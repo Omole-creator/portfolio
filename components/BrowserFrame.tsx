@@ -12,7 +12,7 @@ export function BrowserFrame({
   const shownUrl = url.replace(/^https?:\/\//, "");
 
   return (
-    <figure className="overflow-hidden rounded-xl border border-line bg-white shadow-[0_20px_50px_-24px_rgba(11,30,57,0.45)]">
+    <figure className="group/frame overflow-hidden rounded-xl border border-line bg-white shadow-[0_20px_50px_-24px_rgba(11,30,57,0.45)] transition-[transform,box-shadow] duration-500 hover:-translate-y-2 hover:shadow-[0_36px_70px_-30px_rgba(11,30,57,0.55)]">
       <div className="flex items-center gap-3 border-b border-line bg-[#f3f4f6] px-4 py-3">
         <div className="flex gap-1.5" aria-hidden="true">
           <span className="h-3 w-3 rounded-full bg-[#e0605e]" />
@@ -32,7 +32,7 @@ export function BrowserFrame({
         alt={alt}
         width={2528}
         height={1165}
-        className="h-auto w-full"
+        className="h-auto w-full transition-transform duration-500 group-hover/frame:scale-[1.02]"
         sizes="(max-width: 1024px) 100vw, 640px"
       />
       <figcaption className="sr-only">{alt}</figcaption>

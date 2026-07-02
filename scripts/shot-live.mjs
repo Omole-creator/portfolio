@@ -6,27 +6,23 @@ const OUT = "source-materials/site-preview";
 mkdirSync(OUT, { recursive: true });
 
 const browser = await chromium.launch();
-
-// Mobile hero (check buttons on one row)
-const mob = await browser.newContext({
-  viewport: { width: 390, height: 844 },
-  deviceScaleFactor: 2,
-});
-const mp = await mob.newPage();
-await mp.goto(URL, { waitUntil: "domcontentloaded" });
-await mp.waitForTimeout(2500);
-await mp.screenshot({ path: `${OUT}/live-mobile-hero.png` });
-await mob.close();
-
-// Desktop tools strip
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 const page = await ctx.newPage();
 await page.goto(URL, { waitUntil: "domcontentloaded" });
-await page.waitForTimeout(2500);
-await page.evaluate(() => window.scrollTo(0, 620));
-await page.waitForTimeout(600);
-await page.screenshot({ path: `${OUT}/live-tools.png` });
-await ctx.close();
+await page.waitForTimeout(2000);
+
+// Selected Work partway in (shows the slide/offset)
+await page.evaluate(() => window.scrollTo(0, 1100));
+await page.waitForTimeout(700);
+await page.screenshot({ path: `${OUT}/live-work-slide.png` });
+
+// What I Do settled
+await page.evaluate(() => {
+  const el = document.getElementById("services");
+  if (el) window.scrollTo(0, el.offsetTop - 120);
+});
+await page.waitForTimeout(700);
+await page.screenshot({ path: `${OUT}/live-services.png` });
 
 await browser.close();
 console.log("done");
