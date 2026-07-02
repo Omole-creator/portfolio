@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { caseStudies } from "@/lib/content";
 import { Reveal } from "./Reveal";
+import { ScrollCard } from "./ScrollCard";
 
 export function WorkTeaser() {
   return (
@@ -27,10 +28,10 @@ export function WorkTeaser() {
 
         <div className="mt-12 grid gap-6 md:grid-cols-2">
           {caseStudies.map((study, i) => (
-            <Reveal key={study.name} delay={(i % 2) * 0.05}>
+            <ScrollCard key={study.name} direction={i % 2 === 0 ? -1 : 1}>
               <Link
                 href="/work"
-                className="group flex h-full flex-col rounded-2xl border border-line bg-white p-8 transition-colors hover:border-gold/50"
+                className="group flex h-full flex-col rounded-2xl border border-line bg-white p-8 shadow-[0_10px_30px_-20px_rgba(11,30,57,0.25)] transition-colors hover:border-gold/50"
               >
                 <p className="eyebrow text-gold-hover">{study.kind}</p>
                 <h3 className="mt-3 text-2xl font-semibold text-ink">
@@ -45,7 +46,7 @@ export function WorkTeaser() {
                   />
                 </span>
               </Link>
-            </Reveal>
+            </ScrollCard>
           ))}
         </div>
       </div>
