@@ -1,0 +1,15 @@
+/node_modules
+/.next
+/out
+/build
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+.env*
+/playwright-report
+/test-results
+.DS_Store
+
+# Raw source material: unblurred screenshots, CV, original photo. Keep private.
+/source-materials
+/photo.jpg
