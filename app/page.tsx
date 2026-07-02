@@ -10,8 +10,8 @@ export default function Home() {
     <main>
       <Hero />
       <ToolsMarquee />
-      <Services />
       <WorkTeaser />
+      <Services />
       <Recognition />
       <HomeCta />
     </main>

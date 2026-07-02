@@ -15,7 +15,7 @@ export default function WorkPage() {
       <PageHeader
         eyebrow="Selected work"
         title="A company I built, and the products I shipped to run it."
-        intro="Real growth, and real software behind it. Here is the company, and the tools I built with AI to keep it running. The figures in the dashboards are blurred on purpose."
+        intro="The company I grew, and the software I built with AI to run it. The figures in the dashboards are blurred on purpose."
       />
       <CaseStudies showHeading={false} />
       <HomeCta />

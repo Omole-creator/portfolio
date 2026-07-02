@@ -8,7 +8,7 @@ export const site = {
     "Omole Usuangbon brings growth and systems into businesses using AI. He wins customers for startups and established businesses, and builds the tools that keep the whole thing running.",
   headline: "Growth and Systems, Built Into Your Business Using AI",
   subhead:
-    "I help startups and established businesses win customers, then I build the systems that keep the whole thing running.",
+    "I help startups and established businesses find their customers and grow, then build the systems that keep it running.",
   contact: {
     email: "omoleusuangbon@gmail.com",
     calendly: "https://calendly.com/omoleusuangbon/30min",
@@ -26,7 +26,7 @@ export const nav = [
 export const proof = [
   { value: "16x", label: "return on ad spend" },
   { value: "9,700+", label: "community members" },
-  { value: "200+", label: "clients served" },
+  { value: "4,000+", label: "website users" },
   { value: "3", label: "products shipped with AI" },
   { value: "$5.7k", label: "in grant funding" },
 ];
@@ -46,18 +46,18 @@ export const tools = [
 
 export const about = [
   "I am Omole, founder of JobMingle. Most of our growth did not come from ad budgets. It came from building communities and using growth hacks that got people talking and pulled them in on their own. We turned on paid ads mainly when we wanted to fill a live cohort. Organic first, paid when it counts, that is how I think about growth.",
-  "The part people do not expect is that I also build. When my sales team needed a CRM, I built one. When I needed to see the company finances clearly, I built that too. I use AI tools like Claude Code to ship real, working products, so I can act on an idea without waiting on anyone.",
+  "The part people do not expect is that I also build. When my sales team needed a CRM, I built one. When I needed to see the company finances clearly, I built that too. I use AI tools like Claude Code to ship working products, so I can act on an idea without waiting on anyone.",
   "I am happy to work with startups and established businesses anywhere in the world, whether that is a growth role, a project, or a conversation about building something together.",
 ];
 
 export const services = [
   {
     title: "Growth and paid acquisition",
-    body: "I bring customers to businesses that need them. Most of the growth I have driven started organic, through community and content, with paid ads used to push the big moments like a launch. What I care about is paying customers, not vanity numbers.",
+    body: "I bring customers to businesses that need them. A lot of the growth I have driven came from community, content, and partnerships, and I run paid ads when they fit. What I care about is paying customers, not vanity numbers.",
   },
   {
     title: "Copywriting and content",
-    body: "I write the words that sell, from ads and sales pages to emails and blog posts. One sales letter I wrote beat the control by nine times in two weeks. I write to get a response, not just to sound nice.",
+    body: "I write the words that sell, from ads and sales pages to emails and blog posts. One sales letter I wrote beat the control by nine times in two weeks.",
   },
   {
     title: "Community building",
@@ -69,7 +69,7 @@ export const services = [
   },
   {
     title: "AI products and automation",
-    body: "I build the tools a business needs and automate the parts that waste time. Using Claude Code, I ship real, working software fast, from internal dashboards to a full CRM.",
+    body: "I build the tools a business needs and automate the parts that waste time. Using Claude Code, I ship working software fast, from internal dashboards to a full CRM.",
   },
 ];
 
@@ -100,12 +100,12 @@ export const caseStudies: CaseStudy[] = [
       "JobMingle is the edtech company I started and grew. My engineers built the website at jobmingle.co, while I led the growth, the product direction, and the community, and built the internal tools we run on.",
     highlights: [
       "Grew a community past 9,700 members that brought in most of our customers",
-      "Filled our first live cohort in April 2026 at a 16x return on ad spend",
+      "Launched our first live cohort in April 2026 at a 16x return on ad spend",
       "Enrolled 22 students into tech training programs, with leads under $0.50 each",
       "Served over 200 clients through our career services line",
       "Partnered with EvolvateHR, Ternkonnect, Your Study Path, and Cudose",
     ],
-    tags: ["Founder", "Growth", "Community", "Since 2023"],
+    tags: ["Founder", "Growth", "Marketing", "Community", "Partnerships", "Since 2023"],
     liveUrl: "https://jobmingle.co",
   },
   {
@@ -219,11 +219,11 @@ export const faq = [
   },
   {
     q: "Do you only run paid ads?",
-    a: "No. Most of the growth I have driven started organic, through community and content. Paid ads come in to push the big moments. I use whatever brings you real customers.",
+    a: "No. Most of the growth I have driven started organic, through community and content. Paid ads come in to push the big moments. I use whatever brings you paying customers.",
   },
   {
     q: "You build software, but you are not an engineer?",
-    a: "That is right. I direct AI tools like Claude Code to build and ship the products, and I have real, working ones to show for it. You get the output of an engineer without me pretending to be one.",
+    a: "That is right. I direct AI tools like Claude Code to build and ship the products, and I have working ones to show for it. You get the output of an engineer without me pretending to be one.",
   },
   {
     q: "Where are you based, and does it matter?",
@@ -242,6 +242,6 @@ export const workTracks = [
   },
   {
     title: "For partners who want to work with JobMingle",
-    body: "We train and place young tech talent, and we have a growing community of thousands. If you hire early talent, run a training center, or want to reach that audience, there is a real partnership worth having here.",
+    body: "We train and place young tech talent, and we have a growing community of thousands. If you hire early talent, run a training center, or want to reach that audience, there is a partnership worth having here.",
   },
 ];
