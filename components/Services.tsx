@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   TrendingUp,
   PenLine,
@@ -7,7 +8,7 @@ import {
   ArrowRight,
   type LucideIcon,
 } from "lucide-react";
-import { services } from "@/lib/content";
+import { services, servicesCta } from "@/lib/content";
 import { Reveal } from "./Reveal";
 
 const icons: LucideIcon[] = [TrendingUp, PenLine, Users, Settings2, Bot];
@@ -42,21 +43,21 @@ export function Services() {
           })}
 
           <Reveal delay={0.1}>
-            <a
-              href="#contact"
+            <Link
+              href={servicesCta.href}
               className="group flex h-full flex-col justify-between bg-navy p-8 text-white transition-colors hover:bg-navy-soft"
             >
               <p className="text-lg font-semibold leading-snug">
-                Most teams hire five people for this. You can start with one.
+                {servicesCta.text}
               </p>
               <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-gold">
-                Let us talk
+                {servicesCta.linkText}
                 <ArrowRight
                   className="h-4 w-4 transition-transform group-hover:translate-x-1"
                   aria-hidden="true"
                 />
               </span>
-            </a>
+            </Link>
           </Reveal>
         </div>
       </div>

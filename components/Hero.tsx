@@ -1,65 +1,73 @@
-import { CalendarCheck, Mail } from "lucide-react";
-import { site } from "@/lib/content";
+import { CalendarCheck, ArrowRight } from "lucide-react";
+import { site, proof } from "@/lib/content";
+import { ShaderBackground } from "./ui/shader-background";
+import { GlowButton } from "./ui/glow-button";
 import { Reveal } from "./Reveal";
 
 export function Hero() {
+  const [main, accent] = site.headline.split("Using AI");
+
   return (
     <section
       id="top"
-      className="relative overflow-hidden bg-navy text-white"
+      className="relative flex min-h-[100svh] items-center overflow-hidden bg-navy-deep text-white"
     >
-      {/* soft gold glow, kept subtle */}
+      {/* Animated shader, tinted to navy so it stays on brand */}
+      <div className="absolute inset-0">
+        <ShaderBackground />
+      </div>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-40 -top-40 h-[36rem] w-[36rem] rounded-full bg-gold/10 blur-3xl"
+        className="absolute inset-0 bg-gradient-to-b from-navy-deep/70 via-navy/70 to-navy-deep/90"
       />
-      <div className="container-x relative flex min-h-[92vh] flex-col justify-center pb-20 pt-36">
-        <Reveal>
-          <p className="eyebrow flex items-center gap-2 text-gold">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold/70" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
-            </span>
-            Open to work and co-founder conversations
-          </p>
-        </Reveal>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-40 top-10 h-[32rem] w-[32rem] rounded-full bg-gold/10 blur-3xl"
+      />
 
-        <Reveal delay={0.05}>
-          <h1 className="mt-6 max-w-4xl text-balance text-4xl font-semibold leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl">
-            I turn attention into customers, and build the{" "}
-            <span className="text-gold">tools that run the business</span>.
-          </h1>
-        </Reveal>
+      <div className="container-x relative z-10 py-32">
+        <div className="max-w-4xl">
+          <Reveal>
+            <h1 className="text-4xl font-semibold leading-[1.06] tracking-tight sm:text-5xl md:text-6xl lg:text-[4.25rem]">
+              {main}
+              <span className="text-gold">Using AI</span>
+              {accent}
+            </h1>
+          </Reveal>
 
-        <Reveal delay={0.1}>
-          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-white/75">
-            {site.heroPitch}
-          </p>
-        </Reveal>
+          <Reveal delay={0.08}>
+            <p className="mt-7 max-w-2xl text-lg leading-relaxed text-white/75">
+              {site.subhead}
+            </p>
+          </Reveal>
 
-        <Reveal delay={0.15}>
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <a
-              href={site.contact.calendly}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3.5 text-base font-semibold text-ink transition-colors hover:bg-gold-hover"
-            >
-              <CalendarCheck className="h-5 w-5" aria-hidden="true" />
-              Book a call
-            </a>
-            <a
-              href={`mailto:${site.contact.email}`}
-              className="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-3.5 text-base font-semibold text-white transition-colors hover:border-white/60 hover:bg-white/5"
-            >
-              <Mail className="h-5 w-5" aria-hidden="true" />
-              Email me
-            </a>
-          </div>
-        </Reveal>
+          <Reveal delay={0.14}>
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <GlowButton href={site.contact.calendly} external variant="primary">
+                <CalendarCheck className="h-5 w-5" aria-hidden="true" />
+                Book a call
+              </GlowButton>
+              <GlowButton href="/work" variant="ghost">
+                See my work
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </GlowButton>
+            </div>
+          </Reveal>
+        </div>
 
         <Reveal delay={0.2}>
-          <p className="mt-8 text-sm text-white/55">{site.openLine}</p>
+          <dl className="mt-16 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
+            {proof.map((item) => (
+              <div key={item.label} className="border-l border-white/15 pl-4">
+                <dt className="font-display text-2xl font-semibold tabular-nums text-gold md:text-3xl">
+                  {item.value}
+                </dt>
+                <dd className="mt-1 text-sm leading-snug text-white/60">
+                  {item.label}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </Reveal>
       </div>
     </section>

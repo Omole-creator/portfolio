@@ -29,7 +29,7 @@ export function About() {
           <Reveal>
             <p className="eyebrow text-gold-hover">About</p>
             <h2 className="mt-4 text-3xl font-semibold leading-tight md:text-4xl">
-              A growth marketer who also ships the product.
+              I bring the growth, and build what runs it.
             </h2>
           </Reveal>
           <div className="mt-6 space-y-5 text-lg leading-relaxed text-muted">

@@ -38,6 +38,17 @@ function Featured({ study }: { study: CaseStudy }) {
             <div className="mt-7">
               <Tags tags={study.tags} />
             </div>
+            {study.liveUrl ? (
+              <a
+                href={study.liveUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-7 inline-flex items-center gap-1.5 text-sm font-semibold text-gold underline-offset-4 transition-colors hover:underline"
+              >
+                Visit jobmingle.co
+                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              </a>
+            ) : null}
           </div>
           <ul className="space-y-4 lg:pt-2">
             {study.highlights.map((point) => (
@@ -119,21 +130,23 @@ function ProductRow({ study, flip }: { study: CaseStudy; flip: boolean }) {
   );
 }
 
-export function CaseStudies() {
+export function CaseStudies({ showHeading = true }: { showHeading?: boolean }) {
   const featured = caseStudies.find((s) => s.featured);
   const products = caseStudies.filter((s) => !s.featured);
 
   return (
-    <section id="work" className="border-t border-line bg-paper py-24 md:py-32">
+    <section id="work" className="bg-paper py-20 md:py-24">
       <div className="container-x">
-        <Reveal>
-          <p className="eyebrow text-gold-hover">Selected work</p>
-          <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight md:text-4xl">
-            The company I built, and the products I shipped to run it.
-          </h2>
-        </Reveal>
+        {showHeading ? (
+          <Reveal>
+            <p className="eyebrow text-gold-hover">Selected work</p>
+            <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight md:text-4xl">
+              The company I built, and the products I shipped to run it.
+            </h2>
+          </Reveal>
+        ) : null}
 
-        <div className="mt-14 space-y-20 md:space-y-28">
+        <div className="space-y-20 pt-2 md:space-y-28">
           {featured ? <Featured study={featured} /> : null}
           {products.map((study, i) => (
             <ProductRow key={study.name} study={study} flip={i % 2 === 1} />

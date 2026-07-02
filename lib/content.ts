@@ -3,15 +3,12 @@
 export const site = {
   name: "Omole Usuangbon",
   role: "Founder & Growth Operator",
-  url: "https://omole-usuangbon.vercel.app",
+  url: "https://omoleportfolio.vercel.app",
   metaDescription:
-    "Omole Usuangbon is a founder and growth marketer who takes products from zero to paying customers, and builds the tools that run the business. Open to startup roles and co-founder conversations.",
-  tagline:
-    "I turn attention into customers, and build the tools that keep the business running.",
-  heroPitch:
-    "For four years I have helped products find their first paying customers through paid ads, sharp copy, and communities that stick. The part people do not expect is that I also build the software behind the growth. Founder of JobMingle, and the person who ends up owning the funnel from the first click to the closed sale.",
-  openLine:
-    "Based in Lagos, open to working with startups anywhere.",
+    "Omole Usuangbon brings growth and systems into businesses using AI. He wins customers for startups and established businesses, and builds the tools that keep the whole thing running.",
+  headline: "Growth and Systems, Built Into Your Business Using AI",
+  subhead:
+    "I help startups and established businesses win customers, then I build the systems that keep the whole thing running.",
   contact: {
     email: "omoleusuangbon@gmail.com",
     calendly: "https://calendly.com/omoleusuangbon/30min",
@@ -21,48 +18,66 @@ export const site = {
 };
 
 export const nav = [
-  { label: "About", href: "#about" },
-  { label: "What I do", href: "#services" },
-  { label: "Work", href: "#work" },
-  { label: "Recognition", href: "#recognition" },
+  { label: "Work", href: "/work" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export const proof = [
-  { value: "462", label: "leads from one campaign" },
   { value: "16x", label: "return on ad spend" },
-  { value: "₦4.8m", label: "in sales booked" },
   { value: "9,700+", label: "community members" },
-  { value: "3", label: "grants and awards" },
+  { value: "200+", label: "clients served" },
+  { value: "3", label: "products shipped with AI" },
+  { value: "$5.7k", label: "in grant funding" },
+];
+
+export const tools = [
+  "Meta Ads",
+  "Claude Code",
+  "Google Analytics",
+  "Selar",
+  "Kit",
+  "Resend",
+  "ClickUp",
+  "Asana",
+  "Slack",
+  "Canva",
 ];
 
 export const about = [
-  "I am Omole, a growth marketer and the founder of JobMingle. For the last four years most of my work has come back to one question, how do you put a product in front of the right people and turn their attention into revenue. I have answered it with paid ads, with copy that sells, and with communities that people actually want to stay in.",
+  "I am Omole, founder of JobMingle. Most of our growth did not come from ad budgets. It came from building communities and using growth hacks that got people talking and pulled them in on their own. We turned on paid ads mainly when we wanted to fill a live cohort. Organic first, paid when it counts, that is how I think about growth.",
   "The part people do not expect is that I also build. When my sales team needed a CRM, I built one. When I needed to see the company finances clearly, I built that too. I use AI tools like Claude Code to ship real, working products, so I can act on an idea without waiting on anyone.",
-  "I am based in Lagos and happy to work with startups anywhere, whether that is a growth role, a project, or a conversation about building something together.",
+  "I am happy to work with startups and established businesses anywhere in the world, whether that is a growth role, a project, or a conversation about building something together.",
 ];
 
 export const services = [
   {
     title: "Growth and paid acquisition",
-    body: "I run Meta ads from end to end, the creative, the targeting, the budget, and the daily optimisation. I care about one number above the rest, customers you can actually afford to get.",
+    body: "I bring customers to businesses that need them. Most of the growth I have driven started organic, through community and content, with paid ads used to push the big moments like a launch. What I care about is paying customers, not vanity numbers.",
   },
   {
     title: "Copywriting and content",
-    body: "I write ads, sales pages, and emails that move people to act. One sales letter I wrote beat the version before it by nine times in two weeks.",
+    body: "I write the words that sell, from ads and sales pages to emails and blog posts. One sales letter I wrote beat the control by nine times in two weeks. I write to get a response, not just to sound nice.",
   },
   {
     title: "Community building",
-    body: "I grow communities that people want to belong to. The JobMingle community passed 9,700 members, and engagement went up by 200 percent while it grew.",
+    body: "I build communities people actually want to be in. The JobMingle community grew past 9,700 members across WhatsApp and Telegram, and it became the engine that brought us most of our customers.",
   },
   {
     title: "Operations and leadership",
-    body: "I lead teams, set up the systems, and keep the day to day moving. I have run a ten person team and the partnerships that came with it.",
+    body: "I lead teams and set up the systems that keep the work moving. I have run a 10-member team and the partnerships that came with it, day to day.",
   },
   {
     title: "AI products and automation",
-    body: "I build the tools my business needs and automate the parts that waste time, using Claude Code and modern web stacks to ship quickly.",
+    body: "I build the tools a business needs and automate the parts that waste time. Using Claude Code, I ship real, working software fast, from internal dashboards to a full CRM.",
   },
 ];
+
+export const servicesCta = {
+  text: "Most people do one of these well. I do both, the growth and the systems behind it.",
+  linkText: "See how that works",
+  href: "/work",
+};
 
 export type CaseStudy = {
   name: string;
@@ -82,19 +97,20 @@ export const caseStudies: CaseStudy[] = [
     kind: "The company I founded",
     featured: true,
     blurb:
-      "JobMingle is the edtech company I started and grew from nothing. I built the customer acquisition engine, the community, and most of the software that runs behind it.",
+      "JobMingle is the edtech company I started and grew. My engineers built the website at jobmingle.co, while I led the growth, the product direction, and the community, and built the internal tools we run on.",
     highlights: [
-      "462 leads from a single Meta ads campaign, at under fifty cents each",
-      "18 students enrolled between ₦270k and ₦470k, a 16x return on ad spend",
-      "A community of more than 9,700 members across WhatsApp and Telegram",
-      "Career services that have served over 200 paying clients",
-      "Partnerships with EvolvateHR, Ternkonnect, and Your Study Path",
+      "Grew a community past 9,700 members that brought in most of our customers",
+      "Filled our first live cohort in April 2026 at a 16x return on ad spend",
+      "Enrolled 22 students into tech training programs, with leads under $0.50 each",
+      "Served over 200 clients through our career services line",
+      "Partnered with EvolvateHR, Ternkonnect, Your Study Path, and Cudose",
     ],
     tags: ["Founder", "Growth", "Community", "Since 2023"],
+    liveUrl: "https://jobmingle.co",
   },
   {
     name: "JobMingle Powerhouse",
-    kind: "A product I built",
+    kind: "A product I built with AI",
     blurb:
       "A financial command center for my company. It brings every revenue line and expense into one place, so I always know exactly where the business stands.",
     why: "I was tired of stitching the numbers together in spreadsheets, so I built a dashboard that does it live.",
@@ -103,7 +119,7 @@ export const caseStudies: CaseStudy[] = [
       "Month over month and quarterly growth views for clean reporting",
       "Password protection, offline access, and one click backups",
     ],
-    tags: ["Next.js", "TypeScript", "Supabase", "Tailwind"],
+    tags: ["Built with Claude Code", "Next.js", "Supabase"],
     liveUrl: "https://jobmingle-powerhouse.vercel.app",
     images: [
       {
@@ -114,7 +130,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     name: "JobMingle Leads",
-    kind: "A product I built",
+    kind: "A product I built with AI",
     blurb:
       "The CRM my sales team uses every day. It takes in course inquiries, shares them out to reps on its own, and tracks each one all the way to a closed sale.",
     why: "Leads were slipping through the cracks, so I built a system that assigns and follows up on every single one.",
@@ -123,7 +139,7 @@ export const caseStudies: CaseStudy[] = [
       "A full pipeline from new lead to won or lost, with payment tracking",
       "A live dashboard, plus a one page outcomes report for grant applications",
     ],
-    tags: ["Next.js", "Prisma", "Neon Postgres", "NextAuth", "Recharts"],
+    tags: ["Built with Claude Code", "Next.js", "Prisma"],
     liveUrl: "https://jobmingleleads.vercel.app",
     images: [
       {
@@ -138,7 +154,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     name: "Sales Objections Toolkit",
-    kind: "A product I shipped",
+    kind: "A product I shipped with AI",
     blurb:
       "A paid product I wrote, designed, and built. It hands Nigerian business owners the exact words to turn a hesitant buyer into a sale.",
     why: "I kept watching sellers lose deals to a quiet 'let me get back to you', so I packaged the replies that win those buyers back.",
@@ -147,7 +163,7 @@ export const caseStudies: CaseStudy[] = [
       "Scripts for WhatsApp, Instagram, and Messenger, plus a seven day follow up",
       "Written, designed, and sold from end to end, with checkout through Selar",
     ],
-    tags: ["Next.js", "TypeScript", "Tailwind", "Copywriting"],
+    tags: ["Built with Claude Code", "Copywriting", "Next.js"],
     liveUrl: "https://sales-obj.vercel.app",
     images: [
       {
@@ -158,32 +174,74 @@ export const caseStudies: CaseStudy[] = [
   },
 ];
 
-export const recognition = [
+export type Recognition = {
+  title: string;
+  detail: string;
+  logo: string;
+  kind: "Grant" | "Recognition";
+};
+
+export const recognition: Recognition[] = [
   {
-    title: "Tony Elumelu Foundation Grant",
-    detail: "$5,000 in non dilutive funding for JobMingle",
+    title: "Tony Elumelu Foundation",
+    detail: "$5,000 grant for JobMingle",
+    logo: "/images/logos/tef.png",
+    kind: "Grant",
   },
   {
-    title: "TransactPay Thrive Grant",
-    detail: "Selected for funding and support",
+    title: "TransactPay Thrive",
+    detail: "About $700 in grant funding",
+    logo: "/images/logos/transactpay.png",
+    kind: "Grant",
+  },
+  {
+    title: "Today Africa",
+    detail: "100 African Entrepreneurs to Watch",
+    logo: "/images/logos/today-africa.png",
+    kind: "Recognition",
   },
   {
     title: "African Impact Challenge",
     detail: "Selected entrepreneur",
+    logo: "/images/logos/african-impact.png",
+    kind: "Recognition",
+  },
+];
+
+export const faq = [
+  {
+    q: "What kind of businesses do you work with?",
+    a: "Startups and established businesses that are ready to grow and can move quickly. If you are building something serious and you want customers, we will get along well.",
   },
   {
-    title: "100 African Entrepreneurs to Watch",
-    detail: "Named by Today Africa",
+    q: "Are you open to a role, or only projects?",
+    a: "Both. I take on roles where I can own growth, and I take on projects with a clear goal. Tell me what you need and we will find the right shape for it.",
+  },
+  {
+    q: "Do you only run paid ads?",
+    a: "No. Most of the growth I have driven started organic, through community and content. Paid ads come in to push the big moments. I use whatever brings you real customers.",
+  },
+  {
+    q: "You build software, but you are not an engineer?",
+    a: "That is right. I direct AI tools like Claude Code to build and ship the products, and I have real, working ones to show for it. You get the output of an engineer without me pretending to be one.",
+  },
+  {
+    q: "Where are you based, and does it matter?",
+    a: "I work with startups and businesses anywhere in the world. Wherever you are, I am closer than you think, and I am used to working across time zones.",
+  },
+  {
+    q: "How do we start?",
+    a: "Book a quick call or send me an email. We will talk about where you are, what you need, and whether I am the right fit.",
   },
 ];
 
 export const workTracks = [
   {
-    title: "For startups hiring",
-    body: "If you need someone to own growth and build alongside the team, I am open to full time and fractional roles. I move fast, and I care about revenue over vanity metrics.",
+    title: "For companies that need growth",
+    body: "If you need someone to bring in customers and build the systems to keep them, I am open to the right role or project. I work best with teams that are moving fast and ready to back growth. Startups and established businesses both welcome.",
   },
   {
-    title: "For founders looking for a co-founder",
-    body: "If you are building something and want a partner who can bring in customers and ship product, let us talk. I have done the zero to one journey once, and I am ready to do it again.",
+    title: "For partners who want to work with JobMingle",
+    body: "We train and place young tech talent, and we have a growing community of thousands. If you hire early talent, run a training center, or want to reach that audience, there is a real partnership worth having here.",
   },
 ];

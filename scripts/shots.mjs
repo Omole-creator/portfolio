@@ -3,56 +3,58 @@ import { mkdirSync } from "node:fs";
 
 const OUT = "source-materials/site-preview";
 mkdirSync(OUT, { recursive: true });
+const base = "http://localhost:3000";
 
 async function scrollThrough(page) {
   await page.evaluate(async () => {
     await new Promise((resolve) => {
       let y = 0;
-      const step = 400;
       const timer = setInterval(() => {
         window.scrollTo(0, y);
-        y += step;
+        y += 400;
         if (y >= document.body.scrollHeight) {
           clearInterval(timer);
           setTimeout(resolve, 400);
         }
-      }, 120);
+      }, 110);
     });
   });
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(500);
 }
 
 const browser = await chromium.launch();
 
 // Desktop
-const desktop = await browser.newContext({
-  viewport: { width: 1440, height: 900 },
-});
-const dp = await desktop.newPage();
-await dp.goto("http://localhost:3000", { waitUntil: "networkidle" });
-await scrollThrough(dp);
-for (const id of ["about", "services", "work", "recognition", "contact"]) {
-  await dp.locator(`#${id}`).scrollIntoViewIfNeeded();
-  await dp.waitForTimeout(500);
-  await dp.screenshot({ path: `${OUT}/section-${id}.png` });
-}
-await dp.evaluate(() => window.scrollTo(0, 0));
-await dp.waitForTimeout(400);
-await dp.screenshot({ path: `${OUT}/desktop-full.png`, fullPage: true });
-await desktop.close();
+const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+const page = await ctx.newPage();
 
-// Mobile
-const mobile = await browser.newContext({
+await page.goto(base, { waitUntil: "networkidle" });
+await page.waitForTimeout(1500);
+await page.screenshot({ path: `${OUT}/home-hero.png` });
+await scrollThrough(page);
+await page.evaluate(() => window.scrollTo(0, 0));
+await page.waitForTimeout(300);
+await page.screenshot({ path: `${OUT}/home-full.png`, fullPage: true });
+
+for (const path of ["work", "about", "contact"]) {
+  await page.goto(`${base}/${path}`, { waitUntil: "networkidle" });
+  await scrollThrough(page);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${OUT}/${path}-full.png`, fullPage: true });
+}
+await ctx.close();
+
+// Mobile home
+const mob = await browser.newContext({
   viewport: { width: 390, height: 844 },
   deviceScaleFactor: 2,
 });
-const mp = await mobile.newPage();
-await mp.goto("http://localhost:3000", { waitUntil: "networkidle" });
-await scrollThrough(mp);
-await mp.evaluate(() => window.scrollTo(0, 0));
-await mp.waitForTimeout(400);
-await mp.screenshot({ path: `${OUT}/mobile-full.png`, fullPage: true });
-await mobile.close();
+const mp = await mob.newPage();
+await mp.goto(base, { waitUntil: "networkidle" });
+await mp.waitForTimeout(1200);
+await mp.screenshot({ path: `${OUT}/home-mobile-hero.png` });
+await mob.close();
 
 await browser.close();
 console.log("shots done");

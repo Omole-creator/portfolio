@@ -13,3 +13,13 @@ next-env.d.ts
 # Raw source material: unblurred screenshots, CV, original photo. Keep private.
 /source-materials
 /photo.jpg
+
+# Raw input assets (originals live in source-materials; processed ones ship in public/)
+/logo*.jfif
+/logo*.png
+/Screenshot*.png
+
+# Private reference doc, keep out of the public repo
+/COPYWRITING-PLAYBOOK.md
+
+.vercel

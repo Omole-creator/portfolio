@@ -65,7 +65,7 @@ export function Contact() {
         <Reveal delay={0.1}>
           <div className="mt-12 rounded-2xl bg-navy p-8 text-white md:flex md:items-center md:justify-between md:p-10">
             <div>
-              <h3 className="text-2xl font-semibold">Let us talk.</h3>
+              <h3 className="text-2xl font-semibold">Send me a message.</h3>
               <p className="mt-2 text-white/70">
                 Pick whichever way is easiest. I reply quickly.
               </p>

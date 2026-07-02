@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { site, nav } from "@/lib/content";
 
 export function Footer() {
@@ -11,26 +12,26 @@ export function Footer() {
               {site.role}
             </p>
             <p className="mt-4 text-sm leading-relaxed text-white/60">
-              {site.tagline}
+              Growth and systems, built into your business using AI.
             </p>
           </div>
 
           <nav aria-label="Footer" className="flex flex-col gap-3 text-sm">
+            <Link
+              href="/"
+              className="text-white/70 transition-colors hover:text-white"
+            >
+              Home
+            </Link>
             {nav.map((item) => (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
                 className="text-white/70 transition-colors hover:text-white"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
-            <a
-              href="#contact"
-              className="text-white/70 transition-colors hover:text-white"
-            >
-              Contact
-            </a>
           </nav>
 
           <div className="flex flex-col gap-3 text-sm">

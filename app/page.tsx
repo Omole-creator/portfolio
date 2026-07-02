@@ -1,27 +1,19 @@
-import { Nav } from "@/components/Nav";
 import { Hero } from "@/components/Hero";
-import { ProofBar } from "@/components/ProofBar";
-import { About } from "@/components/About";
+import { ToolsMarquee } from "@/components/ToolsMarquee";
 import { Services } from "@/components/Services";
-import { CaseStudies } from "@/components/CaseStudies";
+import { WorkTeaser } from "@/components/WorkTeaser";
 import { Recognition } from "@/components/Recognition";
-import { Contact } from "@/components/Contact";
-import { Footer } from "@/components/Footer";
+import { HomeCta } from "@/components/HomeCta";
 
 export default function Home() {
   return (
-    <>
-      <Nav />
-      <main>
-        <Hero />
-        <ProofBar />
-        <About />
-        <Services />
-        <CaseStudies />
-        <Recognition />
-        <Contact />
-      </main>
-      <Footer />
-    </>
+    <main>
+      <Hero />
+      <ToolsMarquee />
+      <Services />
+      <WorkTeaser />
+      <Recognition />
+      <HomeCta />
+    </main>
   );
 }
