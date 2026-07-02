@@ -42,9 +42,9 @@ export function Hero() {
           </Reveal>
 
           <Reveal delay={0.14}>
-            <div className="mt-9 flex flex-wrap items-center gap-4">
+            <div className="mt-9 flex flex-nowrap items-center gap-3 sm:gap-4">
               <GlowButton href={site.contact.calendly} external variant="primary">
-                <CalendarCheck className="h-5 w-5" aria-hidden="true" />
+                <CalendarCheck className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
                 Book a call
               </GlowButton>
               <GlowButton href="/work" variant="ghost">

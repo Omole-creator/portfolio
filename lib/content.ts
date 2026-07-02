@@ -8,7 +8,7 @@ export const site = {
     "Omole Usuangbon brings growth and systems into businesses using AI. He wins customers for startups and established businesses, and builds the tools that keep the whole thing running.",
   headline: "Growth and Systems, Built Into Your Business Using AI",
   subhead:
-    "I help startups and established businesses find their customers and grow, then build the systems that keep it running.",
+    "I get startups and businesses in front of buyers, turn them into paying customers, and build the systems that keep the sales coming.",
   contact: {
     email: "omoleusuangbon@gmail.com",
     calendly: "https://calendly.com/omoleusuangbon/30min",
@@ -28,20 +28,19 @@ export const proof = [
   { value: "9,700+", label: "community members" },
   { value: "4,000+", label: "website users" },
   { value: "3", label: "products shipped with AI" },
-  { value: "$5.7k", label: "in grant funding" },
+  { value: "2", label: "grants won" },
 ];
 
 export const tools = [
-  "Meta Ads",
-  "Claude Code",
-  "Google Analytics",
-  "Selar",
-  "Kit",
-  "Resend",
-  "ClickUp",
-  "Asana",
-  "Slack",
-  "Canva",
+  { name: "Meta Ads", logo: "/images/tools/meta.png" },
+  { name: "Claude Code", logo: "/images/tools/claude.png" },
+  { name: "Google Analytics", logo: "/images/tools/google-analytics.png" },
+  { name: "Kit", logo: "/images/tools/kit.png" },
+  { name: "Resend", logo: "/images/tools/resend.png" },
+  { name: "ClickUp", logo: "/images/tools/clickup.png" },
+  { name: "Asana", logo: "/images/tools/asana.png" },
+  { name: "Slack", logo: "/images/tools/slack.png" },
+  { name: "Canva", logo: "/images/tools/canva.png" },
 ];
 
 export const about = [

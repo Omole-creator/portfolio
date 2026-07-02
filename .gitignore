@@ -17,6 +17,8 @@ next-env.d.ts
 # Raw input assets (originals live in source-materials; processed ones ship in public/)
 /logo*.jfif
 /logo*.png
+/1*.png
+/1*.jfif
 /Screenshot*.png
 
 # Private reference doc, keep out of the public repo
