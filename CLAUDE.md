@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A single-page personal portfolio for Omole Usuangbon (founder and growth operator),
-built with Next.js App Router, TypeScript, Tailwind, and Framer Motion. The whole
-site is one route (`app/page.tsx`) that stacks section components with anchor-based
-navigation.
+A personal portfolio for Omole Usuangbon (founder and growth operator), built with
+Next.js App Router, TypeScript, Tailwind, and Framer Motion. It is a multi-page site:
+the home route (`app/page.tsx`) stacks section components, and there are dedicated
+`/work`, `/about`, and `/contact` routes that reuse those same section components.
 
 ## Commands
 
@@ -58,7 +58,9 @@ that happens: stop the dev process, `rm -rf .next`, and restart `npm run dev`.
   coordinates in that script are in a displayed 2000px space and scaled to the real
   2560px image via `SCALE`; when adjusting, re-run and visually verify no number is
   legible. The public sales page (`sales-toolkit`) intentionally keeps its public
-  marketing headline.
+  marketing headline. The GluFloat shots (`glufloat-check`, `glufloat-joy`) are a
+  public marketing site too, so they carry no number-redaction regions: the script
+  only crops the browser chrome / taskbar and covers the "Activate Windows" watermark.
 - **`source-materials/` is gitignored and must stay out of git.** It holds the raw
   unblurred screenshots, the CV, and the original photo. The GitHub repo is public,
   so leaking these would expose the numbers the site redacts. Only the redacted

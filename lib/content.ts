@@ -27,7 +27,7 @@ export const proof = [
   { value: "16x", label: "return on ad spend" },
   { value: "9,700+", label: "community members" },
   { value: "4,000+", label: "website users" },
-  { value: "3", label: "products shipped with AI" },
+  { value: "4", label: "products shipped with AI" },
   { value: "2", label: "grants won" },
 ];
 
@@ -106,6 +106,31 @@ export const caseStudies: CaseStudy[] = [
     ],
     tags: ["Founder", "Growth", "Marketing", "Community", "Partnerships", "Since 2023"],
     liveUrl: "https://jobmingle.co",
+  },
+  {
+    name: "GluFloat",
+    kind: "The startup I'm building now",
+    blurb:
+      "GluFloat is a health startup I am building for Nigerians living with diabetes. You type in any Nigerian food, like jollof rice or eba, and in seconds it tells you whether it is safe for your blood sugar and the simple way to make it better.",
+    why: "My people love their food, and a diabetes diagnosis should not turn every meal into a guessing game. I wanted to give them a way to eat what they love without the fear.",
+    highlights: [
+      "Check any Nigerian food before you cook or buy it, with a clear answer in seconds",
+      "Built the whole product with AI, from the food checker to the trial and pricing flow",
+      "Priced for everyday Nigerians, with a free trial and no card needed to start",
+      "Currently at MVP stage and getting ready to launch",
+    ],
+    tags: ["Founder", "Health tech", "Built with Claude Code", "MVP", "Next.js"],
+    liveUrl: "https://glufloat.vercel.app",
+    images: [
+      {
+        src: "/images/glufloat-check.webp",
+        alt: "GluFloat landing page: check any Nigerian food to see if it is right for your diabetes before you eat it",
+      },
+      {
+        src: "/images/glufloat-joy.webp",
+        alt: "GluFloat section showing a woman happy in her kitchen, with the message that you can eat what you love without fear",
+      },
+    ],
   },
   {
     name: "JobMingle Powerhouse",

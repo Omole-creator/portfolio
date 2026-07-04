@@ -46,6 +46,8 @@ REGIONS = {
         [1268, 842, 1428, 902],   # Expense donut center total
     ],
     "Screenshot (283).png": [],   # Public sales page: marketing numbers kept
+    "Screenshot (285).png": [],   # GluFloat public marketing hero: nothing sensitive
+    "Screenshot (286).png": [],   # GluFloat public marketing section: nothing sensitive
 }
 
 # "Activate Windows" watermark, present on all four (displayed coords).
@@ -88,6 +90,8 @@ def main():
             "Screenshot (281).png": "leads-report",
             "Screenshot (282).png": "powerhouse",
             "Screenshot (283).png": "sales-toolkit",
+            "Screenshot (285).png": "glufloat-check",
+            "Screenshot (286).png": "glufloat-joy",
         }[name]
         im.save(OUT / f"{slug}.webp", "WEBP", quality=88, method=6)
         im.save(OUT / f"{slug}.png", "PNG")  # preview for review
