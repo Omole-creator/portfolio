@@ -58,9 +58,11 @@ that happens: stop the dev process, `rm -rf .next`, and restart `npm run dev`.
   coordinates in that script are in a displayed 2000px space and scaled to the real
   2560px image via `SCALE`; when adjusting, re-run and visually verify no number is
   legible. The public sales page (`sales-toolkit`) intentionally keeps its public
-  marketing headline. The GluFloat shots (`glufloat-check`, `glufloat-joy`) are a
-  public marketing site too, so they carry no number-redaction regions: the script
-  only crops the browser chrome / taskbar and covers the "Activate Windows" watermark.
+  marketing headline. The GluFloat shots (`glufloat-check`, `glufloat-joy`) and the
+  WaterBrooks shots (`waterbrooks-hero`, `waterbrooks-traction`) are public marketing
+  sites too, so they carry no number-redaction regions: the script only crops the
+  browser chrome / taskbar and covers the "Activate Windows" watermark. WaterBrooks
+  keeps its public traction figures on purpose.
 - **`source-materials/` is gitignored and must stay out of git.** It holds the raw
   unblurred screenshots, the CV, and the original photo. The GitHub repo is public,
   so leaking these would expose the numbers the site redacts. Only the redacted
