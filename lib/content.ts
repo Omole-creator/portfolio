@@ -177,6 +177,31 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
   {
+    name: "WaterBrooks Technologies",
+    kind: "A marketing site I built with AI",
+    blurb:
+      "WaterBrooks is an agritech company helping African farmers cut post-harvest losses with solar-powered food preservation. I designed and built their marketing site, from the hero that tells the story to the pages that turn visitors into partners.",
+    why: "A serious mission deserves a site that feels just as serious, so I gave WaterBrooks a home that makes farmers and partners want to reach out.",
+    highlights: [
+      "Designed and built the full marketing site with AI, from the hero down to the traction and contact sections",
+      "Made the story land: solar-powered food preservation built for African farms",
+      "Put their real traction up front, from farmers reached to land secured and accelerator backing",
+      "Built around a clear Partner With Us call to action so the right people get in touch",
+    ],
+    tags: ["Built with Claude Code", "Web design", "Agritech", "Next.js"],
+    liveUrl: "https://waterbrookstechnologies.vercel.app",
+    images: [
+      {
+        src: "/images/waterbrooks-hero.webp",
+        alt: "WaterBrooks Technologies landing page: revolutionizing food preservation with solar-powered innovation for African farms",
+      },
+      {
+        src: "/images/waterbrooks-traction.webp",
+        alt: "WaterBrooks Technologies traction section showing farmers impacted, land secured, a pitch win, and accelerator backing",
+      },
+    ],
+  },
+  {
     name: "Sales Objections Toolkit",
     kind: "A product I shipped with AI",
     blurb:
