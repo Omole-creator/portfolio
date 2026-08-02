@@ -49,6 +49,15 @@ that happens: stop the dev process, `rm -rf .next`, and restart `npm run dev`.
   `muted`, `line`) and are the only approved colors. Fonts are Space Grotesk
   (display) and Inter (body), loaded via `next/font` in `app/layout.tsx` and exposed
   as `font-display` / `font-body`. Page metadata is derived from `site` in `content.ts`.
+- **Analytics** is Google Tag Manager, container `GTM-MCXFF99P`, wired in
+  `app/layout.tsx` through the official `GoogleTagManager` component from
+  `@next/third-parties/google`. That component only emits the loader script, so the
+  `<noscript>` iframe from Google's install snippet is written by hand as the first
+  child of `<body>`. Keep `@next/third-parties` on the same major version as `next`.
+  Everything else (the GA4 tag and its measurement ID, triggers, custom events) is
+  configured in the GTM web UI, not in this repo. Because client-side navigation
+  between `/`, `/work`, `/about`, and `/contact` never reloads the page, the page-view
+  trigger in GTM has to be **History Change** or only the first load gets counted.
 
 ## Screenshots and sensitive data
 

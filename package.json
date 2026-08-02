@@ -10,6 +10,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@next/third-parties": "^15.5.22",
     "clsx": "^2.1.1",
     "framer-motion": "^11.18.0",
     "geist": "^1.7.2",

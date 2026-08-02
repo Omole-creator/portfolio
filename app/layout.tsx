@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
+import { GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { site } from "@/lib/content";
 import { Nav } from "@/components/Nav";
@@ -40,7 +41,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${GeistSans.variable} ${body.variable}`}>
+      <GoogleTagManager gtmId="GTM-MCXFF99P" />
       <body>
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-MCXFF99P"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <Nav />
         {children}
         <Footer />
