@@ -71,17 +71,21 @@ test.describe("Omole portfolio", () => {
   });
 
   test("feeds and sitemap are served", async ({ request }) => {
-    const rss = await request.get("/blog/rss.xml");
+    // Same first-compile lag as above: these three routes have never been hit
+    // when the suite starts, so they get a longer timeout than the default.
+    const slow = { timeout: 60_000 };
+
+    const rss = await request.get("/blog/rss.xml", slow);
     expect(rss.ok()).toBeTruthy();
     expect(await rss.text()).toContain("<rss");
 
     // The sitemap always uses the canonical production URL from content.ts,
     // not the host the test happens to be running against.
-    const sitemap = await request.get("/sitemap.xml");
+    const sitemap = await request.get("/sitemap.xml", slow);
     expect(sitemap.ok()).toBeTruthy();
     expect(await sitemap.text()).toContain("/blog");
 
-    const robots = await request.get("/robots.txt");
+    const robots = await request.get("/robots.txt", slow);
     expect(await robots.text()).toContain("Disallow: /admin");
   });
 

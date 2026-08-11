@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/PageHeader";
 import { HomeCta } from "@/components/HomeCta";
 import { Reveal } from "@/components/Reveal";
 import { PostCard } from "@/components/blog/PostCard";
@@ -24,14 +23,11 @@ export default async function BlogPage() {
 
   return (
     <main>
-      <PageHeader
-        eyebrow={blogPage.eyebrow}
-        title={blogPage.title}
-        intro={blogPage.intro}
-      />
-
-      <section className="bg-paper py-20 md:py-24">
+      <section className="bg-paper pt-36 pb-20 md:pt-40 md:pb-24">
         <div className="container-x">
+          {/* No visible headline here by choice. The h1 stays for screen readers. */}
+          <h1 className="sr-only">{blogPage.srTitle}</h1>
+
           {posts.length ? (
             <div className="grid gap-8 md:grid-cols-2">
               {posts.map((post, i) => (
@@ -41,11 +37,7 @@ export default async function BlogPage() {
               ))}
             </div>
           ) : (
-            <Reveal>
-              <p className="max-w-xl text-lg leading-relaxed text-muted">
-                {blogPage.emptyState}
-              </p>
-            </Reveal>
+            <p className="text-lg text-muted">{blogPage.emptyState}</p>
           )}
         </div>
       </section>

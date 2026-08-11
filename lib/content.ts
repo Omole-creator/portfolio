@@ -24,15 +24,13 @@ export const nav = [
   { label: "Contact", href: "/contact" },
 ];
 
+// The blog index carries no headline or intro on purpose. The posts speak for
+// themselves. `srTitle` is never shown: it exists so the page still has one h1
+// for screen readers and search engines.
 export const blogPage = {
-  eyebrow: "Writing",
-  title: "How to grow a startup with no budget and no engineers.",
-  intro:
-    "I am writing this one chapter at a time, from the things I actually did at JobMingle and GluFloat. What worked, what it cost, and the numbers I am allowed to show you.",
-  emptyState:
-    "The first chapter is on its way. Come back soon, or follow me on LinkedIn and you will see it there first.",
-  metaDescription:
-    "Omole Usuangbon writes about growing a startup in Nigeria without an ad budget or an engineering team, drawing on what he built at JobMingle and GluFloat.",
+  srTitle: "Blog",
+  emptyState: "Nothing here yet.",
+  metaDescription: `Writing by ${site.name}.`,
 };
 
 export const proof = [

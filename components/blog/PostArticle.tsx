@@ -24,7 +24,7 @@ export function PostArticle({ post }: { post: Post }) {
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-gold underline-offset-4 transition-colors hover:underline"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            All writing
+            Back to blog
           </Link>
 
           <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-tight md:text-5xl">

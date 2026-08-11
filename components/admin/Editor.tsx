@@ -1,12 +1,20 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ExternalLink, ImagePlus, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  AlertCircle,
+  CheckCircle2,
+  ExternalLink,
+  ImagePlus,
+  Trash2,
+} from "lucide-react";
 import { savePost, deletePost, type ActionState } from "@/app/admin/actions";
-import { createClient } from "@/lib/supabase/client";
+import { uploadImage } from "@/lib/uploadImage";
 import { slugify, type Post } from "@/lib/posts";
 import { PostBody } from "@/components/blog/PostBody";
+import { MarkdownToolbar } from "./MarkdownToolbar";
 
 const initial: ActionState = {};
 
@@ -16,6 +24,7 @@ const label = "text-sm font-semibold text-ink";
 
 export function Editor({ post }: { post?: Post }) {
   const [state, action, pending] = useActionState(savePost, initial);
+  const router = useRouter();
 
   const [title, setTitle] = useState(post?.title ?? "");
   const [slug, setSlug] = useState(post?.slug ?? "");
@@ -24,37 +33,57 @@ export function Editor({ post }: { post?: Post }) {
   const [coverUrl, setCoverUrl] = useState(post?.cover_url ?? "");
   const [coverAlt, setCoverAlt] = useState(post?.cover_alt ?? "");
   const [tab, setTab] = useState<"write" | "preview">("write");
-  const [uploading, setUploading] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [uploadError, setUploadError] = useState("");
 
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
   const published = post?.status === "published";
+
+  // The status pill and the publish button read from server data, so pull it
+  // again once a save lands. Without this the page keeps saying "Draft".
+  useEffect(() => {
+    if (state.message) router.refresh();
+  }, [state.message, router]);
 
   function onTitleChange(value: string) {
     setTitle(value);
     if (!slugTouched) setSlug(slugify(value));
   }
 
-  async function onUpload(file: File) {
-    setUploading(true);
+  async function onCoverUpload(file: File) {
+    setBusy(true);
     setUploadError("");
+    const result = await uploadImage(file);
+    setBusy(false);
 
-    const supabase = createClient();
-    const extension = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-    const path = `${crypto.randomUUID()}.${extension}`;
-
-    const { error } = await supabase.storage
-      .from("blog-images")
-      .upload(path, file, { cacheControl: "31536000", upsert: false });
-
-    if (error) {
-      setUploadError("That image did not upload. Try again.");
-      setUploading(false);
+    if (!result.ok) {
+      setUploadError(result.error);
       return;
     }
+    setCoverUrl(result.url);
+  }
 
-    const { data } = supabase.storage.from("blog-images").getPublicUrl(path);
-    setCoverUrl(data.publicUrl);
-    setUploading(false);
+  /** Ctrl or Cmd plus B and I, because muscle memory expects them. */
+  function onBodyKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    const key = e.key.toLowerCase();
+    if (key !== "b" && key !== "i") return;
+
+    e.preventDefault();
+    const el = e.currentTarget;
+    const mark = key === "b" ? "**" : "*";
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const selected = body.slice(start, end) || (key === "b" ? "bold" : "italic");
+
+    setBody(
+      body.slice(0, start) + mark + selected + mark + body.slice(end),
+    );
+    const from = start + mark.length;
+    queueMicrotask(() => {
+      el.focus();
+      el.setSelectionRange(from, from + selected.length);
+    });
   }
 
   return (
@@ -67,24 +96,90 @@ export function Editor({ post }: { post?: Post }) {
         value={post?.published_at ?? ""}
       />
       <input type="hidden" name="cover_url" value={coverUrl} />
+      <input type="hidden" name="body" value={body} />
+
+      {/* Everything that acts on the post lives in one bar that follows you
+          down the page, so Publish is never more than a glance away. */}
+      <div className="sticky top-20 z-40 -mx-2 rounded-2xl border border-line bg-white/95 px-4 py-3 backdrop-blur">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+              published ? "bg-navy text-white" : "border border-line text-muted"
+            }`}
+          >
+            {published ? "Live on the site" : "Draft"}
+          </span>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {post ? (
+              <Link
+                href={
+                  published ? `/blog/${post.slug}` : `/admin/preview/${post.slug}`
+                }
+                className="inline-flex h-11 items-center gap-1.5 rounded-full px-4 text-sm font-semibold text-navy underline-offset-4 hover:text-gold-hover hover:underline"
+              >
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                {published ? "View live" : "Preview"}
+              </Link>
+            ) : null}
+
+            <button
+              type="submit"
+              name="intent"
+              value="save"
+              disabled={pending || busy}
+              className="inline-flex h-11 items-center rounded-full border border-line px-5 text-sm font-semibold text-ink transition hover:border-gold disabled:opacity-60"
+            >
+              {pending ? "Saving..." : "Save"}
+            </button>
+
+            <button
+              type="submit"
+              name="intent"
+              value={published ? "unpublish" : "publish"}
+              disabled={pending || busy}
+              className="inline-flex h-11 items-center rounded-full bg-navy px-6 text-sm font-semibold text-white transition hover:bg-navy-soft disabled:opacity-60"
+            >
+              {published ? "Move to draft" : "Publish"}
+            </button>
+          </div>
+        </div>
+
+        {state.error || uploadError ? (
+          <p
+            role="alert"
+            className="mt-3 flex items-start gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+          >
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            {state.error || uploadError}
+          </p>
+        ) : null}
+
+        {state.message ? (
+          <p className="mt-3 flex items-start gap-2 rounded-xl bg-green-50 px-4 py-3 text-sm font-medium text-green-800">
+            <CheckCircle2
+              className="mt-0.5 h-4 w-4 shrink-0"
+              aria-hidden="true"
+            />
+            {state.message}
+          </p>
+        ) : null}
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="space-y-6">
           <div className="rounded-3xl border border-line bg-white p-6 md:p-8">
-            <div>
-              <label htmlFor="title" className={label}>
-                Title
-              </label>
-              <input
-                id="title"
-                name="title"
-                value={title}
-                onChange={(e) => onTitleChange(e.target.value)}
-                required
-                className={`${field} text-lg font-semibold`}
-                placeholder="Why your first 100 customers should not come from ads"
-              />
-            </div>
+            <label htmlFor="title" className={label}>
+              Title
+            </label>
+            <input
+              id="title"
+              name="title"
+              value={title}
+              onChange={(e) => onTitleChange(e.target.value)}
+              required
+              className={`${field} text-lg font-semibold`}
+            />
 
             <div className="mt-5">
               <label htmlFor="excerpt" className={label}>
@@ -96,8 +191,10 @@ export function Editor({ post }: { post?: Post }) {
                 defaultValue={post?.excerpt ?? ""}
                 rows={2}
                 className={field}
-                placeholder="One or two sentences. This shows on the blog index and in Google."
               />
+              <p className="mt-2 text-xs text-muted">
+                Shows on the blog index and in Google. Optional.
+              </p>
             </div>
 
             <div className="mt-5 flex flex-wrap gap-4">
@@ -127,7 +224,6 @@ export function Editor({ post }: { post?: Post }) {
                   name="tags"
                   defaultValue={post?.tags?.join(", ") ?? ""}
                   className={field}
-                  placeholder="Growth, Community"
                 />
                 <p className="mt-2 text-xs text-muted">Separate with commas.</p>
               </div>
@@ -135,7 +231,7 @@ export function Editor({ post }: { post?: Post }) {
           </div>
 
           <div className="rounded-3xl border border-line bg-white p-6 md:p-8">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <span className={label}>Post</span>
               <div className="flex gap-1 rounded-full bg-paper p-1">
                 {(["write", "preview"] as const).map((option) => (
@@ -143,7 +239,7 @@ export function Editor({ post }: { post?: Post }) {
                     key={option}
                     type="button"
                     onClick={() => setTab(option)}
-                    className={`rounded-full px-4 py-1.5 text-sm font-semibold capitalize transition ${
+                    className={`h-9 rounded-full px-4 text-sm font-semibold capitalize transition ${
                       tab === option
                         ? "bg-navy text-white"
                         : "text-muted hover:text-ink"
@@ -156,14 +252,33 @@ export function Editor({ post }: { post?: Post }) {
             </div>
 
             {tab === "write" ? (
-              <textarea
-                name="body"
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                rows={22}
-                className={`${field} font-mono text-sm leading-relaxed`}
-                placeholder={"## A heading\n\nWrite in Markdown. **Bold**, *italic*, [links](https://example.com), and lists all work."}
-              />
+              <>
+                <div className="mt-4">
+                  <MarkdownToolbar
+                    textareaRef={bodyRef}
+                    value={body}
+                    onChange={setBody}
+                    onBusyChange={setBusy}
+                    onError={setUploadError}
+                  />
+                </div>
+
+                <textarea
+                  ref={bodyRef}
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  onKeyDown={onBodyKeyDown}
+                  rows={24}
+                  aria-label="Post body"
+                  className={`${field} font-mono text-sm leading-relaxed`}
+                />
+
+                <p className="mt-2 text-xs text-muted">
+                  {busy
+                    ? "Uploading your image..."
+                    : "Select text, then hit a button. The Image button drops a picture wherever your cursor is."}
+                </p>
+              </>
             ) : (
               <div className="mt-4 rounded-xl border border-line bg-paper p-6">
                 {body.trim() ? (
@@ -179,10 +294,13 @@ export function Editor({ post }: { post?: Post }) {
         <aside className="space-y-6">
           <div className="rounded-3xl border border-line bg-white p-6">
             <p className={label}>Cover image</p>
+            <p className="mt-1 text-xs text-muted">
+              Shows on the blog index and at the top of the post.
+            </p>
 
             {coverUrl ? (
-              // Plain img on purpose: this is the editor, and the file was
-              // uploaded a second ago, so next/image optimisation adds nothing.
+              // Plain img on purpose: the file was uploaded seconds ago, so
+              // next/image optimisation buys nothing inside the editor.
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={coverUrl}
@@ -191,30 +309,21 @@ export function Editor({ post }: { post?: Post }) {
               />
             ) : null}
 
-            <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold text-ink transition hover:border-gold">
+            <label className="mt-3 inline-flex h-11 cursor-pointer items-center gap-2 rounded-full border border-line px-4 text-sm font-semibold text-ink transition hover:border-gold">
               <ImagePlus className="h-4 w-4" aria-hidden="true" />
-              {uploading
-                ? "Uploading..."
-                : coverUrl
-                  ? "Replace image"
-                  : "Upload image"}
+              {busy ? "Uploading..." : coverUrl ? "Replace" : "Upload cover"}
               <input
                 type="file"
                 accept="image/*"
                 className="sr-only"
-                disabled={uploading}
+                disabled={busy}
                 onChange={(e) => {
                   const file = e.target.files?.[0];
-                  if (file) void onUpload(file);
+                  if (file) void onCoverUpload(file);
+                  e.target.value = "";
                 }}
               />
             </label>
-
-            {uploadError ? (
-              <p role="alert" className="mt-2 text-sm text-red-600">
-                {uploadError}
-              </p>
-            ) : null}
 
             {coverUrl ? (
               <div className="mt-4">
@@ -227,7 +336,6 @@ export function Editor({ post }: { post?: Post }) {
                   value={coverAlt}
                   onChange={(e) => setCoverAlt(e.target.value)}
                   className={field}
-                  placeholder="What is in the picture?"
                 />
                 <p className="mt-2 text-xs text-muted">
                   Needed so screen readers can describe it.
@@ -236,61 +344,6 @@ export function Editor({ post }: { post?: Post }) {
             ) : (
               <input type="hidden" name="cover_alt" value="" />
             )}
-          </div>
-
-          <div className="rounded-3xl border border-line bg-white p-6">
-            <p className={label}>
-              {published ? "Live on the site" : "Draft, not visible yet"}
-            </p>
-
-            {state.error ? (
-              <p role="alert" className="mt-3 text-sm font-medium text-red-600">
-                {state.error}
-              </p>
-            ) : null}
-            {state.message ? (
-              <p className="mt-3 text-sm font-medium text-green-700">
-                {state.message}
-              </p>
-            ) : null}
-
-            <div className="mt-4 space-y-3">
-              <button
-                type="submit"
-                name="intent"
-                value="save"
-                disabled={pending}
-                className="w-full rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-gold disabled:opacity-60"
-              >
-                {pending ? "Saving..." : "Save"}
-              </button>
-
-              <button
-                type="submit"
-                name="intent"
-                value={published ? "unpublish" : "publish"}
-                disabled={pending}
-                className="w-full rounded-full bg-navy px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-soft disabled:opacity-60"
-              >
-                {published ? "Move back to draft" : "Publish"}
-              </button>
-            </div>
-
-            {post ? (
-              <div className="mt-5 space-y-2 border-t border-line pt-5 text-sm">
-                <Link
-                  href={
-                    published
-                      ? `/blog/${post.slug}`
-                      : `/admin/preview/${post.slug}`
-                  }
-                  className="inline-flex items-center gap-1.5 font-semibold text-navy underline-offset-4 hover:text-gold-hover hover:underline"
-                >
-                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                  {published ? "View it live" : "Preview the draft"}
-                </Link>
-              </div>
-            ) : null}
           </div>
 
           {post ? (
@@ -309,7 +362,7 @@ export function Editor({ post }: { post?: Post }) {
                   );
                   if (!sure) e.preventDefault();
                 }}
-                className="mt-4 inline-flex items-center gap-2 rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:border-red-400"
+                className="mt-4 inline-flex h-11 items-center gap-2 rounded-full border border-red-200 px-4 text-sm font-semibold text-red-600 transition hover:border-red-400"
               >
                 <Trash2 className="h-4 w-4" aria-hidden="true" />
                 Delete this post

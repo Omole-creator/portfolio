@@ -69,9 +69,6 @@ export async function savePost(
   if (coverUrl && !coverAlt) {
     return { error: "Describe the cover image so screen readers can read it." };
   }
-  if (intent === "publish" && !body.trim()) {
-    return { error: "There is nothing to publish yet. Write the post first." };
-  }
 
   const supabase = await createClient();
 
