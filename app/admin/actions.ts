@@ -99,17 +99,24 @@ export async function savePost(
   };
 
   if (id) {
-    const { error } = await supabase.from("posts").update(values).eq("id", id);
+    // Read the row back so the confirmation reports what actually happened,
+    // not what the button was hoping for.
+    const { data: updated, error } = await supabase
+      .from("posts")
+      .update(values)
+      .eq("id", id)
+      .select("status")
+      .maybeSingle();
+
     if (error) return { error: friendly(error.message) };
+    if (!updated) return { error: "That post could not be found." };
 
     refreshPublicPages();
     return {
       message:
-        intent === "publish"
-          ? "Published. It is live now."
-          : intent === "unpublish"
-            ? "Back to draft. It is off the site."
-            : "Saved.",
+        updated.status === "published"
+          ? "Published. It is live on the site now."
+          : "Saved as a draft. It is not on the site yet.",
     };
   }
 

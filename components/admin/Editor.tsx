@@ -37,7 +37,16 @@ export function Editor({ post }: { post?: Post }) {
   const [uploadError, setUploadError] = useState("");
 
   const bodyRef = useRef<HTMLTextAreaElement>(null);
+  // What the submit buttons mean is carried by this hidden field rather than by
+  // the buttons' own name and value. A submit button's value is only included
+  // in the form data if the browser and React agree on which button submitted,
+  // and that was silently dropping "publish" and falling back to "save".
+  const intentRef = useRef<HTMLInputElement>(null);
   const published = post?.status === "published";
+
+  function setIntent(next: "save" | "publish" | "unpublish") {
+    if (intentRef.current) intentRef.current.value = next;
+  }
 
   // The status pill and the publish button read from server data, so pull it
   // again once a save lands. Without this the page keeps saying "Draft".
@@ -97,6 +106,7 @@ export function Editor({ post }: { post?: Post }) {
       />
       <input type="hidden" name="cover_url" value={coverUrl} />
       <input type="hidden" name="body" value={body} />
+      <input ref={intentRef} type="hidden" name="intent" defaultValue="save" />
 
       {/* Everything that acts on the post lives in one bar that follows you
           down the page, so Publish is never more than a glance away. */}
@@ -125,8 +135,7 @@ export function Editor({ post }: { post?: Post }) {
 
             <button
               type="submit"
-              name="intent"
-              value="save"
+              onClick={() => setIntent("save")}
               disabled={pending || busy}
               className="inline-flex h-11 items-center rounded-full border border-line px-5 text-sm font-semibold text-ink transition hover:border-gold disabled:opacity-60"
             >
@@ -135,8 +144,7 @@ export function Editor({ post }: { post?: Post }) {
 
             <button
               type="submit"
-              name="intent"
-              value={published ? "unpublish" : "publish"}
+              onClick={() => setIntent(published ? "unpublish" : "publish")}
               disabled={pending || busy}
               className="inline-flex h-11 items-center rounded-full bg-navy px-6 text-sm font-semibold text-white transition hover:bg-navy-soft disabled:opacity-60"
             >
