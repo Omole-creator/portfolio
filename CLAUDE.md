@@ -8,6 +8,8 @@ A personal portfolio for Omole Usuangbon (founder and growth operator), built wi
 Next.js App Router, TypeScript, Tailwind, and Framer Motion. It is a multi-page site:
 the home route (`app/page.tsx`) stacks section components, and there are dedicated
 `/work`, `/about`, and `/contact` routes that reuse those same section components.
+There is also a blog at `/blog` whose posts live in Supabase rather than in the repo,
+plus the `/admin` writing desk that manages them.
 
 ## Commands
 
@@ -58,6 +60,66 @@ that happens: stop the dev process, `rm -rf .next`, and restart `npm run dev`.
   configured in the GTM web UI, not in this repo. Because client-side navigation
   between `/`, `/work`, `/about`, and `/contact` never reloads the page, the page-view
   trigger in GTM has to be **History Change** or only the first load gets counted.
+
+## The blog
+
+The blog exists to close the "Publish" pillar of Key Person of Influence. Posts are
+chapters of one running argument, "how do you grow a startup in Nigeria with no budget
+and no engineers", and are meant to assemble into a short book.
+
+- **Posts live in Supabase, not in the repo.** The requirement that drove this is that
+  Omole publishes from his phone without a commit or a deploy. A `posts` table holds
+  Markdown; `blog-images` is the public storage bucket for cover images.
+- **`lib/posts.ts`** is the read layer for the public pages. It uses
+  `lib/supabase/public.ts`, a deliberately **cookie-free** client. Reading cookies
+  would opt `/blog` into dynamic rendering, and these pages are meant to be static.
+  Every function degrades to empty when the Supabase env vars are missing, so the site
+  still builds and runs without them.
+- **`lib/supabase/server.ts`** is the cookie-aware client, and is only for `/admin`
+  and the server actions. `lib/supabase/client.ts` is the browser client, used solely
+  for cover image uploads.
+- **Publishing is instant without a deploy.** `app/admin/actions.ts` calls
+  `revalidatePath` on `/blog`, `/blog/[slug]`, the sitemap and the feed after every
+  save, publish or delete. `revalidate = 60` on those routes is only a fallback.
+- **Security is row level security, not secrecy.** The anon key is public by design.
+  RLS lets anonymous readers see `status = 'published'` rows only, and grants writes to
+  authenticated users. The service role key is never used anywhere in this codebase.
+  There is no signup flow: the single user is created by hand in the Supabase
+  dashboard, so no one else can ever get an account.
+- **`middleware.ts`** refreshes the session and bounces unauthenticated `/admin/*`
+  traffic to `/admin/login`. When the env vars are absent it sends everything to the
+  login page, which then explains what is missing instead of crashing.
+- **Drafts** are invisible publicly through RLS. `/admin/preview/[slug]` renders them
+  with the signed-in session. It is a separate route on purpose: putting preview behind
+  a query string on `/blog/[slug]` would have made the public post page dynamic.
+- **Never wrap the post body in `Reveal`.** Revealed content sits at opacity 0 until
+  scrolled into view, which would hide most of an article from crawlers and from any
+  screenshot that does not scroll. `components/blog/PostArticle.tsx` carries this note.
+- `@tailwindcss/typography` is the one plugin in `tailwind.config.ts`, added for
+  article prose. Its palette is overridden in the `typography` theme block to the
+  existing tokens, so posts introduce no new colors.
+- Copy for the blog index lives in `blogPage` in `lib/content.ts`, per the usual rule.
+  Post content is the deliberate exception, since it lives in the database.
+
+### Environment
+
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...    # present but unused, see below
+```
+
+In `.env.local` locally and in the Vercel project settings. `.gitignore` covers
+`.env*`. Cover images are served from Supabase storage, which is why
+`next.config.mjs` allows `*.supabase.co` in `images.remotePatterns`.
+
+`SUPABASE_SERVICE_ROLE_KEY` is stored at Omole's request but **no code reads it, and
+none should**. It bypasses row level security entirely. If you ever do need it, it must
+stay server-side: anything prefixed `NEXT_PUBLIC_` is compiled into the client bundle
+and served to every visitor, so that key must never carry the prefix.
+
+The Supabase project is `adwbbllkbbyqcqjrhpsr`, the admin user is
+`omoleusuangbon@gmail.com`, and it is the only account.
 
 ## Screenshots and sensitive data
 

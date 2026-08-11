@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@next/third-parties": "^15.5.22",
+    "@supabase/ssr": "^0.12.4",
+    "@supabase/supabase-js": "^2.112.2",
     "clsx": "^2.1.1",
     "framer-motion": "^11.18.0",
     "geist": "^1.7.2",
@@ -18,10 +20,13 @@
     "next": "^15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
+    "@tailwindcss/typography": "^0.5.20",
     "@types/node": "^22.10.7",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",

@@ -19,9 +19,21 @@ export const site = {
 
 export const nav = [
   { label: "Work", href: "/work" },
+  { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
+
+export const blogPage = {
+  eyebrow: "Writing",
+  title: "How to grow a startup with no budget and no engineers.",
+  intro:
+    "I am writing this one chapter at a time, from the things I actually did at JobMingle and GluFloat. What worked, what it cost, and the numbers I am allowed to show you.",
+  emptyState:
+    "The first chapter is on its way. Come back soon, or follow me on LinkedIn and you will see it there first.",
+  metaDescription:
+    "Omole Usuangbon writes about growing a startup in Nigeria without an ad budget or an engineering team, drawing on what he built at JobMingle and GluFloat.",
+};
 
 export const proof = [
   { value: "16x", label: "return on ad spend" },

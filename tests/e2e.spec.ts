@@ -10,7 +10,7 @@ test.describe("Omole portfolio", () => {
 
   test("nav links to the inner pages", async ({ page }) => {
     await page.goto("/");
-    for (const href of ["/work", "/about", "/contact"]) {
+    for (const href of ["/work", "/blog", "/about", "/contact"]) {
       await expect(page.locator(`a[href="${href}"]`).first()).toBeVisible();
     }
   });
@@ -53,6 +53,36 @@ test.describe("Omole portfolio", () => {
     for (let i = 0; i < count; i++) {
       expect(await imgs.nth(i).getAttribute("alt")).toBeTruthy();
     }
+  });
+
+  test("blog index loads with one h1", async ({ page }) => {
+    await page.goto("/blog");
+    await expect(page).toHaveTitle(/Blog/);
+    await expect(page.locator("main h1")).toHaveCount(1);
+  });
+
+  // The dev server compiles /admin on the first request, which under parallel
+  // workers can take a while, so these redirects get a longer leash.
+  test("the writing desk is closed to strangers", async ({ page }) => {
+    await page.goto("/admin");
+    await expect(page).toHaveURL(/\/admin\/login$/, { timeout: 30_000 });
+    await page.goto("/admin/new");
+    await expect(page).toHaveURL(/\/admin\/login$/, { timeout: 30_000 });
+  });
+
+  test("feeds and sitemap are served", async ({ request }) => {
+    const rss = await request.get("/blog/rss.xml");
+    expect(rss.ok()).toBeTruthy();
+    expect(await rss.text()).toContain("<rss");
+
+    // The sitemap always uses the canonical production URL from content.ts,
+    // not the host the test happens to be running against.
+    const sitemap = await request.get("/sitemap.xml");
+    expect(sitemap.ok()).toBeTruthy();
+    expect(await sitemap.text()).toContain("/blog");
+
+    const robots = await request.get("/robots.txt");
+    expect(await robots.text()).toContain("Disallow: /admin");
   });
 
   test("no horizontal scroll on a small phone", async ({ page }) => {
