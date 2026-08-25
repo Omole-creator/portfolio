@@ -50,6 +50,7 @@ REGIONS = {
     "Screenshot (286).png": [],   # GluFloat public marketing section: nothing sensitive
     "Screenshot (287).png": [],   # WaterBrooks public marketing hero: nothing sensitive
     "Screenshot (288).png": [],   # WaterBrooks public marketing traction: public numbers kept
+    "Screenshot (289).png": [],   # JobMingle public marketing hero: nothing sensitive
 }
 
 # "Activate Windows" watermark, present on all four (displayed coords).
@@ -96,6 +97,7 @@ def main():
             "Screenshot (286).png": "glufloat-joy",
             "Screenshot (287).png": "waterbrooks-hero",
             "Screenshot (288).png": "waterbrooks-traction",
+            "Screenshot (289).png": "jobmingle-hero",
         }[name]
         im.save(OUT / f"{slug}.webp", "WEBP", quality=88, method=6)
         im.save(OUT / f"{slug}.png", "PNG")  # preview for review

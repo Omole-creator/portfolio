@@ -61,24 +61,24 @@ export const about = [
 
 export const services = [
   {
-    title: "Growth and paid acquisition",
-    body: "I bring customers to businesses that need them. A lot of the growth I have driven came from community, content, and partnerships, and I run paid ads when they fit. What I care about is paying customers, not vanity numbers.",
+    title: "Getting customers to show up without a big ad budget first",
+    body: "I bring customers to businesses that need them. Most of the growth I have driven came from community, content, and partnerships, and I turn on paid ads once they have something worth spending on. What I care about is paying customers, not vanity numbers.",
   },
   {
-    title: "Copywriting and content",
+    title: "Words that turn a hesitant buyer into a paying one",
     body: "I write the words that sell, from ads and sales pages to emails and blog posts. One sales letter I wrote beat the control by nine times in two weeks.",
   },
   {
-    title: "Community building",
-    body: "I build communities people actually want to be in. The JobMingle community grew past 9,700 members across WhatsApp and Telegram, and it became the engine that brought us most of our customers.",
+    title: "A community that sells for you before you ask it to",
+    body: "I build communities people actually want to be in. The JobMingle community grew past 9,700 members across WhatsApp and Telegram, and it became the engine that brought in most of our customers.",
   },
   {
-    title: "Operations and leadership",
-    body: "I lead teams and set up the systems that keep the work moving. I have run a 10-member team and the partnerships that came with it, day to day.",
+    title: "Running the whole growth operation, not just one piece of it",
+    body: "I lead teams and set up the systems that keep the work moving day to day. I have run a 10-member team and the partnerships that came with it, not just the strategy behind them.",
   },
   {
-    title: "AI products and automation",
-    body: "I build the tools a business needs and automate the parts that waste time. Using Claude Code, I ship working software fast, from internal dashboards to a full CRM.",
+    title: "Tools and dashboards built fast, with no engineering team needed",
+    body: "I build the tools a business needs and automate the parts that waste time. Using Claude Code, I ship working software fast, from internal dashboards to a full CRM, without waiting on a dev team to free up.",
   },
 ];
 
@@ -93,12 +93,11 @@ export type CaseStudy = {
   name: string;
   kind: string;
   blurb: string;
-  why?: string;
+  why: string;
   highlights: string[];
   tags: string[];
   liveUrl?: string;
   images?: { src: string; alt: string }[];
-  featured?: boolean;
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -106,9 +105,9 @@ export const caseStudies: CaseStudy[] = [
     slug: "jobmingle",
     name: "JobMingle",
     kind: "The company I founded",
-    featured: true,
     blurb:
       "JobMingle is the edtech company I started and grew. My engineers built the website at jobmingle.co, while I led the growth, the product direction, and the community, and built the internal tools we run on.",
+    why: "The usual way into tech in Nigeria was slow and gatekept, expensive bootcamps, or waiting on the right introduction. I wanted people to have a faster, cheaper way in, and a community that would not let them do it alone.",
     highlights: [
       "Grew a community past 9,700 members that brought in most of our customers",
       "Launched our first live cohort in April 2026 at a 16x return on ad spend",
@@ -118,6 +117,12 @@ export const caseStudies: CaseStudy[] = [
     ],
     tags: ["Founder", "Growth", "Marketing", "Community", "Partnerships", "Since 2023"],
     liveUrl: "https://jobmingle.co",
+    images: [
+      {
+        src: "/images/jobmingle-hero.webp",
+        alt: "JobMingle landing page hero, become the high earner you did not think you could, with the trusted partners strip below",
+      },
+    ],
   },
   {
     slug: "glufloat",
@@ -129,7 +134,7 @@ export const caseStudies: CaseStudy[] = [
     highlights: [
       "Check any Nigerian food before you cook or buy it, with a clear answer in seconds",
       "Built the whole product with AI, from the food checker to the trial and pricing flow",
-      "Priced for everyday Nigerians, with a free trial and no card needed to start",
+      "Priced for everyday people, with a free trial and no card needed to start",
       "Currently at MVP stage and getting ready to launch",
     ],
     tags: ["Founder", "Health tech", "Built with Claude Code", "MVP", "Next.js"],
@@ -280,7 +285,7 @@ export const faq = [
     a: "Startups and established businesses that are ready to grow and can move quickly. If you are building something serious and you want customers, we will get along well.",
   },
   {
-    q: "Are you open to a role, or only projects?",
+    q: "Do you take on roles, or only projects?",
     a: "Both. I take on roles where I can own growth, and I take on projects with a clear goal. Tell me what you need and we will find the right shape for it.",
   },
   {
@@ -303,11 +308,15 @@ export const faq = [
 
 export const workTracks = [
   {
-    title: "For companies that need growth",
-    body: "If you need someone to bring in customers and build the systems to keep them, I am open to the right role or project. I work best with teams that are moving fast and ready to back growth. Startups and established businesses both welcome.",
+    title: "For startups, SaaS, and ecommerce businesses ready to scale",
+    body: "I help startups, SaaS, and ecommerce businesses grow, through community, content, paid acquisition, or the systems that keep it all running. This is where most of my work happens.",
   },
   {
-    title: "For partners who want to work with JobMingle",
-    body: "We train and place young tech talent, and we have a growing community of thousands. If you hire early talent, run a training center, or want to reach that audience, there is a partnership worth having here.",
+    title: "For organizations that want access to trained tech talent",
+    body: "Through JobMingle we train and place young tech talent, with a community of thousands behind it. If you hire early career talent, run a training program, or want to reach that audience, there is a partnership worth having here.",
+  },
+  {
+    title: "For everything else, including consulting and speaking",
+    body: "If what you need does not fit neatly into the above, reach out anyway. I take on consulting work, and I am open to speaking engagements too.",
   },
 ];

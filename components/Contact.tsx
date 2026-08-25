@@ -57,7 +57,7 @@ export function Contact() {
           </h2>
         </Reveal>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {workTracks.map((track, i) => (
             <Reveal key={track.title} delay={i * 0.05}>
               <div className="h-full rounded-2xl border border-line bg-paper p-8">

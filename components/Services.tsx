@@ -22,7 +22,7 @@ export function Services() {
         <Reveal>
           <p className="eyebrow text-gold-hover">What I do</p>
           <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
-            Five things I am genuinely good at, and use together.
+            Here&apos;s what that&apos;s looked like in practice.
           </h2>
         </Reveal>
 

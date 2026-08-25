@@ -61,6 +61,53 @@ that happens: stop the dev process, `rm -rf .next`, and restart `npm run dev`.
   between `/`, `/work`, `/about`, and `/contact` never reloads the page, the page-view
   trigger in GTM has to be **History Change** or only the first load gets counted.
 
+## Positioning: case studies, services, and who this site is for
+
+The site is deliberately built to read as "work with me," not "hire me." A
+few structural decisions carry that intent, so don't undo them without
+knowing why they're there:
+
+- **Every case study in `caseStudies` (`lib/content.ts`) renders through the
+  same layout.** There used to be a `featured` flag that gave JobMingle a
+  distinct hero treatment; it's gone. All six entries have the same shape
+  now, including a required `why` field, so JobMingle and GluFloat read as
+  projects like the rest, not as a founder's special story next to a list of
+  side work. `components/CaseStudies.tsx` has one rendering path
+  (`CaseStudyRow`) for this reason. If an entry has no `images` yet, the row
+  falls back to a centered, single-column layout instead of leaving an empty
+  half of the grid, so a new case study can ship before its screenshot does.
+- **`services` (`lib/content.ts`) is named by what a business needs, not by
+  what Omole is good at.** Each of the five entries is phrased outcome-first
+  ("Getting customers to show up without a big ad budget first") rather than
+  skill-first ("Growth and paid acquisition"), while keeping the exact same
+  evidence in the body copy.
+- **`workTracks` (`lib/content.ts`), shown on `/contact`, defines who this
+  site is actually for.** By design it favors startups, SaaS, and ecommerce
+  businesses that already have funding, not any startup at any stage, but
+  that filter is intentionally never stated outright ("ready to scale" does
+  the work instead of "you must have raised"). Don't list specific
+  industries here (edtech, healthtech, agritech, etc.), even though Omole
+  has built in all three. They fall under "startups" and naming them reads
+  as narrowing the pitch rather than broadening it. The third track is a
+  deliberate catch-all for anything else, including consulting and speaking
+  engagements, so the page never implies a closed list of services.
+- **`scripts/process-screenshots.py`** now also produces `jobmingle-hero`
+  from a JobMingle marketing screenshot, following the same pattern as the
+  GluFloat and WaterBrooks shots: no number-redaction regions (it's a public
+  marketing page), just the standard browser-chrome crop and watermark
+  cover. The raw screenshots this script reads from live loose in the repo
+  root by convention (gitignored via `/Screenshot*.png`), not inside
+  `source-materials/`, even though the redacted output goes to
+  `source-materials/redacted/` before being copied into `public/images/`.
+- This positioning work followed a full audit (published as an Artifact
+  during the session that did this work, not stored in the repo) that
+  compared the site against portfolio.tomidewilliams.com and against the
+  "key person of influence" framework (Pitch, Publish, Product, Profile,
+  Partnership). Testimonials, partner logos (EvolvateHR, Ternkonnect, Your
+  Study Path, Cudose), and press mentions were identified as the remaining
+  gaps and are intentionally still not on the site, no source confirmed for
+  any of them yet.
+
 ## The blog
 
 The blog exists to close the "Publish" pillar of Key Person of Influence. Posts are
@@ -206,4 +253,7 @@ breakdowns GA4 doesn't give for free.
 ## Copy style (enforced)
 
 Write the way people talk: simple, warm, full sentences with natural rhythm. No
-abrupt clipped fragments that read as AI, and no em dashes anywhere in copy.
+abrupt clipped fragments that read as AI, and no em dashes anywhere in copy. Avoid
+the word "real" and other AI-sounding filler generally, and don't reach for a stock
+heading label (like "Use Cases" or "What I Build") when a plainer phrase says the
+same thing.
