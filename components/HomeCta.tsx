@@ -24,6 +24,7 @@ export function HomeCta() {
                 href={site.contact.calendly}
                 external
                 variant="primary"
+                cta="calendly"
               >
                 <CalendarCheck className="h-5 w-5" aria-hidden="true" />
                 Book a call

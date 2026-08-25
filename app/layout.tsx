@@ -6,6 +6,7 @@ import "./globals.css";
 import { site } from "@/lib/content";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 
 const body = Inter({
   subsets: ["latin"],
@@ -51,6 +52,7 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
+        <PageViewTracker />
         <Nav />
         {children}
         <Footer />

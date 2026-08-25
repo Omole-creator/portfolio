@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { HomeCta } from "@/components/HomeCta";
 import { PostArticle } from "@/components/blog/PostArticle";
+import { PostViewTracker } from "@/components/analytics/PostViewTracker";
 import { getPublishedPost, getPublishedPosts } from "@/lib/posts";
 import { site } from "@/lib/content";
 
@@ -72,6 +73,7 @@ export default async function PostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <PostViewTracker slug={post.slug} />
       <PostArticle post={post} />
       <HomeCta />
     </main>

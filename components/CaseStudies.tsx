@@ -2,6 +2,7 @@ import { Check, ArrowUpRight } from "lucide-react";
 import { caseStudies, type CaseStudy } from "@/lib/content";
 import { BrowserFrame } from "./BrowserFrame";
 import { Reveal } from "./Reveal";
+import { ViewTracker } from "./analytics/ViewTracker";
 
 function Tags({ tags }: { tags: string[] }) {
   return (
@@ -21,6 +22,7 @@ function Tags({ tags }: { tags: string[] }) {
 function Featured({ study }: { study: CaseStudy }) {
   return (
     <Reveal>
+      <ViewTracker eventType="project_view" resourceId={study.slug}>
       <article className="relative overflow-hidden rounded-3xl bg-navy p-8 text-white md:p-12">
         <div
           aria-hidden="true"
@@ -62,12 +64,14 @@ function Featured({ study }: { study: CaseStudy }) {
           </ul>
         </div>
       </article>
+      </ViewTracker>
     </Reveal>
   );
 }
 
 function ProductRow({ study, flip }: { study: CaseStudy; flip: boolean }) {
   return (
+    <ViewTracker eventType="project_view" resourceId={study.slug}>
     <article className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
       <Reveal
         className={flip ? "lg:order-2" : "lg:order-1"}
@@ -127,6 +131,7 @@ function ProductRow({ study, flip }: { study: CaseStudy; flip: boolean }) {
         </div>
       </Reveal>
     </article>
+    </ViewTracker>
   );
 }
 
@@ -149,7 +154,7 @@ export function CaseStudies({ showHeading = true }: { showHeading?: boolean }) {
         <div className="space-y-20 pt-2 md:space-y-28">
           {featured ? <Featured study={featured} /> : null}
           {products.map((study, i) => (
-            <ProductRow key={study.name} study={study} flip={i % 2 === 1} />
+            <ProductRow key={study.slug} study={study} flip={i % 2 === 1} />
           ))}
         </div>
       </div>

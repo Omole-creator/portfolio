@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { site, nav } from "@/lib/content";
+import { TrackedLink } from "./analytics/TrackedLink";
 
 export function Footer() {
   return (
@@ -35,28 +36,29 @@ export function Footer() {
           </nav>
 
           <div className="flex flex-col gap-3 text-sm">
-            <a
+            <TrackedLink
               href={`mailto:${site.contact.email}`}
+              cta="email"
               className="text-white/70 transition-colors hover:text-white"
             >
               {site.contact.email}
-            </a>
-            <a
+            </TrackedLink>
+            <TrackedLink
               href={site.contact.linkedin}
-              target="_blank"
-              rel="noreferrer"
+              cta="linkedin"
+              external
               className="text-white/70 transition-colors hover:text-white"
             >
               LinkedIn
-            </a>
-            <a
+            </TrackedLink>
+            <TrackedLink
               href={site.contact.whatsapp}
-              target="_blank"
-              rel="noreferrer"
+              cta="whatsapp"
+              external
               className="text-white/70 transition-colors hover:text-white"
             >
               WhatsApp
-            </a>
+            </TrackedLink>
           </div>
         </div>
 

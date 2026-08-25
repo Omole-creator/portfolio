@@ -89,6 +89,7 @@ export const servicesCta = {
 };
 
 export type CaseStudy = {
+  slug: string;
   name: string;
   kind: string;
   blurb: string;
@@ -102,6 +103,7 @@ export type CaseStudy = {
 
 export const caseStudies: CaseStudy[] = [
   {
+    slug: "jobmingle",
     name: "JobMingle",
     kind: "The company I founded",
     featured: true,
@@ -118,6 +120,7 @@ export const caseStudies: CaseStudy[] = [
     liveUrl: "https://jobmingle.co",
   },
   {
+    slug: "glufloat",
     name: "GluFloat",
     kind: "The startup I'm building now",
     blurb:
@@ -143,6 +146,7 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
   {
+    slug: "jobmingle-powerhouse",
     name: "JobMingle Powerhouse",
     kind: "A product I built with AI",
     blurb:
@@ -163,6 +167,7 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
   {
+    slug: "jobmingle-leads",
     name: "JobMingle Leads",
     kind: "A product I built with AI",
     blurb:
@@ -187,6 +192,7 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
   {
+    slug: "waterbrooks-technologies",
     name: "WaterBrooks Technologies",
     kind: "A marketing site I built with AI",
     blurb:
@@ -212,6 +218,7 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
   {
+    slug: "sales-objections-toolkit",
     name: "Sales Objections Toolkit",
     kind: "A product I shipped with AI",
     blurb:

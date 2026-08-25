@@ -6,6 +6,7 @@ import { readingTime } from "@/lib/posts";
 import { site } from "@/lib/content";
 import { PostMeta } from "./PostMeta";
 import { PostBody } from "./PostBody";
+import { TrackedLink } from "@/components/analytics/TrackedLink";
 
 // The article body is deliberately not wrapped in Reveal. Revealed content sits
 // at opacity 0 until it is scrolled into view, which would hide most of a long
@@ -71,24 +72,24 @@ export function PostArticle({ post }: { post: Post }) {
             </p>
             <p className="mt-1 text-muted">{site.role}</p>
             <div className="mt-5 flex flex-wrap items-center gap-5">
-              <a
+              <TrackedLink
                 href={site.contact.calendly}
-                target="_blank"
-                rel="noreferrer"
+                cta="calendly"
+                external
                 className="inline-flex items-center gap-2 text-sm font-semibold text-navy underline-offset-4 transition-colors hover:text-gold-hover hover:underline"
               >
                 <CalendarCheck className="h-4 w-4" aria-hidden="true" />
                 Book a call
-              </a>
-              <a
+              </TrackedLink>
+              <TrackedLink
                 href={site.contact.linkedin}
-                target="_blank"
-                rel="noreferrer"
+                cta="linkedin"
+                external
                 className="inline-flex items-center gap-2 text-sm font-semibold text-navy underline-offset-4 transition-colors hover:text-gold-hover hover:underline"
               >
                 <Linkedin className="h-4 w-4" aria-hidden="true" />
                 Connect on LinkedIn
-              </a>
+              </TrackedLink>
             </div>
           </footer>
         </div>

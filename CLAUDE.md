@@ -82,10 +82,14 @@ and no engineers", and are meant to assemble into a short book.
   `revalidatePath` on `/blog`, `/blog/[slug]`, the sitemap and the feed after every
   save, publish or delete. `revalidate = 60` on those routes is only a fallback.
 - **Security is row level security, not secrecy.** The anon key is public by design.
-  RLS lets anonymous readers see `status = 'published'` rows only, and grants writes to
-  authenticated users. The service role key is never used anywhere in this codebase.
-  There is no signup flow: the single user is created by hand in the Supabase
-  dashboard, so no one else can ever get an account.
+  RLS lets anonymous readers see `status = 'published'` rows only, grants writes to
+  authenticated users, and (since `supabase/migrations/0002_posts_authenticated_select.sql`)
+  grants the authenticated admin session a `USING (true)` SELECT policy so `/admin`
+  can see drafts and published posts together. Without that policy, published rows
+  silently vanish from the `/admin` list the moment they publish, even though they
+  still exist. The service role key is never used anywhere in this codebase. There is
+  no signup flow: the single user is created by hand in the Supabase dashboard, so no
+  one else can ever get an account.
 - **`middleware.ts`** refreshes the session and bounces unauthenticated `/admin/*`
   traffic to `/admin/login`. When the env vars are absent it sends everything to the
   login page, which then explains what is missing instead of crashing.
@@ -120,6 +124,66 @@ and served to every visitor, so that key must never carry the prefix.
 
 The Supabase project is `adwbbllkbbyqcqjrhpsr`, the admin user is
 `omoleusuangbon@gmail.com`, and it is the only account.
+
+## Migrations
+
+`supabase/migrations/*.sql` is a version-controlled record of SQL that has been (or
+needs to be) applied by hand in the Supabase SQL editor. **Nothing in this repo runs
+them automatically** — there is no Supabase CLI wired in. Apply them in order, and
+check `supabase/migrations/README.md` for the one-line reminder of that.
+
+## Admin metrics (`/admin/metrics`)
+
+A first-party analytics dashboard, separate from GTM. GTM/GA4 answers marketing
+questions in Google's UI; this answers "who looked at what on this site" inside
+`/admin`, because that data has to be queryable for the per-project and per-post
+breakdowns GA4 doesn't give for free.
+
+- **`analytics_events`** (`supabase/migrations/0001_analytics_events.sql`) is a single
+  append-only table: one row per unique `(visitor_id, event_type, resource_id)`. That
+  uniqueness constraint is the entire dedup mechanism — a visitor is counted once per
+  project, once per blog post, once per CTA, once per page path, for the life of their
+  cookie, not once per page load. The day/week/month/quarter/year breakdowns on the
+  dashboard are this same log grouped by date, in West Africa Time (`Africa/Lagos`,
+  fixed UTC+1) — a visitor's one counted row naturally rolls up into whichever bucket
+  it happened in.
+- **`app/api/track/route.ts`** is the only writer. It mints a long-lived, `httpOnly`
+  visitor cookie (`av_id`) and a first-seen cookie (`av_fs`) on first contact, reads
+  Vercel's free edge geolocation headers (`x-vercel-ip-country` etc. — production
+  only, absent on `localhost` and off Vercel), parses the user agent locally (no
+  dependency), and upserts with `ignoreDuplicates: true` so the DB-level unique
+  constraint is what actually enforces the dedup, not application logic.
+- **`lib/analytics/track.ts`** is the client-side caller: `track({ event_type,
+  resource_id, path })`, fire-and-forget, never throws. Four places call it:
+  `components/analytics/PageViewTracker.tsx` (global, mounted in `app/layout.tsx`),
+  `ViewTracker.tsx` (wraps case-study cards in `CaseStudies.tsx` and `WorkTeaser.tsx`
+  — projects have no dedicated route, so "viewed" means "scrolled into view," the same
+  signal `Reveal.tsx` already watches for, via framer-motion's `useInView`),
+  `PostViewTracker.tsx` (mounted in `app/blog/[slug]/page.tsx`), and
+  `TrackedLink.tsx` (a drop-in `<a>` replacement used everywhere a CTA — email,
+  Calendly, LinkedIn, WhatsApp — is rendered: `Contact.tsx`, `Footer.tsx`,
+  `PostArticle.tsx`, and `GlowButton.tsx`, which took its own `cta` prop instead since
+  it isn't a plain anchor).
+- **CTA-to-post attribution is first-touch, not per-page.** Because a CTA click dedupes
+  once per visitor for life (not once per visitor per post), the blog performance
+  table's "conversions" column means "whichever post this visitor was on the first
+  time they ever clicked that CTA," using the click event's `path` column. A visitor
+  who reads post A without clicking, then later clicks from post B, counts toward B.
+- **`lib/analytics/queries.ts`** does the aggregation in TypeScript, not SQL. Supabase's
+  PostgREST client has no way to run `date_trunc`/`AT TIME ZONE` — the alternative was
+  Postgres RPC functions, which would mean yet more manual SQL to paste into the
+  dashboard. Instead it fetches the event log (capped at 50,000 rows — fine for a
+  personal portfolio for a long time) and buckets/ranks it in memory.
+- **No charting library.** The dashboard's bars (`components/admin/charts/`) are hand
+  -rolled inline SVG/CSS, matching how everything else visual in this repo
+  (`BrowserFrame`, `GlowButton`, `ScrollCard`) is bespoke rather than pulled from a UI
+  kit. Swap in a real charting library later only if richer interaction is needed.
+- **Known gaps, by design, not bugs**: country/region reads "Unknown" on `localhost`
+  (Vercel-only headers); ad blockers that blocklist `/track`-like paths will
+  undercount; the two tracking cookies are long-lived and server-set, which plausibly
+  needs a consent flow for EU/UK visitors that this feature does not include; "new vs
+  returning" means "a known visitor found a new resource," not "came back to browse
+  again," since a genuine repeat view of an already-seen page produces no new row.
 
 ## Screenshots and sensitive data
 

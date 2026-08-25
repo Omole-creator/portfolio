@@ -1,5 +1,9 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { track } from "@/lib/analytics/track";
 
 // Glowing pill button, adapted from the pulse-beams button style into the
 // site's navy and gold. Primary is a solid gold pill; ghost is a dark navy
@@ -11,22 +15,29 @@ export function GlowButton({
   variant = "primary",
   external = false,
   className,
+  cta,
 }: {
   href: string;
   children: ReactNode;
   variant?: "primary" | "ghost";
   external?: boolean;
   className?: string;
+  cta?: string;
 }) {
+  const pathname = usePathname();
   const externalProps = external
     ? { target: "_blank", rel: "noreferrer" }
     : {};
+  const onClick = cta
+    ? () => track({ event_type: "cta_click", resource_id: cta, path: pathname })
+    : undefined;
 
   if (variant === "primary") {
     return (
       <a
         href={href}
         {...externalProps}
+        onClick={onClick}
         className={cn(
           "group relative inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-gold px-4 py-3 text-sm font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5 sm:px-7 sm:py-3.5 sm:text-base",
           className,
@@ -45,6 +56,7 @@ export function GlowButton({
     <a
       href={href}
       {...externalProps}
+      onClick={onClick}
       className={cn(
         "group relative inline-block shrink-0 rounded-full p-px transition-transform duration-300 hover:-translate-y-0.5",
         className,

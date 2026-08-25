@@ -69,7 +69,7 @@ export function Hero() {
             variants={item}
             className="mt-9 flex flex-nowrap items-center gap-3 sm:gap-4"
           >
-            <GlowButton href={site.contact.calendly} external variant="primary">
+            <GlowButton href={site.contact.calendly} external variant="primary" cta="calendly">
               <CalendarCheck className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
               Book a call
             </GlowButton>

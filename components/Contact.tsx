@@ -7,36 +7,42 @@ import {
 } from "lucide-react";
 import { site, workTracks } from "@/lib/content";
 import { Reveal } from "./Reveal";
+import { TrackedLink } from "./analytics/TrackedLink";
 
 const links: {
   label: string;
   href: string;
   icon: LucideIcon;
   external: boolean;
+  cta: string;
 }[] = [
   {
     label: "Email me",
     href: `mailto:${site.contact.email}`,
     icon: Mail,
     external: false,
+    cta: "email",
   },
   {
     label: "Book a call",
     href: site.contact.calendly,
     icon: CalendarCheck,
     external: true,
+    cta: "calendly",
   },
   {
     label: "LinkedIn",
     href: site.contact.linkedin,
     icon: Linkedin,
     external: true,
+    cta: "linkedin",
   },
   {
     label: "WhatsApp",
     href: site.contact.whatsapp,
     icon: MessageCircle,
     external: true,
+    cta: "whatsapp",
   },
 ];
 
@@ -75,12 +81,11 @@ export function Contact() {
                 const Icon = link.icon;
                 const primary = i === 0;
                 return (
-                  <a
+                  <TrackedLink
                     key={link.label}
                     href={link.href}
-                    {...(link.external
-                      ? { target: "_blank", rel: "noreferrer" }
-                      : {})}
+                    cta={link.cta}
+                    external={link.external}
                     className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-colors ${
                       primary
                         ? "bg-gold text-ink hover:bg-gold-hover"
@@ -89,7 +94,7 @@ export function Contact() {
                   >
                     <Icon className="h-4 w-4" aria-hidden="true" />
                     {link.label}
-                  </a>
+                  </TrackedLink>
                 );
               })}
             </div>
