@@ -17,7 +17,7 @@ const dir = [-1, 0, 1];
 
 export function Services({ showHeading = true }: { showHeading?: boolean }) {
   return (
-    <section id="services" className="border-t border-line bg-paper py-24 md:py-32">
+    <section id="services" className="border-t border-line bg-white py-24 md:py-32">
       <div className="container-x">
         {showHeading ? (
           <Reveal>

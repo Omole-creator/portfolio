@@ -51,6 +51,12 @@ that happens: stop the dev process, `rm -rf .next`, and restart `npm run dev`.
   `muted`, `line`) and are the only approved colors. Fonts are Space Grotesk
   (display) and Inter (body), loaded via `next/font` in `app/layout.tsx` and exposed
   as `font-display` / `font-body`. Page metadata is derived from `site` in `content.ts`.
+- **`site.role` ("Founder & Growth Operator") no longer renders anywhere visible.**
+  It used to sit under the name in `Nav.tsx`, `Footer.tsx`, and the blog post
+  footer in `PostArticle.tsx`; all three were changed to show just `site.name`.
+  The field itself is untouched and still feeds the `<title>`/`og:title`/
+  `twitter:title` tags in `app/layout.tsx`, since removing it there is a
+  separate SEO/browser-tab decision nobody has made yet, not an oversight.
 - **Analytics** is Google Tag Manager, container `GTM-MCXFF99P`, wired in
   `app/layout.tsx` through the official `GoogleTagManager` component from
   `@next/third-parties/google`. That component only emits the loader script, so the
@@ -176,9 +182,12 @@ knowing why they're there:
   useless section on the site. Don't re-add one without being asked.
 - **`components/WhoThisIsFor.tsx`, `components/Benefits.tsx`, and
   `components/Contrast.tsx`** are the three homepage sections that replaced
-  it, all only on `app/page.tsx` (and the first two also on `/services`).
-  `WhoThisIsFor` reuses `workTracks` (the same data `/contact` uses) so who
-  the site is for isn't defined twice. `Benefits` (data: `benefits`) is six
+  it. `Benefits` and `Contrast` are also reused on `/services`; `WhoThisIsFor`
+  is homepage-only. On `app/page.tsx`, `WhoThisIsFor` sits right before
+  `Process`, near the bottom of the page — it ran directly after `WorkTeaser`
+  originally and that was too early, deciding who the site is for before the
+  reader had seen any proof. `WhoThisIsFor` reuses `workTracks` (the same
+  data `/contact` uses) so who the site is for isn't defined twice. `Benefits` (data: `benefits`) is six
   short, evidenced reasons to work with Omole — kept away from anything that
   reads as "I'm cheap/available/understanding of tight budgets," since the
   positioning here is startups with good cash flow, not struggling ones, and

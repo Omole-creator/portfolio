@@ -4,7 +4,7 @@ import { Reveal } from "./Reveal";
 
 export function Benefits() {
   return (
-    <section className="bg-white py-24 md:py-32">
+    <section className="bg-paper py-24 md:py-32">
       <div className="container-x">
         <Reveal>
           <p className="eyebrow text-gold-hover">What you get</p>

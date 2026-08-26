@@ -13,15 +13,12 @@ export function Nav() {
       <nav className="container-x flex h-20 items-center justify-between">
         <Link
           href="/"
-          className="flex min-w-0 flex-col leading-none text-white"
+          className="text-white"
           aria-label={`${site.name}, home`}
           onClick={() => setOpen(false)}
         >
           <span className="font-display text-base font-semibold tracking-tight sm:text-lg">
             {site.name}
-          </span>
-          <span className="mt-1 truncate text-[10px] font-medium uppercase tracking-[0.14em] text-gold sm:text-[11px] sm:tracking-[0.16em]">
-            {site.role}
           </span>
         </Link>
 

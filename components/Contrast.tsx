@@ -4,7 +4,7 @@ import { Reveal } from "./Reveal";
 
 export function Contrast() {
   return (
-    <section className="border-t border-line bg-white py-24 md:py-32">
+    <section className="border-t border-line bg-paper py-24 md:py-32">
       <div className="container-x">
         <Reveal>
           <p className="eyebrow text-gold-hover">The difference</p>

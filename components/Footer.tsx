@@ -9,9 +9,6 @@ export function Footer() {
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm">
             <p className="font-display text-lg font-semibold">{site.name}</p>
-            <p className="mt-1 text-sm uppercase tracking-[0.16em] text-gold">
-              {site.role}
-            </p>
             <p className="mt-4 text-sm leading-relaxed text-white/60">
               Growth and systems, built into your business using AI.
             </p>

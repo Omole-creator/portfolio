@@ -4,7 +4,7 @@ import { Reveal } from "./Reveal";
 
 export function Recognition() {
   return (
-    <section id="recognition" className="bg-paper py-24 md:py-28">
+    <section id="recognition" className="bg-white py-24 md:py-28">
       <div className="container-x">
         <Reveal>
           <p className="eyebrow text-gold-hover">Backed and recognised</p>

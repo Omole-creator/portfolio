@@ -70,7 +70,6 @@ export function PostArticle({ post }: { post: Post }) {
             <p className="font-display text-lg font-semibold text-ink">
               Written by {site.name}
             </p>
-            <p className="mt-1 text-muted">{site.role}</p>
             <div className="mt-5 flex flex-wrap items-center gap-5">
               <TrackedLink
                 href={site.contact.calendly}
