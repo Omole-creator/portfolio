@@ -32,7 +32,7 @@ export function WorkTeaser() {
             <ScrollCard key={study.slug} direction={i % 2 === 0 ? -1 : 1}>
               <ViewTracker eventType="project_view" resourceId={study.slug}>
                 <Link
-                  href="/work"
+                  href={`/work/${study.slug}`}
                   className="group flex h-full flex-col rounded-2xl border border-line bg-white p-8 shadow-[0_10px_30px_-20px_rgba(11,30,57,0.25)] transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1.5 hover:border-gold/60 hover:shadow-[0_28px_55px_-28px_rgba(11,30,57,0.45)]"
                 >
                   <p className="eyebrow text-gold-hover">{study.kind}</p>
@@ -41,7 +41,7 @@ export function WorkTeaser() {
                   </h3>
                   <p className="mt-3 leading-relaxed text-muted">{study.blurb}</p>
                   <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-navy transition-colors group-hover:text-gold-hover">
-                    Read more
+                    Read the case study
                     <ArrowRight
                       className="h-4 w-4 transition-transform group-hover:translate-x-1"
                       aria-hidden="true"

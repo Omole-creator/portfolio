@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   TrendingUp,
@@ -39,6 +40,17 @@ export function Services() {
                     {service.title}
                   </h3>
                   <p className="mt-3 leading-relaxed text-muted">{service.body}</p>
+                  {"image" in service && service.image ? (
+                    <div className="relative mt-5 aspect-[16/10] w-full overflow-hidden rounded-xl border border-line">
+                      <Image
+                        src={service.image.src}
+                        alt={service.image.alt}
+                        fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover object-top"
+                      />
+                    </div>
+                  ) : null}
                 </article>
               </ScrollCard>
             );

@@ -67,15 +67,26 @@ The site is deliberately built to read as "work with me," not "hire me." A
 few structural decisions carry that intent, so don't undo them without
 knowing why they're there:
 
-- **Every case study in `caseStudies` (`lib/content.ts`) renders through the
-  same layout.** There used to be a `featured` flag that gave JobMingle a
-  distinct hero treatment; it's gone. All six entries have the same shape
-  now, including a required `why` field, so JobMingle and GluFloat read as
-  projects like the rest, not as a founder's special story next to a list of
-  side work. `components/CaseStudies.tsx` has one rendering path
-  (`CaseStudyRow`) for this reason. If an entry has no `images` yet, the row
-  falls back to a centered, single-column layout instead of leaving an empty
-  half of the grid, so a new case study can ship before its screenshot does.
+- **Every case study in `caseStudies` (`lib/content.ts`) has the same shape.**
+  There used to be a `featured` flag that gave JobMingle a distinct hero
+  treatment; it's gone. All six entries carry the same required fields (`why`,
+  `approach`, `highlights`), so JobMingle and GluFloat read as projects like
+  the rest, not as a founder's special story next to a list of side work.
+- **Each project has its own page at `/work/[slug]`.** This exists because
+  clicking a specific project card used to land on the full `/work` list
+  regardless of which one was clicked (`WorkTeaser.tsx` linked every card to
+  the same `/work` href), which is confusing when you expect to land on the
+  one you picked. Now: `components/WorkTeaser.tsx` (homepage teaser) and
+  `components/CaseStudies.tsx` (the `/work` index) both link to
+  `/work/${study.slug}`, and `app/work/[slug]/page.tsx` +
+  `components/work/CaseStudyDetail.tsx` render one project in full: the
+  problem (`why`), how it was built (`approach`, numbered), what it does
+  (`highlights`), images, and a link to the next project. `CaseStudies.tsx`
+  itself only renders lightweight index cards now (thumbnail, kind, blurb,
+  tags, a link out), it no longer duplicates the full write-up that now
+  lives on the detail page. `ViewTracker` with the same `resourceId` runs on
+  the index card, the teaser card, and the detail page, so all three count
+  as the same "viewed this project" signal, not three separate ones.
 - **`services` (`lib/content.ts`) is named by what a business needs, not by
   what Omole is good at.** Each of the five entries is phrased outcome-first
   ("Getting customers to show up without a big ad budget first") rather than
@@ -99,6 +110,25 @@ knowing why they're there:
   root by convention (gitignored via `/Screenshot*.png`), not inside
   `source-materials/`, even though the redacted output goes to
   `source-materials/redacted/` before being copied into `public/images/`.
+- **`components/Problem.tsx`** (data in `problems`) and **`components/Process.tsx`**
+  (data in `process`), both only on `app/page.tsx`, close the two structural gaps
+  found against the reference site: a problem-first section and a step-by-step
+  "how this works" section. `Problem` sits right before `Services` on purpose,
+  pain then the fix. `Process` sits right before `HomeCta`, since it's the last
+  thing worth knowing before someone reaches out. Each `problems` entry maps to a
+  real product's `why` (Leads, Powerhouse, the Sales Objections Toolkit), not a
+  generic pain-point list. `Process` is the one place on the site that uses
+  numbered markers, because it's an actual sequence, not decoration.
+- **`services` entries carry an optional `image`.** Only added where a
+  screenshot genuinely evidences that service (the Sales Objections Toolkit
+  for the copywriting entry, Powerhouse for the tools/dashboards entry). The
+  other three services stay text-only on purpose rather than forcing a loose
+  match, per an explicit decision not to pad every card with an image.
+- **`components/Nav.tsx` is a hamburger menu at every breakpoint, not just
+  mobile.** The nav links used to always be visible inline; now they're
+  behind a toggle button (top right) that opens a small dropdown. This was a
+  deliberate simplification, not a responsive-design default, so don't
+  reintroduce an always-visible link list without checking first.
 - This positioning work followed a full audit (published as an Artifact
   during the session that did this work, not stored in the repo) that
   compared the site against portfolio.tomidewilliams.com and against the

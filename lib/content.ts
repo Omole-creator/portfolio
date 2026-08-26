@@ -59,14 +59,45 @@ export const about = [
   "I am happy to work with startups and established businesses anywhere in the world, whether that is a growth role, a project, or a conversation about building something together.",
 ];
 
+export const problems = [
+  "Leads come in from the ads, and without a system, they land unevenly, some reps drowning, others sitting idle, while follow up slips.",
+  "Money moves in and out of the business, and nobody can say exactly where, or what is actually working.",
+  "A buyer says let me get back to you, and you both know they will not.",
+  "You have built something worth trusting, but the website does not say what it actually does.",
+  "Someone gets a diagnosis, and food stops being simple. They end up eating the same one meal, scared of everything else.",
+];
+
+export const process = [
+  {
+    title: "We talk",
+    body: "Book a call or send a message. I want to hear where you are and what is actually getting in the way, not just what you think you need built.",
+  },
+  {
+    title: "I find the fastest way in",
+    body: "Sometimes that is growth, community and content before ads. Sometimes it is a tool that removes a whole afternoon of manual work. I tell you which, and why.",
+  },
+  {
+    title: "I build or run it, fast",
+    body: "Using Claude Code and the same systems I use in my own company, I ship or launch in days, not months, and you see progress the whole way.",
+  },
+  {
+    title: "We keep what works",
+    body: "Growth is not a one-time project. I stay close to the numbers and adjust as we go, instead of disappearing after the first win.",
+  },
+];
+
 export const services = [
   {
     title: "Getting customers to show up without a big ad budget first",
-    body: "I bring customers to businesses that need them. Most of the growth I have driven came from community, content, and partnerships, and I turn on paid ads once they have something worth spending on. What I care about is paying customers, not vanity numbers.",
+    body: "I bring customers to businesses that need them. Most of the growth I have driven came from community, content, and partnerships, and I turn on Meta, Google, or TikTok ads once there is something worth spending on. What I care about is paying customers, not vanity numbers.",
   },
   {
     title: "Words that turn a hesitant buyer into a paying one",
     body: "I write the words that sell, from ads and sales pages to emails and blog posts. One sales letter I wrote beat the control by nine times in two weeks.",
+    image: {
+      src: "/images/sales-toolkit.webp",
+      alt: "Sales Objections Toolkit landing page, the product this service is evidenced by",
+    },
   },
   {
     title: "A community that sells for you before you ask it to",
@@ -78,7 +109,11 @@ export const services = [
   },
   {
     title: "Tools and dashboards built fast, with no engineering team needed",
-    body: "I build the tools a business needs and automate the parts that waste time. Using Claude Code, I ship working software fast, from internal dashboards to a full CRM, without waiting on a dev team to free up.",
+    body: "I build the tools a business needs and automate the parts that waste time. Using Claude Code, plus the skills and MCP servers I connect to it, I ship working software fast, from internal dashboards to a full CRM, without waiting on a dev team to free up.",
+    image: {
+      src: "/images/powerhouse.webp",
+      alt: "JobMingle Powerhouse dashboard, one of the tools this service is evidenced by",
+    },
   },
 ];
 
@@ -94,6 +129,7 @@ export type CaseStudy = {
   kind: string;
   blurb: string;
   why: string;
+  approach: string[];
   highlights: string[];
   tags: string[];
   liveUrl?: string;
@@ -104,10 +140,16 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "jobmingle",
     name: "JobMingle",
-    kind: "The company I founded",
+    kind: "The project I started and grew",
     blurb:
-      "JobMingle is the edtech company I started and grew. My engineers built the website at jobmingle.co, while I led the growth, the product direction, and the community, and built the internal tools we run on.",
+      "JobMingle is an edtech platform I started and grew. My engineers built the website at jobmingle.co, while I led the growth, the product direction, and the community, and built the internal tools we run on.",
     why: "The usual way into tech in Nigeria was slow and gatekept, expensive bootcamps, or waiting on the right introduction. I wanted people to have a faster, cheaper way in, and a community that would not let them do it alone.",
+    approach: [
+      "Started with community first, built the WhatsApp and Telegram groups before there was a product to sell.",
+      "Ran ads only once there was a live cohort to fill, and kept them tight enough to hit 16x.",
+      "Built Powerhouse and Leads myself, so the business ran on numbers I could see, not guesswork.",
+      "My engineers built and maintain jobmingle.co, while I run growth, product direction, and the community.",
+    ],
     highlights: [
       "Grew a community past 9,700 members that brought in most of our customers",
       "Launched our first live cohort in April 2026 at a 16x return on ad spend",
@@ -129,13 +171,19 @@ export const caseStudies: CaseStudy[] = [
     name: "GluFloat",
     kind: "The startup I'm building now",
     blurb:
-      "GluFloat is a health startup I am building for Nigerians living with diabetes. You type in any Nigerian food, like jollof rice or eba, and in seconds it tells you whether it is safe for your blood sugar and the simple way to make it better.",
-    why: "My people love their food, and a diabetes diagnosis should not turn every meal into a guessing game. I wanted to give them a way to eat what they love without the fear.",
+      "GluFloat is a web app that helps people living with diabetes figure out what to eat every day without giving up the food they love. It gives personalized recommendations for breakfast, lunch, and dinner, with adjustments for anyone managing another health condition too.",
+    why: "People living with diabetes were scared of the food they loved, and it pushed a lot of them into eating the same one meal, day after day. There was no solution for that, so I built one.",
+    approach: [
+      "Built the recommendation engine first, so it could weigh a food against a diagnosis and any other health condition.",
+      "Wrapped it in a checker anyone could use in seconds, for breakfast, lunch, or dinner.",
+      "Added the report generator, so a doctor's visit starts with data already in hand.",
+      "Built the trial and pricing flow last, priced low enough that cost is never the reason someone does not try it.",
+    ],
     highlights: [
-      "Check any Nigerian food before you cook or buy it, with a clear answer in seconds",
-      "Built the whole product with AI, from the food checker to the trial and pricing flow",
+      "Personalized meal recommendations for breakfast, lunch, and dinner, adjusted for other health conditions too",
+      "Generates a food and glucose report to bring to your next doctor's appointment, for a better consultation",
+      "Built the whole product with AI, from the recommendation engine to the trial and pricing flow",
       "Priced for everyday people, with a free trial and no card needed to start",
-      "Currently at MVP stage and getting ready to launch",
     ],
     tags: ["Founder", "Health tech", "Built with Claude Code", "MVP", "Next.js"],
     liveUrl: "https://glufloat.vercel.app",
@@ -153,12 +201,19 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "jobmingle-powerhouse",
     name: "JobMingle Powerhouse",
-    kind: "A product I built with AI",
+    kind: "The financial command center I built with AI",
     blurb:
       "A financial command center for my company. It brings every revenue line and expense into one place, so I always know exactly where the business stands.",
-    why: "I was tired of stitching the numbers together in spreadsheets, so I built a dashboard that does it live.",
+    why: "I was finding it difficult to track our expenses and revenue, what was bringing in the most money, and what was consuming the most of it, so I built Powerhouse to see all of it clearly, in one place.",
+    approach: [
+      "Pulled revenue and expenses from all four services into one place, instead of four spreadsheets.",
+      "Built views for what is bringing in the most money and what is consuming the most of it, so the answer is a glance, not a calculation.",
+      "Added month over month and quarterly views, so trends show up before they become problems.",
+      "Locked it behind a password, with offline access and one click backups, since it holds the company's numbers.",
+    ],
     highlights: [
       "Tracks revenue across four services, plus expenses, commissions, and profit",
+      "Shows what is bringing in the most money, and what is consuming the most of it, at a glance",
       "Month over month and quarterly growth views for clean reporting",
       "Password protection, offline access, and one click backups",
     ],
@@ -174,14 +229,22 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "jobmingle-leads",
     name: "JobMingle Leads",
-    kind: "A product I built with AI",
+    kind: "The CRM and operations agent I built with AI",
     blurb:
-      "The CRM my sales team uses every day. It takes in course inquiries, shares them out to reps on its own, and tracks each one all the way to a closed sale.",
-    why: "Leads were slipping through the cracks, so I built a system that assigns and follows up on every single one.",
+      "The CRM and operations agent my team runs on every day. It captures every lead straight from the Meta and Google ad forms I run, takes it from first contact to a closed sale, and handles tutor attendance, reports, and certificates on the side.",
+    why: "I was bringing in sales closers to handle the leads coming through our ads, so I built Leads to automate the whole process instead of doing it by hand.",
+    approach: [
+      "Connected the Meta and Google ad lead forms straight into the system, so nothing gets typed in by hand.",
+      "Built round robin assignment, so every lead reaches a closer within moments, evenly, with an email the second it happens.",
+      "Gave each closer their own dashboard for follow up, visible from the admin side so nothing goes quiet unnoticed.",
+      "Added a tutor attendance dashboard and automatic marketing emails, so the system covers the class, not just the sale.",
+    ],
     highlights: [
-      "Automatic round robin assignment to sales reps",
-      "A full pipeline from new lead to won or lost, with payment tracking",
-      "A live dashboard, plus a one page outcomes report for grant applications",
+      "Captures every lead straight from the Meta and Google ad forms I run, no manual entry",
+      "Splits leads evenly across sales closers, with an email notification the moment one lands",
+      "Tracks each closer's follow up and performance on their own dashboard, visible from the admin side",
+      "A separate attendance dashboard for each tutor, with reports and certificates generated automatically",
+      "A full pipeline from new lead to won or lost, with payment tracking, plus a one page outcomes report for grant applications",
     ],
     tags: ["Built with Claude Code", "Next.js", "Prisma"],
     liveUrl: "https://jobmingleleads.vercel.app",
@@ -202,7 +265,13 @@ export const caseStudies: CaseStudy[] = [
     kind: "A marketing site I built with AI",
     blurb:
       "WaterBrooks is an agritech company helping African farmers cut post-harvest losses with solar-powered food preservation. I designed and built their marketing site, from the hero that tells the story to the pages that turn visitors into partners.",
-    why: "A serious mission deserves a site that feels just as serious, so I gave WaterBrooks a home that makes farmers and partners want to reach out.",
+    why: "The founder did not have a website that effectively communicated what they did, so I built one that does.",
+    approach: [
+      "Sat with the founder to get the story straight: solar powered food preservation, for African farms, in plain language.",
+      "Designed and built the site around that story, from the hero down to the traction numbers.",
+      "Put the traction up front, farmers reached, land secured, the pitch win, the accelerator backing.",
+      "Built the whole thing around one Partner With Us button, so the right people know exactly what to do.",
+    ],
     highlights: [
       "Designed and built the full marketing site with AI, from the hero down to the traction and contact sections",
       "Made the story land: solar-powered food preservation built for African farms",
@@ -227,12 +296,19 @@ export const caseStudies: CaseStudy[] = [
     name: "Sales Objections Toolkit",
     kind: "A product I shipped with AI",
     blurb:
-      "A paid product I wrote, designed, and built. It hands Nigerian business owners the exact words to turn a hesitant buyer into a sale.",
-    why: "I kept watching sellers lose deals to a quiet 'let me get back to you', so I packaged the replies that win those buyers back.",
+      "A paid product I wrote, designed, and built. The ebook hands small business owners the exact words to turn a hesitant buyer into a sale, and the website sells it end to end.",
+    why: "I saw how difficult it was for small business owners to close customers who kept going quiet on them, so I wrote the ebook and built the website to sell it.",
+    approach: [
+      "Wrote the ebook first: the A.V.Q. method, and scripts for the five most common objections.",
+      "Built scripts for WhatsApp, Instagram, and Messenger, plus a seven day follow up sequence.",
+      "Built a one page site around a single offer, with checkout through Selar.",
+      "Priced it to remove the excuse not to try it, with a refund guarantee behind it.",
+    ],
     highlights: [
-      "A simple three step method for the five most common objections",
+      "Wrote the ebook myself: a simple three step method for the five most common objections",
       "Scripts for WhatsApp, Instagram, and Messenger, plus a seven day follow up",
-      "Written, designed, and sold from end to end, with checkout through Selar",
+      "Built and sold the website end to end, with checkout through Selar",
+      "I also build lead magnets like this one, if that is something your business needs",
     ],
     tags: ["Built with Claude Code", "Copywriting", "Next.js"],
     liveUrl: "https://sales-obj.vercel.app",
