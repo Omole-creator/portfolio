@@ -72,6 +72,14 @@ knowing why they're there:
   treatment; it's gone. All six entries carry the same required fields (`why`,
   `approach`, `highlights`), so JobMingle and GluFloat read as projects like
   the rest, not as a founder's special story next to a list of side work.
+  The old JobMingle Leads product is `name: "JobMingle Pulse"` now (slug
+  stays `jobmingle-leads`, that's just the URL, it doesn't need to match the
+  display name) — "Leads" alone read as an unfinished placeholder name, not
+  a real product name. Its content is deliberately long and fully unpacked
+  (lead capture, round-robin distribution, per-closer dashboards, admin
+  monitoring, tutor attendance, certificates, marketing emails all get their
+  own line) rather than merged into fewer, shorter bullets, because
+  condensing it previously read as leaving things out.
 - **Each project has its own page at `/work/[slug]`.** This exists because
   clicking a specific project card used to land on the full `/work` list
   regardless of which one was clicked (`WorkTeaser.tsx` linked every card to
@@ -110,20 +118,38 @@ knowing why they're there:
   root by convention (gitignored via `/Screenshot*.png`), not inside
   `source-materials/`, even though the redacted output goes to
   `source-materials/redacted/` before being copied into `public/images/`.
-- **`components/Problem.tsx`** (data in `problems`) and **`components/Process.tsx`**
-  (data in `process`), both only on `app/page.tsx`, close the two structural gaps
-  found against the reference site: a problem-first section and a step-by-step
-  "how this works" section. `Problem` sits right before `Services` on purpose,
-  pain then the fix. `Process` sits right before `HomeCta`, since it's the last
-  thing worth knowing before someone reaches out. Each `problems` entry maps to a
-  real product's `why` (Leads, Powerhouse, the Sales Objections Toolkit), not a
-  generic pain-point list. `Process` is the one place on the site that uses
-  numbered markers, because it's an actual sequence, not decoration.
-- **`services` entries carry an optional `image`.** Only added where a
-  screenshot genuinely evidences that service (the Sales Objections Toolkit
-  for the copywriting entry, Powerhouse for the tools/dashboards entry). The
-  other three services stay text-only on purpose rather than forcing a loose
-  match, per an explicit decision not to pad every card with an image.
+- **There is no problem-first section.** A `Problem`/"Before we start" section
+  (pain points before the fix) was tried and explicitly removed as the most
+  useless section on the site. Don't re-add one without being asked.
+- **`components/WhoThisIsFor.tsx`, `components/Benefits.tsx`, and
+  `components/Contrast.tsx`** are the three homepage sections that replaced
+  it, all only on `app/page.tsx` (and the first two also on `/services`).
+  `WhoThisIsFor` reuses `workTracks` (the same data `/contact` uses) so who
+  the site is for isn't defined twice. `Benefits` (data: `benefits`) is four
+  short, evidenced reasons to work with Omole. `Contrast` (data: `contrast`,
+  `{ theirs, mine }` pairs) is a "most people do X, I do Y" section, kept
+  honest by never inventing before/after numbers, only qualitative claims
+  already evidenced elsewhere on the site. None of these three use a literal
+  stock heading ("Who This Is For", "Benefits", etc.) on purpose, each has
+  its own short, human phrase instead ("Good fit", "What you get", "The
+  difference").
+- **`components/Process.tsx`** (data: `process`) is still the step-by-step
+  "how this works" section, sitting right before `HomeCta`. It's the one
+  place on the site that uses numbered markers, because it's an actual
+  sequence, not decoration.
+- **Section subheads (the `h2` under each eyebrow) are kept short on
+  purpose**, a handful of words, not a full sentence. They used to run
+  longer ("A company I built, and the products I shipped to run it.") and
+  were trimmed ("What I've built.") after explicit feedback that long
+  subheads read badly. Keep new ones brief.
+- **`services` entries do NOT carry images.** This was tried (reusing
+  case-study screenshots like the Sales Objections Toolkit shot) and
+  explicitly reverted: case-study screenshots belong to their case study,
+  not to an abstract service card. `components/Services.tsx` takes a
+  `showHeading` prop (same pattern as `CaseStudies.tsx`) so `/services` can
+  supply its own `PageHeader` instead of a duplicate in-section heading.
+- **`nav` (`lib/content.ts`) includes a "Services" link to `/services`.**
+  `app/services/page.tsx` reuses `Services`, `Benefits`, and `Contrast`.
 - **`components/Nav.tsx` is a hamburger menu at every breakpoint, not just
   mobile.** The nav links used to always be visible inline; now they're
   behind a toggle button (top right) that opens a small dropdown. This was a

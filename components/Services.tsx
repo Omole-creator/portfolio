@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import {
   TrendingUp,
@@ -16,16 +15,18 @@ import { ScrollCard } from "./ScrollCard";
 const icons: LucideIcon[] = [TrendingUp, PenLine, Users, Settings2, Bot];
 const dir = [-1, 0, 1];
 
-export function Services() {
+export function Services({ showHeading = true }: { showHeading?: boolean }) {
   return (
-    <section id="services" className="border-t border-line bg-white py-24 md:py-32">
+    <section id="services" className="border-t border-line bg-paper py-24 md:py-32">
       <div className="container-x">
-        <Reveal>
-          <p className="eyebrow text-gold-hover">What I do</p>
-          <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
-            Here&apos;s what that&apos;s looked like in practice.
-          </h2>
-        </Reveal>
+        {showHeading ? (
+          <Reveal>
+            <p className="eyebrow text-gold-hover">What I do</p>
+            <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
+              What this looks like.
+            </h2>
+          </Reveal>
+        ) : null}
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, i) => {
@@ -40,17 +41,6 @@ export function Services() {
                     {service.title}
                   </h3>
                   <p className="mt-3 leading-relaxed text-muted">{service.body}</p>
-                  {"image" in service && service.image ? (
-                    <div className="relative mt-5 aspect-[16/10] w-full overflow-hidden rounded-xl border border-line">
-                      <Image
-                        src={service.image.src}
-                        alt={service.image.alt}
-                        fill
-                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                        className="object-cover object-top"
-                      />
-                    </div>
-                  ) : null}
                 </article>
               </ScrollCard>
             );

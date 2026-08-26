@@ -1,9 +1,11 @@
 import { Hero } from "@/components/Hero";
 import { ToolsMarquee } from "@/components/ToolsMarquee";
-import { Problem } from "@/components/Problem";
-import { Services } from "@/components/Services";
 import { WorkTeaser } from "@/components/WorkTeaser";
+import { WhoThisIsFor } from "@/components/WhoThisIsFor";
+import { Services } from "@/components/Services";
+import { Benefits } from "@/components/Benefits";
 import { Recognition } from "@/components/Recognition";
+import { Contrast } from "@/components/Contrast";
 import { Process } from "@/components/Process";
 import { HomeCta } from "@/components/HomeCta";
 
@@ -13,9 +15,11 @@ export default function Home() {
       <Hero />
       <ToolsMarquee />
       <WorkTeaser />
-      <Problem />
+      <WhoThisIsFor />
       <Services />
+      <Benefits />
       <Recognition />
+      <Contrast />
       <Process />
       <HomeCta />
     </main>

@@ -19,6 +19,7 @@ export const site = {
 
 export const nav = [
   { label: "Work", href: "/work" },
+  { label: "Services", href: "/services" },
   { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
@@ -59,12 +60,30 @@ export const about = [
   "I am happy to work with startups and established businesses anywhere in the world, whether that is a growth role, a project, or a conversation about building something together.",
 ];
 
-export const problems = [
-  "Leads come in from the ads, and without a system, they land unevenly, some reps drowning, others sitting idle, while follow up slips.",
-  "Money moves in and out of the business, and nobody can say exactly where, or what is actually working.",
-  "A buyer says let me get back to you, and you both know they will not.",
-  "You have built something worth trusting, but the website does not say what it actually does.",
-  "Someone gets a diagnosis, and food stops being simple. They end up eating the same one meal, scared of everything else.",
+export const benefits = [
+  "You get growth and the systems behind it, not just one or the other.",
+  "Nothing ships in months when it can ship in days.",
+  "Every decision comes from numbers, not guesses.",
+  "I have been the founder, so I know what actually matters when time and money are tight.",
+];
+
+export const contrast = [
+  {
+    theirs: "Most growth people cannot build the tools they ask for.",
+    mine: "I build them myself, with AI, in days.",
+  },
+  {
+    theirs: "Most builders do not understand growth or sales.",
+    mine: "I have closed deals, run ads, and grown a community past 9,700 people.",
+  },
+  {
+    theirs: "Most agencies hand you a report.",
+    mine: "I hand you the dashboard that makes the report unnecessary.",
+  },
+  {
+    theirs: "Most freelancers disappear after the first win.",
+    mine: "I stay close to the numbers and keep adjusting.",
+  },
 ];
 
 export const process = [
@@ -94,10 +113,6 @@ export const services = [
   {
     title: "Words that turn a hesitant buyer into a paying one",
     body: "I write the words that sell, from ads and sales pages to emails and blog posts. One sales letter I wrote beat the control by nine times in two weeks.",
-    image: {
-      src: "/images/sales-toolkit.webp",
-      alt: "Sales Objections Toolkit landing page, the product this service is evidenced by",
-    },
   },
   {
     title: "A community that sells for you before you ask it to",
@@ -110,10 +125,6 @@ export const services = [
   {
     title: "Tools and dashboards built fast, with no engineering team needed",
     body: "I build the tools a business needs and automate the parts that waste time. Using Claude Code, plus the skills and MCP servers I connect to it, I ship working software fast, from internal dashboards to a full CRM, without waiting on a dev team to free up.",
-    image: {
-      src: "/images/powerhouse.webp",
-      alt: "JobMingle Powerhouse dashboard, one of the tools this service is evidenced by",
-    },
   },
 ];
 
@@ -228,22 +239,25 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "jobmingle-leads",
-    name: "JobMingle Leads",
+    name: "JobMingle Pulse",
     kind: "The CRM and operations agent I built with AI",
     blurb:
       "The CRM and operations agent my team runs on every day. It captures every lead straight from the Meta and Google ad forms I run, takes it from first contact to a closed sale, and handles tutor attendance, reports, and certificates on the side.",
-    why: "I was bringing in sales closers to handle the leads coming through our ads, so I built Leads to automate the whole process instead of doing it by hand.",
+    why: "I was bringing in sales closers to handle the leads coming through our ads, so I built Pulse to automate the whole process instead of doing it by hand.",
     approach: [
-      "Connected the Meta and Google ad lead forms straight into the system, so nothing gets typed in by hand.",
-      "Built round robin assignment, so every lead reaches a closer within moments, evenly, with an email the second it happens.",
-      "Gave each closer their own dashboard for follow up, visible from the admin side so nothing goes quiet unnoticed.",
-      "Added a tutor attendance dashboard and automatic marketing emails, so the system covers the class, not just the sale.",
+      "Connected the Meta and Google ad lead forms straight into the system, so every lead lands automatically, nothing typed in by hand.",
+      "Built round robin assignment, so every lead reaches a sales closer evenly, with an email notification sent the moment it happens.",
+      "Gave each closer a dashboard to log their follow up, with performance tracked and visible from the admin section.",
+      "Built a separate attendance dashboard for each tutor, with reports and certificates generated automatically.",
+      "Added automatic marketing emails sent out to leads.",
     ],
     highlights: [
       "Captures every lead straight from the Meta and Google ad forms I run, no manual entry",
       "Splits leads evenly across sales closers, with an email notification the moment one lands",
-      "Tracks each closer's follow up and performance on their own dashboard, visible from the admin side",
+      "Closers follow up on their own dashboard, with performance tracked there too",
+      "Everything a closer does is visible and monitored from the admin section",
       "A separate attendance dashboard for each tutor, with reports and certificates generated automatically",
+      "Automatic marketing emails sent out to leads",
       "A full pipeline from new lead to won or lost, with payment tracking, plus a one page outcomes report for grant applications",
     ],
     tags: ["Built with Claude Code", "Next.js", "Prisma"],
@@ -251,11 +265,11 @@ export const caseStudies: CaseStudy[] = [
     images: [
       {
         src: "/images/leads-overview.webp",
-        alt: "JobMingle Leads CRM dashboard with lead totals and pipeline charts, figures redacted",
+        alt: "JobMingle Pulse CRM dashboard with lead totals and pipeline charts, figures redacted",
       },
       {
         src: "/images/leads-report.webp",
-        alt: "JobMingle Leads training outcomes report page, figures redacted",
+        alt: "JobMingle Pulse training outcomes report page, figures redacted",
       },
     ],
   },

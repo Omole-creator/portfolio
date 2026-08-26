@@ -28,7 +28,7 @@ export function CaseStudies({ showHeading = true }: { showHeading?: boolean }) {
           <Reveal>
             <p className="eyebrow text-gold-hover">Selected work</p>
             <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight md:text-4xl">
-              The company I built, and the products I shipped to run it.
+              What I&apos;ve built.
             </h2>
           </Reveal>
         ) : null}

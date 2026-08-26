@@ -8,7 +8,7 @@ export function Process() {
         <Reveal>
           <p className="eyebrow text-gold-hover">How this works</p>
           <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
-            What working together actually looks like.
+            How we&apos;d work together.
           </h2>
         </Reveal>
 

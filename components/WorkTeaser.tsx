@@ -14,7 +14,7 @@ export function WorkTeaser() {
             <div>
               <p className="eyebrow text-gold-hover">Selected work</p>
               <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
-                A company I built, and the products I shipped to run it.
+                What I&apos;ve built.
               </h2>
             </div>
             <Link

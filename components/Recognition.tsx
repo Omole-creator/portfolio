@@ -9,7 +9,7 @@ export function Recognition() {
         <Reveal>
           <p className="eyebrow text-gold-hover">Backed and recognised</p>
           <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
-            People who bet on founders have bet on me.
+            People have bet on me.
           </h2>
         </Reveal>
 
