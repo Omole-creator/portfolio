@@ -53,7 +53,7 @@ export function Contact() {
         <Reveal>
           <p className="eyebrow text-gold-hover">Work with me</p>
           <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
-            Two good reasons to reach out.
+            Three good reasons to reach out.
           </h2>
         </Reveal>
 

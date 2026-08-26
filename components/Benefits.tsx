@@ -9,7 +9,7 @@ export function Benefits() {
         <Reveal>
           <p className="eyebrow text-gold-hover">What you get</p>
           <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
-            Four things that come with it.
+            Six things that come with it.
           </h2>
         </Reveal>
 

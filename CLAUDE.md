@@ -83,7 +83,33 @@ knowing why they're there:
   leaving things out. Be precise about what it does: not every lead closes
   ("through to an outcome, won or lost," never "to a closed sale"), and
   attendance is tutors recording which *students* attended a class, visible
-  from admin, not attendance of the tutors themselves.
+  from admin, not attendance of the tutors themselves. Neither JobMingle nor
+  GluFloat carries a `"Founder"` tag, on purpose, same reasoning as dropping
+  the `featured` flag: they read as projects, not as the one thing Omole
+  owns sitting apart from the rest.
+- **WaterBrooks had no previous website at all**, don't reintroduce language
+  implying there was an old confusing one. What actually happened: two
+  different developers were already paid to build the site and never
+  delivered, and Omole built the entire thing himself in 24 hours. The
+  traction numbers in `results` (200+ farmers, 18 land plots, the accelerator
+  backing) all predate the site, they're the founder's achievements that the
+  site finally communicates, not outcomes the site produced, so `results`
+  is framed around delivery and accurate showcasing, not around the
+  farm-level numbers as if the build caused them.
+- **Every paragraph field (`why`, `beforeAfter`, `insight`) is a complete
+  sentence, never a noun-phrase fragment**, and no single rhetorical shape
+  repeats across every case study. An early pass had five of six `insight`
+  fields using the identical "X is not really about Y, it's about Z"
+  construction and several `beforeAfter.after` fields with no main verb
+  ("A dashboard that shows...", not "There is now a dashboard that
+  shows...") — both read as machine-generated once you saw the pattern
+  across all six back to back. Read new case-study copy against the other
+  five before shipping it, not just on its own.
+- **Body text inside a case study is all one size** (`components/work/CaseStudyDetail.tsx`
+  has no `text-xl` anywhere in the prose sections) — the problem section
+  used to render larger than everything else and that inconsistency was
+  called out explicitly. Keep every prose section (problem, before/after,
+  thinking) at the same base size.
 - **`why` is `string[]`, 2-3 real paragraphs, not one line.** Short, flat
   problem statements were tried and rejected as underwhelming, and so was a
   "Picture this..." narrative opener, both read as amateurish. Each one now

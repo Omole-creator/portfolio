@@ -89,10 +89,7 @@ export function CaseStudyDetail({
             <p className="eyebrow text-gold-hover">The problem</p>
             <div className="mt-4 space-y-4">
               {study.why.map((paragraph, i) => (
-                <p
-                  key={i}
-                  className="text-xl leading-relaxed text-ink/80"
-                >
+                <p key={i} className="leading-relaxed text-ink/80">
                   {paragraph}
                 </p>
               ))}
