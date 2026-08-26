@@ -84,16 +84,26 @@ knowing why they're there:
   ("through to an outcome, won or lost," never "to a closed sale"), and
   attendance is tutors recording which *students* attended a class, visible
   from admin, not attendance of the tutors themselves.
-- **Every case study's `why` is a full, dramatized story, not a one-line
-  summary.** Short, flat problem statements were tried and explicitly
-  rejected as underwhelming; each one now opens with a scene or a concrete
-  moment before naming the problem. `beforeAfter` (`{ before, after }`),
-  `insight` (why this particular approach, not a different one), and
-  `builtWith` (the actual tools, not the categorization `tags`) are three
-  more required fields per case study, rendered on the detail page right
-  after "What it does" — these fill out the rest of the structure modeled on
-  the reference site's case-study pages (problem, approach, before/after,
-  reasoning, outcomes, tools), which was incomplete without them.
+- **`why` is `string[]`, 2-3 real paragraphs, not one line.** Short, flat
+  problem statements were tried and rejected as underwhelming, and so was a
+  "Picture this..." narrative opener, both read as amateurish. Each one now
+  reads as a standard portfolio problem statement: state the problem,
+  agitate it (what it actually costs, why it matters, who it affects), then
+  bridge into the fix. `components/work/CaseStudyDetail.tsx` renders each
+  array entry as its own `<p>`, so there's real white space between them,
+  never one dense block.
+- **The full detail-page section order is:** hero → first screenshot (if
+  any) → The problem (`why`) → How I built it (`approach`) → What changed
+  (`beforeAfter`, two flowing paragraphs labeled Before/After inline, not
+  boxed side by side the way the reference site does it) → What it does
+  (`highlights`) → second screenshot (if any) → The result (`results`,
+  quantified outcomes, reusing numbers already established elsewhere on the
+  site rather than inventing new ones) → The thinking (`insight`) → Built
+  with (`builtWith`, actual tools, distinct from the categorization `tags`
+  shown further down). **Screenshots never sit at the bottom** — the first
+  one runs right under the hero, the second (when a case study has two)
+  runs mid-page after "What it does," so the write-up isn't all text
+  followed by images at the end.
 - **Each project has its own page at `/work/[slug]`.** This exists because
   clicking a specific project card used to land on the full `/work` list
   regardless of which one was clicked (`WorkTeaser.tsx` linked every card to
@@ -146,9 +156,12 @@ knowing why they're there:
   short, evidenced reasons to work with Omole — kept away from anything that
   reads as "I'm cheap/available/understanding of tight budgets," since the
   positioning here is startups with good cash flow, not struggling ones, and
-  away from generic-sounding claims like "every decision comes from numbers,"
-  both were tried and cut. `Contrast` (data: `contrast`, `{ theirs, mine }`
-  pairs) is a "most people do X, I do Y" section, kept honest by never
+  away from generic-sounding claims like "every decision comes from numbers"
+  or a "rotating account manager" line that didn't land. Two rounds of these
+  got swapped out; if a benefit line ever feels like it's padding the count
+  rather than saying something specific, it's a candidate to replace, not to
+  keep for the sake of hitting six. `Contrast` (data: `contrast`, `{ theirs,
+  mine }` pairs) is a "most people do X, I do Y" section, kept honest by never
   inventing before/after numbers, only qualitative claims already evidenced
   elsewhere on the site. None of these three use a literal stock heading
   ("Who This Is For", "Benefits", etc.) on purpose, each has its own short,

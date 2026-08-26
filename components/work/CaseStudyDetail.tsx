@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Check, CalendarCheck } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  TrendingUp,
+  CalendarCheck,
+} from "lucide-react";
 import { site, type CaseStudy } from "@/lib/content";
 import { BrowserFrame } from "@/components/BrowserFrame";
 import { ViewTracker } from "@/components/analytics/ViewTracker";
@@ -20,10 +27,13 @@ function Tags({ tags }: { tags: string[] }) {
   );
 }
 
-// One project, full detail, modeled on: hero, the problem, how it was
-// built, what it does, images, and a link to the next project. Never
-// wrapped in Reveal, same reasoning as PostArticle.tsx: this is long-form
-// content meant to be fully present for crawlers and screenshots.
+// One project, full detail: hero, a screenshot near the top, the problem,
+// how it was built, what changed, what it does, a second screenshot mid
+// -page if there is one, the result, the thinking behind the approach,
+// built with, and a link to the next project. Screenshots never sit at the
+// bottom, they break up the writing instead. Never wrapped in Reveal, same
+// reasoning as PostArticle.tsx: this is long-form content meant to be
+// fully present for crawlers and screenshots.
 export function CaseStudyDetail({
   study,
   next,
@@ -31,6 +41,8 @@ export function CaseStudyDetail({
   study: CaseStudy;
   next: CaseStudy;
 }) {
+  const [firstImage, secondImage] = study.images ?? [];
+
   return (
     <article>
       <header className="relative overflow-hidden bg-navy-deep pt-36 pb-16 text-white md:pt-40 md:pb-20">
@@ -63,11 +75,28 @@ export function CaseStudyDetail({
 
       <div className="bg-paper py-16 md:py-20">
         <div className="container-x max-w-3xl">
+          {firstImage ? (
+            <div className="mb-14">
+              <BrowserFrame
+                url={study.liveUrl ?? ""}
+                src={firstImage.src}
+                alt={firstImage.alt}
+              />
+            </div>
+          ) : null}
+
           <section>
             <p className="eyebrow text-gold-hover">The problem</p>
-            <p className="mt-3 text-xl leading-relaxed text-ink/80">
-              {study.why}
-            </p>
+            <div className="mt-4 space-y-4">
+              {study.why.map((paragraph, i) => (
+                <p
+                  key={i}
+                  className="text-xl leading-relaxed text-ink/80"
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
           </section>
 
           <section className="mt-14">
@@ -87,6 +116,20 @@ export function CaseStudyDetail({
           </section>
 
           <section className="mt-14">
+            <p className="eyebrow text-gold-hover">What changed</p>
+            <div className="mt-4 space-y-4">
+              <p className="leading-relaxed text-ink/80">
+                <span className="font-semibold text-ink">Before: </span>
+                {study.beforeAfter.before}
+              </p>
+              <p className="leading-relaxed text-ink/80">
+                <span className="font-semibold text-gold-hover">After: </span>
+                {study.beforeAfter.after}
+              </p>
+            </div>
+          </section>
+
+          <section className="mt-14">
             <p className="eyebrow text-gold-hover">What it does</p>
             <ul className="mt-6 space-y-3">
               {study.highlights.map((point) => (
@@ -101,30 +144,33 @@ export function CaseStudyDetail({
             </ul>
           </section>
 
-          <section className="mt-14">
-            <p className="eyebrow text-gold-hover">Before and after</p>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border border-line bg-white p-6">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-                  Before
-                </p>
-                <p className="mt-2 leading-relaxed text-ink/80">
-                  {study.beforeAfter.before}
-                </p>
-              </div>
-              <div className="rounded-2xl border border-gold/40 bg-white p-6">
-                <p className="text-xs font-semibold uppercase tracking-wide text-gold-hover">
-                  After
-                </p>
-                <p className="mt-2 leading-relaxed text-ink/80">
-                  {study.beforeAfter.after}
-                </p>
-              </div>
+          {secondImage ? (
+            <div className="mt-14">
+              <BrowserFrame
+                url={study.liveUrl ?? ""}
+                src={secondImage.src}
+                alt={secondImage.alt}
+              />
             </div>
+          ) : null}
+
+          <section className="mt-14">
+            <p className="eyebrow text-gold-hover">The result</p>
+            <ul className="mt-6 space-y-3">
+              {study.results.map((point) => (
+                <li key={point} className="flex gap-3 text-ink/80">
+                  <TrendingUp
+                    className="mt-1 h-4 w-4 shrink-0 text-gold-hover"
+                    aria-hidden="true"
+                  />
+                  <span className="leading-relaxed">{point}</span>
+                </li>
+              ))}
+            </ul>
           </section>
 
           <section className="mt-14">
-            <p className="eyebrow text-gold-hover">Why this approach</p>
+            <p className="eyebrow text-gold-hover">The thinking</p>
             <p className="mt-3 leading-relaxed text-ink/80">{study.insight}</p>
           </section>
 
@@ -141,19 +187,6 @@ export function CaseStudyDetail({
               ))}
             </ul>
           </section>
-
-          {study.images?.length ? (
-            <section className="mt-14 space-y-5">
-              {study.images.map((img) => (
-                <BrowserFrame
-                  key={img.src}
-                  url={study.liveUrl ?? ""}
-                  src={img.src}
-                  alt={img.alt}
-                />
-              ))}
-            </section>
-          ) : null}
 
           <div className="mt-10">
             <Tags tags={study.tags} />
