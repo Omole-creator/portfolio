@@ -101,6 +101,47 @@ export function CaseStudyDetail({
             </ul>
           </section>
 
+          <section className="mt-14">
+            <p className="eyebrow text-gold-hover">Before and after</p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl border border-line bg-white p-6">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+                  Before
+                </p>
+                <p className="mt-2 leading-relaxed text-ink/80">
+                  {study.beforeAfter.before}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-gold/40 bg-white p-6">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gold-hover">
+                  After
+                </p>
+                <p className="mt-2 leading-relaxed text-ink/80">
+                  {study.beforeAfter.after}
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section className="mt-14">
+            <p className="eyebrow text-gold-hover">Why this approach</p>
+            <p className="mt-3 leading-relaxed text-ink/80">{study.insight}</p>
+          </section>
+
+          <section className="mt-14">
+            <p className="eyebrow text-gold-hover">Built with</p>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {study.builtWith.map((item) => (
+                <li
+                  key={item}
+                  className="rounded-full border border-line bg-white px-3 py-1 text-xs font-medium text-muted"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </section>
+
           {study.images?.length ? (
             <section className="mt-14 space-y-5">
               {study.images.map((img) => (

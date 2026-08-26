@@ -63,8 +63,10 @@ export const about = [
 export const benefits = [
   "You get growth and the systems behind it, not just one or the other.",
   "Nothing ships in months when it can ship in days.",
-  "Every decision comes from numbers, not guesses.",
-  "I have been the founder, so I know what actually matters when time and money are tight.",
+  "You work directly with me, not a rotating account manager.",
+  "I have run growth, product, and community myself, so nothing gets lost between people who do not talk to each other.",
+  "Every tool I build for a client, I have already used myself first.",
+  "I bring the read of someone who has actually run a business, not just advised one.",
 ];
 
 export const contrast = [
@@ -83,6 +85,10 @@ export const contrast = [
   {
     theirs: "Most freelancers disappear after the first win.",
     mine: "I stay close to the numbers and keep adjusting.",
+  },
+  {
+    theirs: "Most people cannot build the automation a business needs to run well.",
+    mine: "I build it myself, and wire it into how the business already works.",
   },
 ];
 
@@ -142,6 +148,9 @@ export type CaseStudy = {
   why: string;
   approach: string[];
   highlights: string[];
+  beforeAfter: { before: string; after: string };
+  insight: string;
+  builtWith: string[];
   tags: string[];
   liveUrl?: string;
   images?: { src: string; alt: string }[];
@@ -154,11 +163,11 @@ export const caseStudies: CaseStudy[] = [
     kind: "The project I started and grew",
     blurb:
       "JobMingle is an edtech platform I started and grew. My engineers built the website at jobmingle.co, while I led the growth, the product direction, and the community, and built the internal tools we run on.",
-    why: "The usual way into tech in Nigeria was slow and gatekept, expensive bootcamps, or waiting on the right introduction. I wanted people to have a faster, cheaper way in, and a community that would not let them do it alone.",
+    why: "Every year I watched smart, hungry people get shut out of tech, not for lack of ability, but because they did not know the right person, could not afford a twelve week bootcamp, or gave up after the third rejection with no feedback at all. The door into tech in Nigeria was narrow, expensive, and mostly closed to anyone without a name or a network behind them. I had lived close enough to that frustration to know it was solvable, so I built JobMingle to be the door that swings open instead.",
     approach: [
       "Started with community first, built the WhatsApp and Telegram groups before there was a product to sell.",
       "Ran ads only once there was a live cohort to fill, and kept them tight enough to hit 16x.",
-      "Built Powerhouse and Leads myself, so the business ran on numbers I could see, not guesswork.",
+      "Built the CRM and Powerhouse myself, so the business ran on numbers I could see, not guesswork.",
       "My engineers built and maintain jobmingle.co, while I run growth, product direction, and the community.",
     ],
     highlights: [
@@ -168,6 +177,12 @@ export const caseStudies: CaseStudy[] = [
       "Served over 200 clients through our career services line",
       "Partnered with EvolvateHR, Ternkonnect, Your Study Path, and Cudose",
     ],
+    beforeAfter: {
+      before: "Getting into tech meant knowing the right person, or paying for a bootcamp most people could not afford.",
+      after: "A community past 9,700 people learning and getting placed together, with training, ads, and career services all running under one roof.",
+    },
+    insight: "The real gap was never talent. It was access, and a support system that did not disappear the moment things got hard. Community closed that gap faster and cheaper than any ad campaign could.",
+    builtWith: ["Meta Ads", "WhatsApp", "Telegram", "Claude Code"],
     tags: ["Founder", "Growth", "Marketing", "Community", "Partnerships", "Since 2023"],
     liveUrl: "https://jobmingle.co",
     images: [
@@ -183,7 +198,7 @@ export const caseStudies: CaseStudy[] = [
     kind: "The startup I'm building now",
     blurb:
       "GluFloat is a web app that helps people living with diabetes figure out what to eat every day without giving up the food they love. It gives personalized recommendations for breakfast, lunch, and dinner, with adjustments for anyone managing another health condition too.",
-    why: "People living with diabetes were scared of the food they loved, and it pushed a lot of them into eating the same one meal, day after day. There was no solution for that, so I built one.",
+    why: "Picture finding out you have diabetes, and the first thing that changes is not your body, it is your plate. Jollof rice becomes a threat, eba becomes a gamble, and the food that used to mean home now comes with fear attached. Most people in that position never get real guidance, just a warning to watch what they eat, and are left to figure out the rest alone. Some give up and eat the same one safe meal every single day for years, just to avoid the anxiety of guessing wrong. Nobody had built anything that actually understood Nigerian food and gave a straight answer, so I built GluFloat to be that answer.",
     approach: [
       "Built the recommendation engine first, so it could weigh a food against a diagnosis and any other health condition.",
       "Wrapped it in a checker anyone could use in seconds, for breakfast, lunch, or dinner.",
@@ -196,6 +211,12 @@ export const caseStudies: CaseStudy[] = [
       "Built the whole product with AI, from the recommendation engine to the trial and pricing flow",
       "Priced for everyday people, with a free trial and no card needed to start",
     ],
+    beforeAfter: {
+      before: "Guessing whether a meal was safe, or giving up and eating the same one dish every day out of fear.",
+      after: "A clear, personalized answer for breakfast, lunch, and dinner, plus a report to bring to the doctor instead of a guess.",
+    },
+    insight: "Telling someone to eat healthy is not guidance, it is a shrug. The only thing that actually helps is a direct answer for the exact meal in front of them, which is why GluFloat starts from the food, not a generic diet plan.",
+    builtWith: ["Claude Code", "Next.js", "AI recommendation engine"],
     tags: ["Founder", "Health tech", "Built with Claude Code", "MVP", "Next.js"],
     liveUrl: "https://glufloat.vercel.app",
     images: [
@@ -215,7 +236,7 @@ export const caseStudies: CaseStudy[] = [
     kind: "The financial command center I built with AI",
     blurb:
       "A financial command center for my company. It brings every revenue line and expense into one place, so I always know exactly where the business stands.",
-    why: "I was finding it difficult to track our expenses and revenue, what was bringing in the most money, and what was consuming the most of it, so I built Powerhouse to see all of it clearly, in one place.",
+    why: "There is a specific kind of dread that comes from opening five different spreadsheets to answer one question: are we actually making money this month? I would piece together revenue from one tab, expenses from another, chase down a commission figure from a WhatsApp message, and by the time I had an answer, it was already out of date. I was running a company on stitched together guesswork, and one day I got tired of not trusting my own numbers, so I built Powerhouse to give me an answer I could actually believe.",
     approach: [
       "Pulled revenue and expenses from all four services into one place, instead of four spreadsheets.",
       "Built views for what is bringing in the most money and what is consuming the most of it, so the answer is a glance, not a calculation.",
@@ -228,6 +249,12 @@ export const caseStudies: CaseStudy[] = [
       "Month over month and quarterly growth views for clean reporting",
       "Password protection, offline access, and one click backups",
     ],
+    beforeAfter: {
+      before: "Piecing revenue and expenses together across spreadsheets, never quite sure the number was current.",
+      after: "One dashboard that shows what is making money and what is draining it, updated live, with month over month and quarterly views.",
+    },
+    insight: "A business does not need more spreadsheets, it needs one place that never lies. Once I stopped trusting memory and manual entry, decisions got faster and a lot less stressful.",
+    builtWith: ["Claude Code", "Next.js", "Supabase"],
     tags: ["Built with Claude Code", "Next.js", "Supabase"],
     liveUrl: "https://jobmingle-powerhouse.vercel.app",
     images: [
@@ -239,16 +266,16 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "jobmingle-leads",
-    name: "JobMingle Pulse",
+    name: "JobMingle CRM",
     kind: "The CRM and operations agent I built with AI",
     blurb:
-      "The CRM and operations agent my team runs on every day. It captures every lead straight from the Meta and Google ad forms I run, takes it from first contact to a closed sale, and handles tutor attendance, reports, and certificates on the side.",
-    why: "I was bringing in sales closers to handle the leads coming through our ads, so I built Pulse to automate the whole process instead of doing it by hand.",
+      "The CRM my team runs on every day. It captures every lead straight from the Meta and Google ad forms I run, moves it through follow up to an outcome, won or lost, and handles tutor-recorded attendance, reports, and certificates on the side.",
+    why: "I brought in sales closers to handle the leads pouring in from our ad campaigns, and for a while it worked, until it did not. Leads sat untouched for hours because nobody knew whose turn it was to follow up. Two closers would message the same person, or worse, nobody would message them at all. I had no way to see who was actually following up, who was slacking, or where a promising lead had quietly gone cold. Hiring more people was not going to fix a broken handoff, so I built the CRM to own that handoff completely.",
     approach: [
       "Connected the Meta and Google ad lead forms straight into the system, so every lead lands automatically, nothing typed in by hand.",
       "Built round robin assignment, so every lead reaches a sales closer evenly, with an email notification sent the moment it happens.",
       "Gave each closer a dashboard to log their follow up, with performance tracked and visible from the admin section.",
-      "Built a separate attendance dashboard for each tutor, with reports and certificates generated automatically.",
+      "Built attendance into the system, so tutors record which students show up to class, and it reflects straight to admin.",
       "Added automatic marketing emails sent out to leads.",
     ],
     highlights: [
@@ -256,20 +283,26 @@ export const caseStudies: CaseStudy[] = [
       "Splits leads evenly across sales closers, with an email notification the moment one lands",
       "Closers follow up on their own dashboard, with performance tracked there too",
       "Everything a closer does is visible and monitored from the admin section",
-      "A separate attendance dashboard for each tutor, with reports and certificates generated automatically",
+      "Tutors record student attendance for every class, and it reflects straight to admin",
       "Automatic marketing emails sent out to leads",
-      "A full pipeline from new lead to won or lost, with payment tracking, plus a one page outcomes report for grant applications",
+      "A full pipeline from new lead through to an outcome, won or lost, with payment tracking, plus a one page outcomes report for grant applications",
     ],
+    beforeAfter: {
+      before: "Leads sitting untouched for hours, or getting messaged by two closers at once, with no way to see who dropped the ball.",
+      after: "Every lead assigned evenly and instantly, followed up on a tracked dashboard, visible from admin the whole way through.",
+    },
+    insight: "A CRM is not really about storing contacts, it is about making sure a handoff never silently fails. Once every step was visible from admin, leads stopped disappearing.",
+    builtWith: ["Claude Code", "Next.js", "Prisma", "Meta Ads", "Google Ads"],
     tags: ["Built with Claude Code", "Next.js", "Prisma"],
     liveUrl: "https://jobmingleleads.vercel.app",
     images: [
       {
         src: "/images/leads-overview.webp",
-        alt: "JobMingle Pulse CRM dashboard with lead totals and pipeline charts, figures redacted",
+        alt: "JobMingle CRM dashboard with lead totals and pipeline charts, figures redacted",
       },
       {
         src: "/images/leads-report.webp",
-        alt: "JobMingle Pulse training outcomes report page, figures redacted",
+        alt: "JobMingle CRM training outcomes report page, figures redacted",
       },
     ],
   },
@@ -279,7 +312,7 @@ export const caseStudies: CaseStudy[] = [
     kind: "A marketing site I built with AI",
     blurb:
       "WaterBrooks is an agritech company helping African farmers cut post-harvest losses with solar-powered food preservation. I designed and built their marketing site, from the hero that tells the story to the pages that turn visitors into partners.",
-    why: "The founder did not have a website that effectively communicated what they did, so I built one that does.",
+    why: "WaterBrooks was solving a serious problem, solar powered cold storage that could cut post harvest losses for African farmers, but you would never know that from their old site. A farmer or a funder landing on it had no clear idea what the company did, what it had already achieved, or why it mattered. A mission that serious deserved better than a confusing homepage, so I sat with the founder, got the story straight, and built a site that finally said it plainly.",
     approach: [
       "Sat with the founder to get the story straight: solar powered food preservation, for African farms, in plain language.",
       "Designed and built the site around that story, from the hero down to the traction numbers.",
@@ -289,9 +322,15 @@ export const caseStudies: CaseStudy[] = [
     highlights: [
       "Designed and built the full marketing site with AI, from the hero down to the traction and contact sections",
       "Made the story land: solar-powered food preservation built for African farms",
-      "Put their real traction up front, from farmers reached to land secured and accelerator backing",
+      "Put their traction up front, from farmers reached to land secured and accelerator backing",
       "Built around a clear Partner With Us call to action so the right people get in touch",
     ],
+    beforeAfter: {
+      before: "A website that did not clearly explain what WaterBrooks did or why it mattered.",
+      after: "A clear story from the hero down, with the traction up front and one obvious Partner With Us button.",
+    },
+    insight: "Impact does not sell itself if nobody can understand it in five seconds. Clarity mattered more here than clever design.",
+    builtWith: ["Claude Code", "Next.js", "Web design"],
     tags: ["Built with Claude Code", "Web design", "Agritech", "Next.js"],
     liveUrl: "https://waterbrookstechnologies.vercel.app",
     images: [
@@ -311,7 +350,7 @@ export const caseStudies: CaseStudy[] = [
     kind: "A product I shipped with AI",
     blurb:
       "A paid product I wrote, designed, and built. The ebook hands small business owners the exact words to turn a hesitant buyer into a sale, and the website sells it end to end.",
-    why: "I saw how difficult it was for small business owners to close customers who kept going quiet on them, so I wrote the ebook and built the website to sell it.",
+    why: "I kept watching the same scene play out. A small business owner does everything right, gets a serious buyer interested, and then hears the words that kill more sales than any competitor ever could: let me get back to you. The buyer disappears, the seller assumes it is over, and a sale that was one honest reply away from closing just evaporates. Most sellers had never been taught what to actually say in that moment, so I wrote down exactly what works and built a way to put it in their hands.",
     approach: [
       "Wrote the ebook first: the A.V.Q. method, and scripts for the five most common objections.",
       "Built scripts for WhatsApp, Instagram, and Messenger, plus a seven day follow up sequence.",
@@ -324,6 +363,12 @@ export const caseStudies: CaseStudy[] = [
       "Built and sold the website end to end, with checkout through Selar",
       "I also build lead magnets like this one, if that is something your business needs",
     ],
+    beforeAfter: {
+      before: "A hesitant buyer goes quiet, and the seller has no idea what to say next, so the sale just dies.",
+      after: "A simple three step method and ready to use scripts that turn that same silence into a sale.",
+    },
+    insight: "Objections are not rejections, they are usually just unanswered questions. The moment sellers had the right words ready, hesitation stopped being the end of the conversation.",
+    builtWith: ["Claude Code", "Next.js", "Selar", "Copywriting"],
     tags: ["Built with Claude Code", "Copywriting", "Next.js"],
     liveUrl: "https://sales-obj.vercel.app",
     images: [
@@ -398,8 +443,8 @@ export const faq = [
 
 export const workTracks = [
   {
-    title: "For startups, SaaS, and ecommerce businesses ready to scale",
-    body: "I help startups, SaaS, and ecommerce businesses grow, through community, content, paid acquisition, or the systems that keep it all running. This is where most of my work happens.",
+    title: "For startups, agencies, SaaS, and ecommerce businesses ready to scale",
+    body: "I help these businesses grow, through community, content, paid acquisition, or the systems that keep it all running. For startups specifically, I am also open to advisor and founding-team roles, not just project work.",
   },
   {
     title: "For organizations that want access to trained tech talent",

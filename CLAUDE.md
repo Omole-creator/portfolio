@@ -72,14 +72,28 @@ knowing why they're there:
   treatment; it's gone. All six entries carry the same required fields (`why`,
   `approach`, `highlights`), so JobMingle and GluFloat read as projects like
   the rest, not as a founder's special story next to a list of side work.
-  The old JobMingle Leads product is `name: "JobMingle Pulse"` now (slug
-  stays `jobmingle-leads`, that's just the URL, it doesn't need to match the
-  display name) — "Leads" alone read as an unfinished placeholder name, not
-  a real product name. Its content is deliberately long and fully unpacked
-  (lead capture, round-robin distribution, per-closer dashboards, admin
-  monitoring, tutor attendance, certificates, marketing emails all get their
-  own line) rather than merged into fewer, shorter bullets, because
-  condensing it previously read as leaving things out.
+  The old JobMingle Leads product is `name: "JobMingle CRM"` now (slug stays
+  `jobmingle-leads`, that's just the URL, it doesn't need to match the
+  display name) — "Leads" alone read as an unfinished placeholder name, and
+  a middle name of "Pulse" was tried and rejected too, "CRM" is what it
+  actually is. Its content is deliberately long and fully unpacked (lead
+  capture, round-robin distribution, per-closer dashboards, admin
+  monitoring, marketing emails all get their own line) rather than merged
+  into fewer, shorter bullets, because condensing it previously read as
+  leaving things out. Be precise about what it does: not every lead closes
+  ("through to an outcome, won or lost," never "to a closed sale"), and
+  attendance is tutors recording which *students* attended a class, visible
+  from admin, not attendance of the tutors themselves.
+- **Every case study's `why` is a full, dramatized story, not a one-line
+  summary.** Short, flat problem statements were tried and explicitly
+  rejected as underwhelming; each one now opens with a scene or a concrete
+  moment before naming the problem. `beforeAfter` (`{ before, after }`),
+  `insight` (why this particular approach, not a different one), and
+  `builtWith` (the actual tools, not the categorization `tags`) are three
+  more required fields per case study, rendered on the detail page right
+  after "What it does" — these fill out the rest of the structure modeled on
+  the reference site's case-study pages (problem, approach, before/after,
+  reasoning, outcomes, tools), which was incomplete without them.
 - **Each project has its own page at `/work/[slug]`.** This exists because
   clicking a specific project card used to land on the full `/work` list
   regardless of which one was clicked (`WorkTeaser.tsx` linked every card to
@@ -100,16 +114,19 @@ knowing why they're there:
   ("Getting customers to show up without a big ad budget first") rather than
   skill-first ("Growth and paid acquisition"), while keeping the exact same
   evidence in the body copy.
-- **`workTracks` (`lib/content.ts`), shown on `/contact`, defines who this
-  site is actually for.** By design it favors startups, SaaS, and ecommerce
-  businesses that already have funding, not any startup at any stage, but
-  that filter is intentionally never stated outright ("ready to scale" does
-  the work instead of "you must have raised"). Don't list specific
-  industries here (edtech, healthtech, agritech, etc.), even though Omole
-  has built in all three. They fall under "startups" and naming them reads
-  as narrowing the pitch rather than broadening it. The third track is a
-  deliberate catch-all for anything else, including consulting and speaking
-  engagements, so the page never implies a closed list of services.
+- **`workTracks` (`lib/content.ts`), shown on `/contact` and on the homepage
+  via `WhoThisIsFor`, defines who this site is actually for.** By design it
+  favors startups, agencies, SaaS, and ecommerce businesses that already
+  have funding, not any startup at any stage, but that filter is
+  intentionally never stated outright ("ready to scale" does the work
+  instead of "you must have raised"). Don't list specific industries here
+  (edtech, healthtech, agritech, etc.), even though Omole has built in all
+  three. They fall under "startups" and naming them reads as narrowing the
+  pitch rather than broadening it. The first track also says Omole is open
+  to advisor and founding-team roles for startups, not just project or
+  growth-role work. The third track is a deliberate catch-all for anything
+  else, including consulting and speaking engagements, so the page never
+  implies a closed list of services.
 - **`scripts/process-screenshots.py`** now also produces `jobmingle-hero`
   from a JobMingle marketing screenshot, following the same pattern as the
   GluFloat and WaterBrooks shots: no number-redaction regions (it's a public
@@ -125,14 +142,17 @@ knowing why they're there:
   `components/Contrast.tsx`** are the three homepage sections that replaced
   it, all only on `app/page.tsx` (and the first two also on `/services`).
   `WhoThisIsFor` reuses `workTracks` (the same data `/contact` uses) so who
-  the site is for isn't defined twice. `Benefits` (data: `benefits`) is four
-  short, evidenced reasons to work with Omole. `Contrast` (data: `contrast`,
-  `{ theirs, mine }` pairs) is a "most people do X, I do Y" section, kept
-  honest by never inventing before/after numbers, only qualitative claims
-  already evidenced elsewhere on the site. None of these three use a literal
-  stock heading ("Who This Is For", "Benefits", etc.) on purpose, each has
-  its own short, human phrase instead ("Good fit", "What you get", "The
-  difference").
+  the site is for isn't defined twice. `Benefits` (data: `benefits`) is six
+  short, evidenced reasons to work with Omole — kept away from anything that
+  reads as "I'm cheap/available/understanding of tight budgets," since the
+  positioning here is startups with good cash flow, not struggling ones, and
+  away from generic-sounding claims like "every decision comes from numbers,"
+  both were tried and cut. `Contrast` (data: `contrast`, `{ theirs, mine }`
+  pairs) is a "most people do X, I do Y" section, kept honest by never
+  inventing before/after numbers, only qualitative claims already evidenced
+  elsewhere on the site. None of these three use a literal stock heading
+  ("Who This Is For", "Benefits", etc.) on purpose, each has its own short,
+  human phrase instead ("Good fit", "What you get", "The difference").
 - **`components/Process.tsx`** (data: `process`) is still the step-by-step
   "how this works" section, sitting right before `HomeCta`. It's the one
   place on the site that uses numbered markers, because it's an actual
