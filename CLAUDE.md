@@ -75,9 +75,15 @@ knowing why they're there:
 
 - **Every case study in `caseStudies` (`lib/content.ts`) has the same shape.**
   There used to be a `featured` flag that gave JobMingle a distinct hero
-  treatment; it's gone. All six entries carry the same required fields (`why`,
-  `approach`, `highlights`), so JobMingle and GluFloat read as projects like
-  the rest, not as a founder's special story next to a list of side work.
+  treatment; it's gone. All eight entries (JobMingle, GluFloat, JobMingle
+  Powerhouse, JobMingle CRM, WaterBrooks Technologies, Sales Objections
+  Toolkit, CV Reviewer, and Designs & Konstruct) carry the same required
+  fields (`why`, `approach`, `highlights`), so JobMingle and GluFloat read as
+  projects like the rest, not as a founder's special story next to a list of
+  side work. CV Reviewer and Designs & Konstruct were added later, both
+  tagged `"Built with Claude Code"` even though their write-ups don't say so
+  explicitly, for consistency with the rest of the list; Designs & Konstruct
+  carries no `images` field since no screenshots were supplied for it.
   The old JobMingle Leads product is `name: "JobMingle CRM"` now (slug stays
   `jobmingle-leads`, that's just the URL, it doesn't need to match the
   display name) — "Leads" alone read as an unfinished placeholder name, and
@@ -173,9 +179,13 @@ knowing why they're there:
   from a JobMingle marketing screenshot, following the same pattern as the
   GluFloat and WaterBrooks shots: no number-redaction regions (it's a public
   marketing page), just the standard browser-chrome crop and watermark
-  cover. The raw screenshots this script reads from live loose in the repo
-  root by convention (gitignored via `/Screenshot*.png`), not inside
-  `source-materials/`, even though the redacted output goes to
+  cover. The same pattern applies to the GluFloat shots (raw files `glu1.png`,
+  `glu2.png`, replacing an earlier pair) and the CV Reviewer shots (raw files
+  `cv1.png`, `cv2.png`). The raw screenshots this script reads from live loose
+  in the repo root by convention (gitignored via `/Screenshot*.png`, and via
+  `/cv1.png`, `/cv2.png`, `/glu1.png`, `/glu2.png` for the newer ones since
+  they don't match that glob), not inside `source-materials/`, even though
+  the redacted output goes to
   `source-materials/redacted/` before being copied into `public/images/`.
 - **There is no problem-first section.** A `Problem`/"Before we start" section
   (pain points before the fix) was tried and explicitly removed as the most
@@ -364,11 +374,13 @@ breakdowns GA4 doesn't give for free.
   coordinates in that script are in a displayed 2000px space and scaled to the real
   2560px image via `SCALE`; when adjusting, re-run and visually verify no number is
   legible. The public sales page (`sales-toolkit`) intentionally keeps its public
-  marketing headline. The GluFloat shots (`glufloat-check`, `glufloat-joy`) and the
-  WaterBrooks shots (`waterbrooks-hero`, `waterbrooks-traction`) are public marketing
-  sites too, so they carry no number-redaction regions: the script only crops the
-  browser chrome / taskbar and covers the "Activate Windows" watermark. WaterBrooks
-  keeps its public traction figures on purpose.
+  marketing headline. The GluFloat shots (`glufloat-hero`, `glufloat-today`), the
+  WaterBrooks shots (`waterbrooks-hero`, `waterbrooks-traction`), and the CV Reviewer
+  shots (`cv-reviewer-hero`, `cv-reviewer-score`) are public marketing/demo pages too,
+  so they carry no number-redaction regions: the script only crops the browser chrome
+  / taskbar and covers the "Activate Windows" watermark. CV Reviewer's score-card shot
+  shows a sample audit result (85/100), not a real user's data, so it needed no
+  redaction either. WaterBrooks keeps its public traction figures on purpose.
 - **`source-materials/` is gitignored and must stay out of git.** It holds the raw
   unblurred screenshots, the CV, and the original photo. The GitHub repo is public,
   so leaking these would expose the numbers the site redacts. Only the redacted

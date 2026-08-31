@@ -46,11 +46,13 @@ REGIONS = {
         [1268, 842, 1428, 902],   # Expense donut center total
     ],
     "Screenshot (283).png": [],   # Public sales page: marketing numbers kept
-    "Screenshot (285).png": [],   # GluFloat public marketing hero: nothing sensitive
-    "Screenshot (286).png": [],   # GluFloat public marketing section: nothing sensitive
     "Screenshot (287).png": [],   # WaterBrooks public marketing hero: nothing sensitive
     "Screenshot (288).png": [],   # WaterBrooks public marketing traction: public numbers kept
     "Screenshot (289).png": [],   # JobMingle public marketing hero: nothing sensitive
+    "glu1.png": [],   # GluFloat public marketing hero: nothing sensitive
+    "glu2.png": [],   # GluFloat public app screen: nothing sensitive
+    "cv1.png": [],    # CV Reviewer public landing hero: nothing sensitive
+    "cv2.png": [],    # CV Reviewer public demo score card: nothing sensitive
 }
 
 # "Activate Windows" watermark, present on all four (displayed coords).
@@ -93,11 +95,13 @@ def main():
             "Screenshot (281).png": "leads-report",
             "Screenshot (282).png": "powerhouse",
             "Screenshot (283).png": "sales-toolkit",
-            "Screenshot (285).png": "glufloat-check",
-            "Screenshot (286).png": "glufloat-joy",
             "Screenshot (287).png": "waterbrooks-hero",
             "Screenshot (288).png": "waterbrooks-traction",
             "Screenshot (289).png": "jobmingle-hero",
+            "glu1.png": "glufloat-hero",
+            "glu2.png": "glufloat-today",
+            "cv1.png": "cv-reviewer-hero",
+            "cv2.png": "cv-reviewer-score",
         }[name]
         im.save(OUT / f"{slug}.webp", "WEBP", quality=88, method=6)
         im.save(OUT / f"{slug}.png", "PNG")  # preview for review

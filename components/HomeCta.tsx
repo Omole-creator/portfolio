@@ -12,7 +12,7 @@ export function HomeCta() {
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
             <div className="max-w-2xl">
               <h2 className="text-3xl font-semibold leading-tight md:text-4xl">
-                Ready to bring growth into your business?
+                Ready to grow, build, or fix what is slowing your business down?
               </h2>
               <p className="mt-4 text-lg leading-relaxed text-white/70">
                 Tell me where you are and what you need. If I am the right fit,

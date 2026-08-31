@@ -20,6 +20,10 @@ next-env.d.ts
 /1*.png
 /1*.jfif
 /Screenshot*.png
+/cv1.png
+/cv2.png
+/glu1.png
+/glu2.png
 
 # Private reference doc, keep out of the public repo
 /COPYWRITING-PLAYBOOK.md
