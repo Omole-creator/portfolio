@@ -9,7 +9,10 @@ Next.js App Router, TypeScript, Tailwind, and Framer Motion. It is a multi-page 
 the home route (`app/page.tsx`) stacks section components, and there are dedicated
 `/work`, `/about`, and `/contact` routes that reuse those same section components.
 There is also a blog at `/blog` whose posts live in Supabase rather than in the repo,
-plus the `/admin` writing desk that manages them.
+plus the `/admin` writing desk that manages them. `/growth` and `/web` are two
+separate, self-contained portfolios built for specific pitches rather than the
+general "work with me" story the rest of the site tells — see **Audience-specific
+portfolios** below before touching either.
 
 ## Commands
 
@@ -241,6 +244,99 @@ knowing why they're there:
   Study Path, Cudose), and press mentions were identified as the remaining
   gaps and are intentionally still not on the site, no source confirmed for
   any of them yet.
+
+## Audience-specific portfolios (`/growth` and `/web`)
+
+Two standalone landing pages, each built for one specific pitch rather than the
+general "work with me" story the rest of the site tells. `/growth` targets growth
+marketing job applications and gigs. `/web` targets US business owners with an
+outdated or missing website, selling web design and development. Both are complete
+in themselves: someone can land on either one from a job application or a cold
+outreach message and never need to see the rest of the site.
+
+- **Each has its own content file** (`lib/growth-content.ts`, `lib/web-content.ts`),
+  separate from `lib/content.ts`, and its own component tree
+  (`components/growth/*`, `components/web/*`) that mirrors the shape of the main
+  site's components (Hero, About, Services, Work, Contact, Nav, Footer) but never
+  imports from `lib/content.ts`. This is deliberate duplication, not an oversight:
+  the two pitches need different case studies, different proof, and different
+  framing, and keeping them in separate files means editing one can never
+  accidentally change the others.
+- **Neither page frames Omole as a founder, anywhere.** No "founder," no "my
+  company," no "the business I built," no JobMingle ownership language. This
+  matters because both pages exist to be sent to people evaluating him for
+  someone else's role or project (a growth marketing job, a client's website) —
+  founder framing reads as "busy running his own thing," which undercuts the
+  pitch. Where a case study is his own venture (JobMingle, GluFloat), the copy
+  describes what he *did* ("I ran growth for JobMingle, an edtech platform...",
+  "I designed and built GluFloat...") without claiming ownership of the company.
+- **`components/SiteChrome.tsx`** (mounted in `app/layout.tsx` in place of a
+  plain `<Nav /> {children} <Footer />`) branches by `pathname`: `/growth` gets
+  `GrowthNav`/`GrowthFooter`, `/web` gets `WebNav`/`WebFooter`, everything else
+  gets the normal `Nav`/`Footer`. This exists so a visitor following a `/growth`
+  or `/web` link never lands back on the founder-framed main nav or a case study
+  aimed at the other audience — each variant's nav only links to anchors within
+  itself (`#work`, `#services`, `#about`, `#contact`), not to `/work`, `/about`,
+  etc.
+- **`/growth`** covers only the four projects that are actually growth marketing:
+  JobMingle (community, content, paid ads, framed as growth work rather than
+  founding), JobMingle CRM (marketing ops / lead capture), the Sales Objections
+  Toolkit (conversion copywriting), and CV Reviewer (a self-serve lead magnet).
+  GluFloat, Powerhouse, WaterBrooks, and Designs & Konstruct are left out on
+  purpose — they're product or web-design work, not growth marketing.
+- **`/web`** covers the five projects that are actual websites or web apps:
+  WaterBrooks Technologies, Designs & Konstruct, the Sales Objections Toolkit,
+  GluFloat, and CV Reviewer. JobMingle's own site is deliberately excluded here
+  even though it's on the main site and on `/growth` — `lib/content.ts` is
+  explicit that "my engineers built the website at jobmingle.co," so claiming it
+  as a build credit on a page selling web development would be dishonest.
+  WaterBrooks (a full site built in 24 hours after two paid developers never
+  delivered) is the strongest proof point on this page and gets reused twice: once
+  as a case study, once retold in the About copy ("One business had already paid
+  two different developers... neither one delivered"), because it directly
+  answers this audience's biggest fear — getting burned again by someone who
+  doesn't deliver. A proof-bar metric built around that same "developers who
+  failed before me" number was tried and reverted; the approved proof bar
+  (`webProof` in `lib/web-content.ts`) is "24 hrs," "5" websites and web apps
+  built end to end, and "9x" conversion lift, so don't reintroduce that metric
+  without checking first. `WebWork.tsx` handles the one project with no
+  screenshot (Designs & Konstruct, matching the same gap noted in the
+  case-studies section above): it renders a plain bordered text card instead
+  of a `BrowserFrame` when `project.image` is absent, rather than requiring
+  every entry to have one.
+- **`COPYWRITING-PLAYBOOK.md`** (repo root) is a direct-response copywriting
+  reference. It's written for long-form sales letters, not hero copy, but its
+  house-style rules (Section 0.1: no em dashes, plain spoken language, push every
+  line to the truth, cut anything that doesn't answer "so what?") and its
+  specificity rule (Section 8: replace vague claims with concrete, oddly specific
+  numbers, since round numbers read as made up) are exactly what `/growth` and
+  `/web`'s hero and proof-bar copy should be checked against. It's why `/web`'s
+  proof bar uses "24 hrs" and "9x" rather than something vaguer.
+- **`WebHero.tsx`'s single-word gold highlight ("Customers") carries
+  `whitespace-nowrap`** so the browser can never split it mid-word across two
+  lines; it just moves to the next line whole if it doesn't fit. `GrowthHero.tsx`
+  deliberately does NOT do this for its two-word highlight ("Paying Customers")
+  — a `whitespace-nowrap` phrase can only ever move as a rigid two-word block,
+  which on phones pushed it onto its own 4th line. Letting it wrap normally
+  (each word free to join whichever line it fits on) is what makes "Paying"
+  land on the same line as "Strangers Into" instead.
+- **`GrowthHero.tsx`'s headline is sized specifically below Tailwind's `sm`
+  breakpoint** (`text-[1.62rem]` with `leading-[1.15]`, vs. `sm:text-5xl` and up
+  unchanged) so that on phones it holds to exactly 3 lines with "Paying" on the
+  same line as "Strangers Into" (not with "Customers"). This exact value was
+  found by rendering the headline at many font sizes in a headless browser and
+  recording which words landed on which line at each common phone width
+  (320/360/375/390/412/428px). The mapping from font size to line breaks is
+  not smooth: `1.62rem` is the top of a narrow safe band, and `1.63rem` already
+  regresses to 4 lines at 320px. At 320px/360px specifically, even the safe
+  band falls back to the old grouping ("Paying Customers" together on line 3
+  instead of "Paying" joining line 2) rather than the ideal one — still 3
+  lines, just not the exact word split — because no font size in the tested
+  range achieves the ideal split at those narrow widths without breaking
+  something else. If the headline copy changes, or that 320px/360px fallback
+  needs to match too, re-run the same measurement rather than nudging the
+  Tailwind class by feel — a "round" size like `text-3xl` or `text-2xl` will
+  not reliably land in the safe band.
 
 ## The blog
 

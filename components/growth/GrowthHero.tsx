@@ -51,10 +51,10 @@ export function GrowthHero() {
         <div className="max-w-4xl">
           <motion.h1
             variants={item}
-            className="text-[1.6rem] font-semibold leading-[1.15] tracking-tight sm:text-5xl sm:leading-[1.06] md:text-6xl lg:text-[4.25rem]"
+            className="text-[1.62rem] font-semibold leading-[1.15] tracking-tight sm:text-5xl sm:leading-[1.06] md:text-6xl lg:text-[4.25rem]"
           >
             {main}
-            <span className="text-gold whitespace-nowrap">Paying Customers</span>
+            <span className="text-gold">Paying Customers</span>
             {accent}
           </motion.h1>
 
