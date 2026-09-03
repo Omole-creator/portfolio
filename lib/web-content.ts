@@ -12,7 +12,7 @@ export const webSite = {
     "Omole Usuangbon designs and builds professional websites for small businesses, fast, including a full site built in 24 hours and a modern web app from design to launch.",
   headline: "A Website That Turns Visitors Into Customers",
   subhead:
-    "I build clean, modern websites for small businesses that still look ten years old. Most go live in days, not months, and every page is built to turn a visitor into a customer, not just look nice.",
+    "A slow or outdated website loses you customers before they ever say hello. I build ones that make people stay, trust you, and buy.",
   contact: {
     email: "omoleusuangbon@gmail.com",
     calendly: "https://calendly.com/omoleusuangbon/30min",
@@ -29,9 +29,9 @@ export const webNav = [
 ];
 
 export const webProof = [
-  { value: "24 hrs", label: "from a blank page to a live, professional site" },
-  { value: "5", label: "websites and web apps designed and built end to end" },
-  { value: "9x", label: "conversion lift from a launch I wrote the copy for" },
+  { value: "24 hrs", label: "from zero to a live, professional site" },
+  { value: "2", label: "developers who failed to deliver, before me" },
+  { value: "9x", label: "the conversion lift from one sales page I wrote" },
 ];
 
 export const webAbout = [

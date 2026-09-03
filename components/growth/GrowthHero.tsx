@@ -54,7 +54,7 @@ export function GrowthHero() {
             className="text-4xl font-semibold leading-[1.06] tracking-tight sm:text-5xl md:text-6xl lg:text-[4.25rem]"
           >
             {main}
-            <span className="text-gold">Paying Customers</span>
+            <span className="text-gold whitespace-nowrap">Paying Customers</span>
             {accent}
           </motion.h1>
 
