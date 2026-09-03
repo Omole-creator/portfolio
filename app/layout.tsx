@@ -4,8 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { site } from "@/lib/content";
-import { Nav } from "@/components/Nav";
-import { Footer } from "@/components/Footer";
+import { SiteChrome } from "@/components/SiteChrome";
 import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 
 const body = Inter({
@@ -53,9 +52,7 @@ export default function RootLayout({
           />
         </noscript>
         <PageViewTracker />
-        <Nav />
-        {children}
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );
