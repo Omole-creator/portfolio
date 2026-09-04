@@ -121,7 +121,7 @@ export const services = [
   },
   {
     title: "Words that turn a hesitant buyer into a paying one",
-    body: "I write the words that sell, from ads and sales pages to emails and blog posts. One sales letter I wrote beat the control by nine times in two weeks.",
+    body: "I write the words that sell, from ads and sales pages to emails and blog posts. That copywriting helped enroll students into JobMingle's first cohort at a 16x return on ad spend.",
   },
   {
     title: "A community that sells for you before you ask it to",
@@ -175,7 +175,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     approach: [
       "Started with community first, built the WhatsApp and Telegram groups before there was a product to sell.",
-      "Ran ads only once there was a live cohort to fill, and kept them tight enough to hit 16x.",
+      "Ran Meta ads as a core acquisition channel for every cohort launch, and kept them tight enough to hit 16x.",
       "Built the CRM and Powerhouse myself, so the business ran on numbers I could see, not guesswork.",
       "My engineers built and maintain jobmingle.co, while I run growth, product direction, and the community.",
     ],
@@ -308,7 +308,7 @@ export const caseStudies: CaseStudy[] = [
     name: "JobMingle CRM",
     kind: "The CRM and operations agent I built with AI",
     blurb:
-      "The CRM my team runs on every day. It captures every lead straight from the Meta and Google ad forms I run, automatically assigns them to sales closers, tracks follow-up through to an outcome, won or lost, and handles tutor-recorded attendance, reports, and certificates on the side.",
+      "The CRM my team runs on every day. It captures every lead the moment its notification email lands from the Meta and Google ad forms I run, automatically assigns them to sales closers, tracks follow-up through to an outcome, won or lost, and handles tutor-recorded attendance, reports, and certificates on the side.",
     why: [
       "I was manually tracking every lead coming from my Meta and Google ad campaigns, following up with people, and trying to keep track of where each conversation stood. I was doing all of it myself, and as the number of leads grew, it became exhausting.",
       "I knew I needed to bring in sales closers, but handing over the leads created a new problem: I needed a way to know who was handling each lead, whether they were following up, how they were performing, and what was happening to every opportunity without having to manage everything myself.",
@@ -316,7 +316,7 @@ export const caseStudies: CaseStudy[] = [
       "So I built JobMingle CRM to take the manual work out of lead management and give me a clear view of the entire sales process.",
     ],
     approach: [
-      "Connected the Meta and Google ad lead forms directly to the CRM, so every new lead enters the system automatically without manual entry.",
+      "Wrote a Google Apps Script that watches the inbox for the notification email every new Meta or Google ad lead triggers, and enters that lead into the CRM automatically.",
       "Built round-robin assignment to distribute leads evenly across sales closers, with an email notification sent as soon as a lead is assigned.",
       "Gave each closer a dashboard to manage follow-ups, while making their activity and performance visible from the admin section.",
       "Built attendance into the system, allowing tutors to record student attendance and have it reflected directly in the admin dashboard.",
@@ -327,7 +327,7 @@ export const caseStudies: CaseStudy[] = [
       after: "Leads now enter the CRM automatically, get distributed to sales closers, and remain visible throughout the pipeline. Closers manage their follow-ups from their own dashboards, while I can monitor their activity, performance, payments, and outcomes from admin.",
     },
     highlights: [
-      "Captures every lead directly from the Meta and Google ad forms I run, with no manual entry",
+      "Captures every lead the moment its notification email lands, from the Meta and Google ad forms I run, with no manual entry",
       "Distributes leads evenly across sales closers and sends an email notification when one is assigned",
       "Gives closers their own dashboard to manage follow-ups and track their activity",
       "Makes closer activity and performance visible from the admin section",

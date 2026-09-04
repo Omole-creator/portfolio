@@ -3,6 +3,9 @@ import { GrowthHero } from "@/components/growth/GrowthHero";
 import { GrowthAbout } from "@/components/growth/GrowthAbout";
 import { GrowthServices } from "@/components/growth/GrowthServices";
 import { GrowthWork } from "@/components/growth/GrowthWork";
+import { GrowthCredentials } from "@/components/growth/GrowthCredentials";
+import { GrowthDifference } from "@/components/growth/GrowthDifference";
+import { GrowthProcess } from "@/components/growth/GrowthProcess";
 import { GrowthContact } from "@/components/growth/GrowthContact";
 import { ToolsMarquee } from "@/components/ToolsMarquee";
 import { growthSite } from "@/lib/growth-content";
@@ -36,6 +39,9 @@ export default function GrowthPage() {
       <GrowthAbout />
       <GrowthServices />
       <GrowthWork />
+      <GrowthCredentials />
+      <GrowthDifference />
+      <GrowthProcess />
       <GrowthContact />
     </main>
   );

@@ -31,13 +31,13 @@ export const growthProof = [
   { value: "16x", label: "return on ad spend" },
   { value: "10,000+", label: "community members grown" },
   { value: "<$0.50", label: "cost per lead" },
-  { value: "9x", label: "conversion lift over the control" },
+  { value: "462", label: "leads from a single Meta Ads campaign" },
 ];
 
 export const growthAbout = [
   "I ran growth for JobMingle, an edtech platform that helps career switchers build practical tech skills and find jobs. Over the past few years I have worked across community, content, paid ads, and the marketing systems behind all of it.",
-  "Most of the growth I drove did not come from ad spend. It came from building communities, creating content, and finding ways to get people talking and pulling each other in. Ads came in once there was a live cohort to fill, and I kept them tight enough to hit 16x return on ad spend.",
-  "I also set up the systems that keep leads from falling through. When leads from Meta and Google ads needed to be captured and followed up fast, I built the CRM that does that automatically. When a free CV review was taking up hours of the team's time every week, I built a tool that runs the same checklist in minutes, turning a manual process into a lead magnet that works on its own.",
+  "Growth came from a mix of community, content, and paid ads working together, not from one carrying the others. I ran Meta ad campaigns myself, end to end, and kept targeting and creative tight enough to turn a single campaign into 462 leads and a 16x return on ad spend.",
+  "I also set up the systems that keep leads from falling through. When leads from Meta and Google ads needed to be captured and followed up fast, I wrote a Google Apps Script that pulls each one into the CRM automatically. When a free CV review was taking up hours of the team's time every week, I built a tool that runs the same checklist in minutes, turning a manual process into a lead magnet that works on its own.",
   "I am happy to take on growth marketing roles or projects for startups and businesses anywhere in the world, whether that means running paid acquisition, building a community, writing the copy that converts, or fixing the systems leads keep falling through.",
 ];
 
@@ -48,7 +48,7 @@ export const growthServices = [
   },
   {
     title: "Words that turn a hesitant buyer into a paying one",
-    body: "I write the words that sell, from ads and sales pages to emails and blog posts. One sales letter I wrote beat the control by nine times in two weeks.",
+    body: "I write the words that sell, from ads and sales pages to emails and blog posts. That copywriting helped enroll students into JobMingle's first cohort at a 16x return on ad spend.",
   },
   {
     title: "A community that sells for you before you ask it to",
@@ -78,21 +78,21 @@ export const growthWork: GrowthProject[] = [
     name: "JobMingle",
     kind: "Growth for an edtech platform",
     why: [
-      "JobMingle needed to get in front of career switchers and beginners looking to break into tech, without a large ad budget to spend testing what worked.",
-      "Ads alone would have burned through a small budget fast with no proof of what message or audience actually converted. The platform needed people to trust it enough to join a community and a paid cohort, not just click an ad.",
+      "JobMingle needed to turn career switchers and beginners into paying students, and that meant getting paid acquisition right, not just building an audience and hoping some of it converted.",
+      "A badly targeted campaign can burn through a small budget with nothing to show for it. The platform needed community, content, and Meta ads working as one engine, with ads doing direct, measurable work, not sitting in reserve until everything else was in place.",
     ],
     approach: [
-      "Built the community first, on WhatsApp and Telegram, before there was a product to sell, so there was proof of demand and a warm audience to launch to.",
-      "Ran content and partnerships to keep the community growing organically, and only turned on Meta ads once there was a live cohort to fill.",
-      "Kept ad targeting and creative tight enough to hit a 16x return, instead of spreading spend across broad, unproven audiences.",
+      "Built a community on WhatsApp and Telegram alongside the brand, so paid ads had a warm audience and existing trust to land on, not a cold click.",
+      "Ran Meta ad campaigns as a core acquisition channel for cohort launches, owning targeting, creative, and budget myself.",
+      "Kept targeting and creative tight enough to turn a single campaign into 462 leads and a 16x return on ad spend.",
     ],
     results: [
-      "Grew a community past 10,000 members across WhatsApp and Telegram that brought in most new customers",
+      "Generated 462 leads at under $0.50 each from a single Meta Ads campaign",
       "Hit a 16x return on ad spend on the first live cohort launch",
-      "Enrolled 22 students into tech training programs, with leads under $0.50 each",
+      "Grew a community past 10,000 members across WhatsApp and Telegram that brought in most new customers",
     ],
     insight:
-      "Ads work best once you already know what story gets someone to say yes. Building the community first gave me that story, and the proof, before a single naira went into paid media.",
+      "Community and content bring people close. Paid ads are what turn that closeness into a cohort with a deadline and a fixed number of seats to fill. I run both as core parts of the same engine, not one as backup for the other.",
     liveUrl: "https://jobmingle.co",
     images: [
       {
@@ -101,7 +101,7 @@ export const growthWork: GrowthProject[] = [
       },
       {
         src: "/images/jobmingle-fb-results.webp",
-        alt: "Meta Ads Manager showing JobMingle campaign results across four ad sets, with lead counts and cost per lead visible, budget and amount spent redacted",
+        alt: "Meta Ads Manager showing JobMingle campaign results across four ad sets, including results, cost per result, budget, amount spent, and impressions",
       },
     ],
   },
@@ -114,12 +114,12 @@ export const growthWork: GrowthProject[] = [
       "Bringing on sales closers would only fix half the problem. Without a system, there was still no way to see who was following up, how fast, or what was happening to each lead.",
     ],
     approach: [
-      "Connected the Meta and Google ad lead forms directly into the CRM, so every new lead entered the system automatically.",
+      "Wrote a Google Apps Script that watches the inbox for the notification email every new Meta or Google ad lead triggers, and enters that lead into the CRM automatically.",
       "Built round-robin assignment to distribute leads evenly across closers, with an instant email notification the moment one lands.",
       "Gave each closer their own dashboard, while keeping their activity, performance, and outcomes visible from admin.",
     ],
     results: [
-      "Every lead now enters the system and is assigned to a closer within moments, instead of sitting in an inbox",
+      "Every lead is pulled into the CRM and assigned to a closer within moments of the ad platform's notification email, instead of waiting for someone to enter it by hand",
       "The full pipeline is visible from one place, including closer activity, payments, and outcomes, won or lost",
       "Automated marketing emails keep leads engaged through the pipeline without manual follow-up",
     ],
@@ -128,8 +128,12 @@ export const growthWork: GrowthProject[] = [
     liveUrl: "https://jobmingleleads.vercel.app",
     images: [
       {
-        src: "/images/leads-overview.webp",
-        alt: "JobMingle CRM dashboard with lead totals and pipeline charts, figures redacted",
+        src: "/images/jobmingle-crm-overview.webp",
+        alt: "JobMingle CRM overview dashboard showing total leads, pipeline status, close rate, and commission for a live cohort",
+      },
+      {
+        src: "/images/jobmingle-crm-pipeline.webp",
+        alt: "JobMingle CRM charts showing leads by source and pipeline by stage for a live cohort",
       },
     ],
   },
@@ -142,14 +146,14 @@ export const growthWork: GrowthProject[] = [
       "Most sellers were never taught what to say back. They were improvising in the exact moment when having the right words mattered most.",
     ],
     approach: [
-      "Wrote a simple three-step method and ready-to-use scripts for the five objections sellers hear most often, across WhatsApp, Instagram, and Messenger.",
+      "Wrote a simple three-step method and ready-to-use scripts for the five objections sellers hear most often, across WhatsApp, Instagram, and Messenger, plus a seven-day follow-up sequence.",
       "Designed and wrote a one-page sales site around a single offer, with checkout handled through Selar.",
-      "Tested the sales copy against a control, and rewrote until it won.",
+      "Priced it to be an easy yes and backed it with a 30-day refund guarantee, so trying it carried almost no risk.",
     ],
     results: [
-      "One sales letter beat the control by nine times inside two weeks",
-      "Turned an idea into a complete paid product, from the ebook and scripts to the sales site and checkout",
-      "Priced to be an easy yes, backed by a 30-day refund guarantee",
+      "Turned an idea into a complete paid product: the ebook and scripts, the sales site, and the checkout, all live and working end to end",
+      "Built a working sales funnel that takes a customer from the landing page through checkout with no manual step in between",
+      "Gives sellers a three-step method and scripts for the five objections they hear most, ready to use the same day",
     ],
     insight:
       "An objection is a question the buyer needs answered before they will say yes. Give sellers that answer in advance, and hesitation stops being the place a sale goes to die.",
@@ -194,6 +198,78 @@ export const growthWork: GrowthProject[] = [
     ],
   },
 ];
+
+export const growthDifference = [
+  {
+    theirs: "Most growth marketers hand the tech off to someone else.",
+    mine: "I build the lead-capture systems myself, so nothing falls through after the ad spend.",
+  },
+  {
+    theirs: "Most people can run ads or write copy, rarely both.",
+    mine: "I write the copy and run the ads that copy sits behind.",
+  },
+  {
+    theirs: "Most agencies report the numbers after the campaign ends.",
+    mine: "I build the dashboard that shows the numbers while the campaign is still running.",
+  },
+  {
+    theirs: "Most growth marketers stop at the click.",
+    mine: "I follow the lead all the way to a closed sale or a lost one, and fix what is in between.",
+  },
+];
+
+export const growthProcess = [
+  {
+    title: "We talk numbers first",
+    body: "Book a call or send a message. I want to know your current cost per lead, your funnel, and what is actually not working, not just what you think you need.",
+  },
+  {
+    title: "I find where the growth actually is",
+    body: "Sometimes that is a community and content before ads. Sometimes it is tightening a Meta campaign that is already running. I tell you which, and why, before we spend a naira.",
+  },
+  {
+    title: "I run it, and show you the numbers as they move",
+    body: "I own the campaigns, the copy, and the systems that catch the leads, and you see the cost per lead and the pipeline the whole way, not just a report at the end.",
+  },
+  {
+    title: "We keep what works and cut what does not",
+    body: "Growth is not a one-time launch. I stay close to the numbers and adjust the targeting, the creative, or the offer as we go.",
+  },
+];
+
+export const growthTechnicalSkills = [
+  "Paid Social Advertising (Meta Ads Manager)",
+  "Lead Generation & Funnel Optimization",
+  "Conversion Copywriting",
+  "Email Marketing (Kit)",
+  "Community Growth & Engagement",
+  "Google Analytics 4",
+  "AI-Assisted Marketing Ops (Claude Code)",
+  "Project Management (ClickUp, Asana, Slack)",
+];
+
+export const growthSoftSkills = [
+  "Team Leadership",
+  "Cross-Functional Collaboration",
+  "Persuasive Communication",
+  "Resourcefulness Under Budget Constraints",
+  "Adaptability Across Roles",
+];
+
+export const growthCertifications = [
+  { name: "The Essentials of Growth Marketing", issuer: "Udemy", year: "2026" },
+  { name: "Marketing Tools: Growth Marketing", issuer: "LinkedIn Learning", year: "2026" },
+  { name: "Growth Marketing Foundations", issuer: "LinkedIn Learning", year: "2026" },
+  { name: "Digital Marketing Foundations", issuer: "LinkedIn Learning", year: "2026" },
+];
+
+export const growthResume = {
+  eyebrow: "Resume",
+  title: "Want the one-page version?",
+  body: "Everything above, plus the full work history, in a CV you can download and keep.",
+  buttonLabel: "Download my CV",
+  href: "/omole-usuangbon-growth-marketing-cv.pdf",
+};
 
 export const growthTracks = [
   {

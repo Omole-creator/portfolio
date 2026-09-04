@@ -31,7 +31,7 @@ export const webNav = [
 export const webProof = [
   { value: "24 hrs", label: "from a blank page to a live, professional site" },
   { value: "5", label: "websites and web apps designed and built end to end" },
-  { value: "9x", label: "conversion lift from a launch I wrote the copy for" },
+  { value: "462", label: "leads generated from one ad campaign I ran" },
 ];
 
 export const webAbout = [
@@ -110,7 +110,7 @@ export const webWork: WebProject[] = [
     name: "Sales Objections Toolkit",
     kind: "A sales site and product, designed and built end to end",
     blurb:
-      "Small business owners could get a buyer interested, but the conversation often stalled the moment an objection came up. I wrote the ebook, designed the site, and built the checkout that sells it, and one sales letter for it beat the control by nine times in two weeks.",
+      "Small business owners could get a buyer interested, but the conversation often stalled the moment an objection came up. I wrote the ebook, designed the site, and built the checkout that sells it, end to end.",
     highlights: [
       "One-page sales site built around a single offer, with checkout handled through Selar",
       "Copy and design built to move a hesitant buyer to a decision, not just look good",
@@ -155,6 +155,25 @@ export const webWork: WebProject[] = [
       src: "/images/cv-reviewer-hero.webp",
       alt: "CV Reviewer landing page: most CVs get rejected before a human ever reads them",
     },
+  },
+];
+
+export const webDifference = [
+  {
+    theirs: "Most web designers hand you a pretty template.",
+    mine: "I write the copy and design the page to work together, so it actually sells.",
+  },
+  {
+    theirs: "Most agencies take months and disappear after launch.",
+    mine: "I built a full site in 24 hours, and I stay reachable after it goes live.",
+  },
+  {
+    theirs: "Most developers cannot tell you why a page is not converting.",
+    mine: "I come from growth and sales, so I design pages to turn visitors into customers, not just look good.",
+  },
+  {
+    theirs: "Most freelancers need a spec document before they can start.",
+    mine: "Tell me what is wrong with your site on a call, and I can usually tell you what to fix on the spot.",
   },
 ];
 

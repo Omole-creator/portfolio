@@ -3,6 +3,7 @@ import { WebHero } from "@/components/web/WebHero";
 import { WebAbout } from "@/components/web/WebAbout";
 import { WebServices } from "@/components/web/WebServices";
 import { WebWork } from "@/components/web/WebWork";
+import { WebDifference } from "@/components/web/WebDifference";
 import { WebProcess } from "@/components/web/WebProcess";
 import { WebContact } from "@/components/web/WebContact";
 import { ToolsMarquee } from "@/components/ToolsMarquee";
@@ -37,6 +38,7 @@ export default function WebPage() {
       <WebAbout />
       <WebServices />
       <WebWork />
+      <WebDifference />
       <WebProcess />
       <WebContact />
     </main>

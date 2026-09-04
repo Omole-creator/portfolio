@@ -2,8 +2,11 @@
 Redact and clean the product screenshots for the portfolio.
 
 For each screenshot we:
-  1. Blur every business-sensitive number (revenue, profit, expenses,
-     commissions, lead/applicant counts, conversion %, chart data labels).
+  1. Blur any business-sensitive number that REGIONS lists for it (revenue,
+     profit, expenses, commissions, lead/applicant counts, conversion %,
+     chart data labels). Screenshots with an empty region list are shown
+     as-is, either because the page is public marketing content or because
+     Omole asked for that specific screenshot to go up unredacted.
   2. Cover the "Activate Windows" watermark.
   3. Crop off the browser tabs / URL bar (top) and the Windows taskbar (bottom)
      plus the right-hand scrollbar.
@@ -56,27 +59,20 @@ REGIONS = {
     "GL.png": [],     # Designs & Konstruct public marketing hero: nothing sensitive
     "GL1.png": [],    # Designs & Konstruct public traction/trust section: public numbers kept
     "cv.png": [],     # CV Reviewer result for Omole's own CV: not a real user's data
+    "crm.png": [],    # JobMingle CRM overview, a fresh/empty cohort: nothing sensitive, shown as-is at Omole's request
+    "crm1.png": [],   # JobMingle CRM leads-by-source and pipeline charts: shown as-is at Omole's request
+    "fb.png": [],     # JobMingle Meta Ads Manager results: shown unredacted at Omole's request
 }
 
 # Images that are already a tight app/browser-viewport capture with no OS
 # chrome, taskbar, or watermark to remove — skip CROP and WATERMARK for these.
 NO_CROP = {"fb.png"}
 
-# fb.png's regions are real pixel coordinates (not the shared displayed-space
-# used everywhere else), since it isn't a 2560x1440 desktop capture to scale
-# from. redact() skips the SCALE multiplication for names in this set.
+# fb.png's regions, if any are ever needed again, would be real pixel
+# coordinates (not the shared displayed-space used everywhere else), since
+# it isn't a 2560x1440 desktop capture to scale from. redact() skips the
+# SCALE multiplication for names in this set.
 RAW_COORDS = {"fb.png"}
-
-# JobMingle Meta Ads Manager results: blur Budget / Amount spent / Impressions
-# (reveals real ad spend and reach) across all 4 campaign rows. Results and
-# Cost per result are left legible since they support numbers already public
-# elsewhere on the site (16x ROAS, leads under $0.50 each).
-REGIONS["fb.png"] = [
-    [1805, 470, 2015, 535], [2020, 470, 2240, 535], [2240, 470, 2460, 535],
-    [1805, 540, 2015, 605], [2020, 540, 2240, 605], [2240, 540, 2460, 605],
-    [1805, 608, 2015, 673], [2020, 608, 2240, 673], [2240, 608, 2460, 673],
-    [1805, 676, 2015, 741], [2020, 676, 2240, 741], [2240, 676, 2460, 741],
-]
 
 # "Activate Windows" watermark, present on all four (displayed coords).
 WATERMARK = [1500, 918, 1975, 1040]
@@ -131,6 +127,8 @@ def main():
             "GL1.png": "designs-konstruct-traction",
             "cv.png": "cv-reviewer-results",
             "fb.png": "jobmingle-fb-results",
+            "crm.png": "jobmingle-crm-overview",
+            "crm1.png": "jobmingle-crm-pipeline",
         }[name]
         im.save(OUT / f"{slug}.webp", "WEBP", quality=88, method=6)
         im.save(OUT / f"{slug}.png", "PNG")  # preview for review

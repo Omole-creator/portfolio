@@ -334,8 +334,11 @@ outreach message and never need to see the rest of the site.
   doesn't deliver. A proof-bar metric built around that same "developers who
   failed before me" number was tried and reverted; the approved proof bar
   (`webProof` in `lib/web-content.ts`) is "24 hrs," "5" websites and web apps
-  built end to end, and "9x" conversion lift, so don't reintroduce that metric
-  without checking first. `WebWork.tsx` renders a plain bordered text card
+  built end to end, and "462" leads generated from one ad campaign — that
+  third figure used to be a "9x conversion lift" claim tied to the Sales
+  Objections Toolkit, which was fabricated (see the correction below) and
+  had to be replaced everywhere it appeared, not just here. `WebWork.tsx`
+  renders a plain bordered text card
   instead of a `BrowserFrame` when a project's `image` is absent, rather than
   requiring every entry to have one — this was added for Designs & Konstruct
   before it had a screenshot, and stays as the fallback for any future project
@@ -373,6 +376,91 @@ outreach message and never need to see the rest of the site.
   needs to match too, re-run the same measurement rather than nudging the
   Tailwind class by feel — a "round" size like `text-3xl` or `text-2xl` will
   not reliably land in the safe band.
+- **Two factual corrections Omole caught, both now fixed everywhere they
+  appeared, not just in the one place they were flagged.** Read these before
+  writing new copy about JobMingle CRM or the Sales Objections Toolkit, since
+  the wrong version is an easy trap to fall back into by pattern-matching the
+  surrounding case-study prose:
+  1. **The Meta/Google lead forms were never connected directly to the CRM.**
+     A new lead shows up as a notification email first; a Google Apps Script
+     Omole wrote watches the inbox and enters that lead into the CRM. Copy
+     that said "connected the ad lead forms directly to the CRM" (in
+     `lib/content.ts`'s `jobmingle-leads` case study and `growth-content.ts`'s
+     `jobmingle-crm` project) was wrong and has been corrected to describe
+     the Apps Script / email-triggered mechanism instead.
+  2. **No sales letter for the Sales Objections Toolkit was ever tested
+     against a control, and none "beat a control by 9x."** That specific
+     achievement is real (it happened at Rectixam Herbal Company, a past
+     copywriting role — see the CV) but is not connected to any project shown
+     on this site, so it was removed everywhere it had been attached to
+     featured work: `growthWork`'s `sales-objections-toolkit` entry
+     (`approach`/`results`) and `webWork`'s same-slug `blurb` in
+     `lib/web-content.ts`, plus the `growthProof` and `webProof` hero-stat
+     entries that used "9x" as a proof number. The `services`/`growthServices`
+     line "One sales letter I wrote beat the control by nine times" was also
+     reworded, since even unattributed to a specific product it read as
+     evidence for the case studies sitting next to it — it now credits the
+     16x JobMingle result instead, which is both true and actually shown on
+     the site.
+- **JobMingle's ad spend is written as a core channel, not an afterthought.**
+  Earlier drafts had lines like "ran ads only once there was a live cohort to
+  fill," which undersold paid acquisition — most growth marketing employers
+  weigh Meta/Google ads competency heavily, and burying it behind "community
+  first" reads as a weaker paid-ads background than the real one. `why` /
+  `approach` / `insight` for the JobMingle project in `growth-content.ts`, and
+  the matching `approach` bullet in `lib/content.ts`'s JobMingle case study,
+  were reworded to present community and paid ads as one engine running
+  together, with ads doing real, direct work — while staying truthful to what
+  actually happened (community did come first chronologically). The specific,
+  odd number **462 leads from a single Meta Ads campaign** (from the CV) was
+  added to `growthProof`, the JobMingle project's `results`, and `growthAbout`
+  as concrete evidence of paid-acquisition competence, replacing the retired
+  9x claim in the proof bar.
+- **`GrowthWork.tsx`'s JobMingle card carries a second image,
+  `jobmingle-fb-results.webp`** (raw file `fb.png`, a Meta Ads Manager
+  screenshot of JobMingle's campaigns) **and the JobMingle CRM card's images
+  were replaced with `jobmingle-crm-overview.webp` / `jobmingle-crm-pipeline.webp`**
+  (raw files `crm.png`, `crm1.png`, a fresh/empty cohort dashboard and its
+  charts), swapped in for the old `leads-overview.webp` reference. All three
+  are shown **fully unredacted, at Omole's explicit request** — this
+  overrides the general "blur sensitive figures" rule elsewhere in this file
+  for these three images specifically. `fb.png`'s Budget/Amount
+  spent/Impressions columns were blurred in an earlier pass and then
+  un-blurred again on request; `process-screenshots.py`'s `REGIONS["fb.png"]`
+  is `[]`, and the `NO_CROP`/`RAW_COORDS` machinery (fb.png is a tight
+  app-viewport capture, not a scaled 2560x1440 desktop screenshot) is kept in
+  the script only in case redaction is asked for again later. The main site's
+  `jobmingle-leads` case study (`lib/content.ts`) still uses the original,
+  redacted `leads-overview.webp`/`leads-report.webp` — only the `/growth`
+  JobMingle CRM card's images changed.
+- **`GrowthCredentials.tsx`** (new, mounted on `/growth` only) renders
+  `growthTechnicalSkills`, `growthSoftSkills`, and `growthCertifications`
+  (all `lib/growth-content.ts`), pulled from
+  `Omole Usuangbon - Growth Marketing CV.pdf` (raw file at repo root,
+  gitignored — the CORE SKILLS list became technical skills, soft skills were
+  inferred from the work-experience bullets since the CV has no separate soft
+  -skills section, certifications are copied as-is), plus a "Download my CV"
+  button (`growthResume`) linking to
+  `public/omole-usuangbon-growth-marketing-cv.pdf` — a clean copy of the CV
+  committed to `public/` specifically so it is downloadable, unlike the raw
+  gitignored copy at the repo root. **The CV download exists on `/growth`
+  only, on purpose — not on `/web` and not on the main site.** Don't add it
+  elsewhere without being asked.
+- **`GrowthDifference.tsx` and `WebDifference.tsx`** are `/growth`- and
+  `/web`-specific versions of the main site's `Contrast.tsx` "most people do
+  X, I do Y" pattern (data: `growthDifference` / `webDifference`), each with
+  its own eyebrow "The difference" and a heading in that same voice ("Most
+  growth marketers do one. I do both." / "Most web designers do one. I do
+  both."). **`GrowthProcess.tsx`** is a `/growth`-specific version of the main
+  site's `Process.tsx` "How this works" 4-step pattern (data: `growthProcess`),
+  tailored to a growth-marketing engagement (cost per lead, campaigns,
+  pipeline) rather than the main site's general "book a call, I find the
+  fastest way in" language. `/web` already had its own process section
+  (`WebProcess.tsx`, added earlier) — it didn't need a new one, only the
+  Difference section was missing. `app/growth/page.tsx` order is: Hero,
+  ToolsMarquee, About, Services, Work, Credentials, Difference, Process,
+  Contact. `app/web/page.tsx` order is: Hero, ToolsMarquee, About, Services,
+  Work, Difference, Process, Contact.
 
 ## The blog
 
@@ -515,6 +603,14 @@ breakdowns GA4 doesn't give for free.
   "Activate Windows" watermark. CV Reviewer's score-card shot shows a sample audit
   result (85/100), not a real user's data, so it needed no redaction either.
   WaterBrooks and Designs & Konstruct keep their public traction figures on purpose.
+  `cv-reviewer-results` (raw file `cv.png`, Omole's own CV run through the tool)
+  is the same "not a real user's data" case. `jobmingle-fb-results` (raw file
+  `fb.png`) and `jobmingle-crm-overview`/`jobmingle-crm-pipeline` (raw files
+  `crm.png`, `crm1.png`) are the exception to the "blur sensitive figures"
+  rule at the top of this section — all three carry real ad-spend and
+  pipeline numbers and are shown unredacted anyway, at Omole's explicit
+  request. See **Audience-specific portfolios** above for the full story on
+  why and where each is used.
 - **`source-materials/` is gitignored and must stay out of git.** It holds the raw
   unblurred screenshots, the CV, and the original photo. The GitHub repo is public,
   so leaking these would expose the numbers the site redacts. Only the redacted
