@@ -1,4 +1,4 @@
-import { Download, GraduationCap } from "lucide-react";
+import { Check, Download, GraduationCap } from "lucide-react";
 import {
   growthTechnicalSkills,
   growthSoftSkills,
@@ -12,12 +12,13 @@ function SkillList({ title, items }: { title: string; items: string[] }) {
   return (
     <div>
       <h3 className="text-sm font-semibold uppercase tracking-wide text-ink">{title}</h3>
-      <ul className="mt-4 flex flex-wrap gap-2">
+      <ul className="mt-4 space-y-2.5">
         {items.map((item) => (
           <li
             key={item}
-            className="rounded-full border border-line bg-paper px-3 py-1.5 text-sm text-muted"
+            className="flex items-start gap-2.5 text-sm leading-relaxed text-muted"
           >
+            <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold-hover" aria-hidden="true" />
             {item}
           </li>
         ))}
@@ -73,11 +74,10 @@ export function GrowthCredentials() {
         </Reveal>
 
         <Reveal delay={0.15}>
-          <div className="mt-12 flex flex-col items-start justify-between gap-6 rounded-2xl bg-navy p-8 text-white md:flex-row md:items-center md:p-10">
+          <div className="mt-12 flex flex-col items-start justify-between gap-6 rounded-2xl bg-navy p-8 text-white sm:flex-row sm:items-center">
             <div>
               <p className="eyebrow text-gold">{growthResume.eyebrow}</p>
               <h3 className="mt-2 text-2xl font-semibold">{growthResume.title}</h3>
-              <p className="mt-2 text-white/70">{growthResume.body}</p>
             </div>
             <TrackedLink
               href={growthResume.href}

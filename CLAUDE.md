@@ -349,8 +349,9 @@ outreach message and never need to see the rest of the site.
   line to the truth, cut anything that doesn't answer "so what?") and its
   specificity rule (Section 8: replace vague claims with concrete, oddly specific
   numbers, since round numbers read as made up) are exactly what `/growth` and
-  `/web`'s hero and proof-bar copy should be checked against. It's why `/web`'s
-  proof bar uses "24 hrs" and "9x" rather than something vaguer.
+  `/web`'s hero and proof-bar copy should be checked against. It's why both
+  proof bars use "462" (leads from one Meta Ads campaign) rather than
+  something vaguer.
 - **`WebHero.tsx`'s single-word gold highlight ("Customers") carries
   `whitespace-nowrap`** so the browser can never split it mid-word across two
   lines; it just moves to the next line whole if it doesn't fit. `GrowthHero.tsx`
@@ -402,20 +403,25 @@ outreach message and never need to see the rest of the site.
      evidence for the case studies sitting next to it — it now credits the
      16x JobMingle result instead, which is both true and actually shown on
      the site.
-- **JobMingle's ad spend is written as a core channel, not an afterthought.**
-  Earlier drafts had lines like "ran ads only once there was a live cohort to
-  fill," which undersold paid acquisition — most growth marketing employers
-  weigh Meta/Google ads competency heavily, and burying it behind "community
-  first" reads as a weaker paid-ads background than the real one. `why` /
-  `approach` / `insight` for the JobMingle project in `growth-content.ts`, and
-  the matching `approach` bullet in `lib/content.ts`'s JobMingle case study,
-  were reworded to present community and paid ads as one engine running
-  together, with ads doing real, direct work — while staying truthful to what
-  actually happened (community did come first chronologically). The specific,
-  odd number **462 leads from a single Meta Ads campaign** (from the CV) was
-  added to `growthProof`, the JobMingle project's `results`, and `growthAbout`
-  as concrete evidence of paid-acquisition competence, replacing the retired
-  9x claim in the proof bar.
+- **JobMingle's ad spend is written as a core channel, not an afterthought —
+  but community and paid ads are two genuinely separate channels, not one
+  feeding the other.** Earlier drafts had lines like "ran ads only once there
+  was a live cohort to fill" (undersold paid acquisition — most growth
+  marketing employers weigh Meta/Google ads competency heavily) and then,
+  after a first fix, "community and Meta ads working as one engine" /
+  "ads had a warm audience to land on" (wrong in the other direction: it
+  implied the community feeds the ad campaigns, which is not how it works).
+  What actually happens: each cohort gets promoted directly to the community
+  as its own effort, and a separate Meta ad campaign runs in parallel to
+  reach people the community doesn't, both aimed at filling the same cohort.
+  `why` / `approach` / `insight` for the JobMingle project in
+  `growth-content.ts`, and `growthAbout`, describe two channels run side by
+  side toward the same goal, never merged into one "engine" or one warming up
+  the other. The specific, odd number **462 leads from a single Meta Ads
+  campaign** (from the CV) was added to `growthProof`, the JobMingle
+  project's `results`, and `growthAbout` as concrete evidence of
+  paid-acquisition competence, replacing the retired 9x claim in the proof
+  bar.
 - **`GrowthWork.tsx`'s JobMingle card carries a second image,
   `jobmingle-fb-results.webp`** (raw file `fb.png`, a Meta Ads Manager
   screenshot of JobMingle's campaigns) **and the JobMingle CRM card's images
@@ -445,7 +451,14 @@ outreach message and never need to see the rest of the site.
   committed to `public/` specifically so it is downloadable, unlike the raw
   gitignored copy at the repo root. **The CV download exists on `/growth`
   only, on purpose — not on `/web` and not on the main site.** Don't add it
-  elsewhere without being asked.
+  elsewhere without being asked. Both skill lists render as a plain vertical
+  checklist (`Check` icon + one item per line, matching the "What it does" /
+  "The result" list style used throughout the site) — a wrapped pill/chip
+  layout was tried first and read as jampacked, so don't revert to chips.
+  The CV banner itself is deliberately bare: eyebrow, "Download my CV," and
+  the button, nothing else — an explanatory sentence ("Everything above,
+  plus the full work history...") was cut as unnecessary. It's a card that
+  tells a business owner to download the CV, not a pitch for why they should.
 - **`GrowthDifference.tsx` and `WebDifference.tsx`** are `/growth`- and
   `/web`-specific versions of the main site's `Contrast.tsx` "most people do
   X, I do Y" pattern (data: `growthDifference` / `webDifference`), each with

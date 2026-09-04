@@ -36,7 +36,7 @@ export const growthProof = [
 
 export const growthAbout = [
   "I ran growth for JobMingle, an edtech platform that helps career switchers build practical tech skills and find jobs. Over the past few years I have worked across community, content, paid ads, and the marketing systems behind all of it.",
-  "Growth came from a mix of community, content, and paid ads working together, not from one carrying the others. I ran Meta ad campaigns myself, end to end, and kept targeting and creative tight enough to turn a single campaign into 462 leads and a 16x return on ad spend.",
+  "Community and paid ads are two separate channels I run side by side, not one feeding the other. Every cohort gets promoted directly to the community, and I run Meta ad campaigns in parallel to bring in fresh leads for that same cohort, with targeting and creative tight enough to turn a single campaign into 462 leads and a 16x return on ad spend.",
   "I also set up the systems that keep leads from falling through. When leads from Meta and Google ads needed to be captured and followed up fast, I wrote a Google Apps Script that pulls each one into the CRM automatically. When a free CV review was taking up hours of the team's time every week, I built a tool that runs the same checklist in minutes, turning a manual process into a lead magnet that works on its own.",
   "I am happy to take on growth marketing roles or projects for startups and businesses anywhere in the world, whether that means running paid acquisition, building a community, writing the copy that converts, or fixing the systems leads keep falling through.",
 ];
@@ -78,12 +78,12 @@ export const growthWork: GrowthProject[] = [
     name: "JobMingle",
     kind: "Growth for an edtech platform",
     why: [
-      "JobMingle needed to turn career switchers and beginners into paying students, and that meant getting paid acquisition right, not just building an audience and hoping some of it converted.",
-      "A badly targeted campaign can burn through a small budget with nothing to show for it. The platform needed community, content, and Meta ads working as one engine, with ads doing direct, measurable work, not sitting in reserve until everything else was in place.",
+      "JobMingle needed to turn career switchers and beginners into paying students, and that meant running two separate channels well: a community that already trusted the brand, and paid ads that could reach people the community never would.",
+      "Treating ads as an afterthought, or expecting the community to carry a launch on its own, both leave leads on the table. Every cohort needed its own community push and its own ad campaign, running side by side, not one standing in for the other.",
     ],
     approach: [
-      "Built a community on WhatsApp and Telegram alongside the brand, so paid ads had a warm audience and existing trust to land on, not a cold click.",
-      "Ran Meta ad campaigns as a core acquisition channel for cohort launches, owning targeting, creative, and budget myself.",
+      "Grew a community on WhatsApp and Telegram as its own channel, and used it to promote every new cohort directly to people who already knew the brand.",
+      "Ran Meta ad campaigns as a separate channel, in parallel, to bring in fresh leads for that same cohort from people the community never reaches.",
       "Kept targeting and creative tight enough to turn a single campaign into 462 leads and a 16x return on ad spend.",
     ],
     results: [
@@ -92,7 +92,7 @@ export const growthWork: GrowthProject[] = [
       "Grew a community past 10,000 members across WhatsApp and Telegram that brought in most new customers",
     ],
     insight:
-      "Community and content bring people close. Paid ads are what turn that closeness into a cohort with a deadline and a fixed number of seats to fill. I run both as core parts of the same engine, not one as backup for the other.",
+      "Community and paid ads are not the same lever, so I do not treat them like one. Each cohort gets promoted straight to the community, and a separate ad campaign runs alongside it to reach the people the community cannot, both aimed at filling the same seats.",
     liveUrl: "https://jobmingle.co",
     images: [
       {
@@ -265,9 +265,8 @@ export const growthCertifications = [
 
 export const growthResume = {
   eyebrow: "Resume",
-  title: "Want the one-page version?",
-  body: "Everything above, plus the full work history, in a CV you can download and keep.",
-  buttonLabel: "Download my CV",
+  title: "Download my CV",
+  buttonLabel: "Download CV",
   href: "/omole-usuangbon-growth-marketing-cv.pdf",
 };
 
