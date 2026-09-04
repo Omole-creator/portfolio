@@ -64,10 +64,12 @@ export type GrowthProject = {
   slug: string;
   name: string;
   kind: string;
-  blurb: string;
-  highlights: string[];
+  why: string[];
+  approach: string[];
+  results: string[];
+  insight: string;
   liveUrl: string;
-  image: { src: string; alt: string };
+  images: { src: string; alt: string }[];
 };
 
 export const growthWork: GrowthProject[] = [
@@ -75,69 +77,121 @@ export const growthWork: GrowthProject[] = [
     slug: "jobmingle",
     name: "JobMingle",
     kind: "Growth for an edtech platform",
-    blurb:
-      "JobMingle trains and places career switchers in tech. I ran growth: community, content, partnerships, and paid ads once there was something worth spending on.",
-    highlights: [
-      "Grew a community past 10,000 members across WhatsApp and Telegram that brought in most of its customers",
-      "Launched a live cohort at a 16x return on ad spend",
+    why: [
+      "JobMingle needed to get in front of career switchers and beginners looking to break into tech, without a large ad budget to spend testing what worked.",
+      "Ads alone would have burned through a small budget fast with no proof of what message or audience actually converted. The platform needed people to trust it enough to join a community and a paid cohort, not just click an ad.",
+    ],
+    approach: [
+      "Built the community first, on WhatsApp and Telegram, before there was a product to sell, so there was proof of demand and a warm audience to launch to.",
+      "Ran content and partnerships to keep the community growing organically, and only turned on Meta ads once there was a live cohort to fill.",
+      "Kept ad targeting and creative tight enough to hit a 16x return, instead of spreading spend across broad, unproven audiences.",
+    ],
+    results: [
+      "Grew a community past 10,000 members across WhatsApp and Telegram that brought in most new customers",
+      "Hit a 16x return on ad spend on the first live cohort launch",
       "Enrolled 22 students into tech training programs, with leads under $0.50 each",
     ],
+    insight:
+      "Ads work best once you already know what story gets someone to say yes. Building the community first gave me that story, and the proof, before a single naira went into paid media.",
     liveUrl: "https://jobmingle.co",
-    image: {
-      src: "/images/jobmingle-hero.webp",
-      alt: "JobMingle landing page hero, become the high earner you did not think you could, with the trusted partners strip below",
-    },
+    images: [
+      {
+        src: "/images/jobmingle-hero.webp",
+        alt: "JobMingle landing page hero, become the high earner you did not think you could, with the trusted partners strip below",
+      },
+      {
+        src: "/images/jobmingle-fb-results.webp",
+        alt: "Meta Ads Manager showing JobMingle campaign results across four ad sets, with lead counts and cost per lead visible, budget and amount spent redacted",
+      },
+    ],
   },
   {
     slug: "jobmingle-crm",
     name: "JobMingle CRM",
     kind: "Marketing ops for a lead-gen funnel",
-    blurb:
-      "The system that catches every lead from Meta and Google ad campaigns, assigns it to a sales closer automatically, and tracks it through to an outcome, won or lost.",
-    highlights: [
-      "Every lead enters the system automatically and is assigned to a closer within moments",
-      "Closers get their own dashboard, and their activity and performance stay visible from admin",
-      "Sends automated marketing emails to keep leads engaged through the pipeline",
+    why: [
+      "Every lead from Meta and Google ad campaigns was being tracked and followed up manually, and as the volume grew, leads sat too long before anyone reached out, or slipped through entirely.",
+      "Bringing on sales closers would only fix half the problem. Without a system, there was still no way to see who was following up, how fast, or what was happening to each lead.",
     ],
+    approach: [
+      "Connected the Meta and Google ad lead forms directly into the CRM, so every new lead entered the system automatically.",
+      "Built round-robin assignment to distribute leads evenly across closers, with an instant email notification the moment one lands.",
+      "Gave each closer their own dashboard, while keeping their activity, performance, and outcomes visible from admin.",
+    ],
+    results: [
+      "Every lead now enters the system and is assigned to a closer within moments, instead of sitting in an inbox",
+      "The full pipeline is visible from one place, including closer activity, payments, and outcomes, won or lost",
+      "Automated marketing emails keep leads engaged through the pipeline without manual follow-up",
+    ],
+    insight:
+      "A lead that sits for a day is a lead that has probably already found someone else. The system exists to make sure that never happens, so the ad spend that brought the lead in is not wasted after the click.",
     liveUrl: "https://jobmingleleads.vercel.app",
-    image: {
-      src: "/images/leads-overview.webp",
-      alt: "JobMingle CRM dashboard with lead totals and pipeline charts, figures redacted",
-    },
+    images: [
+      {
+        src: "/images/leads-overview.webp",
+        alt: "JobMingle CRM dashboard with lead totals and pipeline charts, figures redacted",
+      },
+    ],
   },
   {
     slug: "sales-objections-toolkit",
     name: "Sales Objections Toolkit",
     kind: "Conversion copywriting, shipped as a product",
-    blurb:
-      "Small business owners could get a buyer interested, but the conversation often stalled the moment an objection came up. This gives them a simple framework and ready-to-use scripts for the objections they hear most.",
-    highlights: [
-      "A three-step method and scripts for five common sales objections",
-      "Ready-to-use scripts for WhatsApp, Instagram, and Messenger, plus a seven-day follow-up sequence",
-      "Wrote the sales copy and built the checkout flow that sells it end to end",
+    why: [
+      "Small business owners could get a buyer interested, but the conversation often stalled the moment an objection came up, and a stalled conversation quietly costs a sale.",
+      "Most sellers were never taught what to say back. They were improvising in the exact moment when having the right words mattered most.",
     ],
+    approach: [
+      "Wrote a simple three-step method and ready-to-use scripts for the five objections sellers hear most often, across WhatsApp, Instagram, and Messenger.",
+      "Designed and wrote a one-page sales site around a single offer, with checkout handled through Selar.",
+      "Tested the sales copy against a control, and rewrote until it won.",
+    ],
+    results: [
+      "One sales letter beat the control by nine times inside two weeks",
+      "Turned an idea into a complete paid product, from the ebook and scripts to the sales site and checkout",
+      "Priced to be an easy yes, backed by a 30-day refund guarantee",
+    ],
+    insight:
+      "An objection is a question the buyer needs answered before they will say yes. Give sellers that answer in advance, and hesitation stops being the place a sale goes to die.",
     liveUrl: "https://sales-obj.vercel.app",
-    image: {
-      src: "/images/sales-toolkit.webp",
-      alt: "Sales Objections Toolkit landing page hero for Nigerian business owners",
-    },
+    images: [
+      {
+        src: "/images/sales-toolkit.webp",
+        alt: "Sales Objections Toolkit landing page hero for Nigerian business owners",
+      },
+    ],
   },
   {
     slug: "cv-reviewer",
     name: "CV Reviewer",
     kind: "A self-serve lead magnet",
-    blurb:
-      "Free CV reviews were taking up hours of manual work every week for JobMingle's team. This turns the same 15-point checklist into a self-serve tool that scores a CV in minutes, so it works as a lead magnet on its own.",
-    highlights: [
-      "Reviews CVs against the same 15-point checklist used for paying clients",
-      "Gives a score out of 100 with plain-English feedback, no signup required",
-      "Frees the team from manually reviewing every CV submitted for a free audit",
+    why: [
+      "JobMingle was manually reviewing CVs for everyone who wanted a free audit, and every review repeated the same 15-point checklist by hand.",
+      "That meant free reviews were slow to deliver and capped by however much time the team had that week, even though the checklist itself never changed.",
     ],
+    approach: [
+      "Turned the same 15-point checklist used for paying clients into a repeatable, automated review process.",
+      "Built a simple upload flow that accepts PDF, Word, PNG, and JPG, with no signup required.",
+      "Made the tool self-serve and private: no CV is stored, so the audit runs and disappears.",
+    ],
+    results: [
+      "Turned a manual, one-at-a-time review process into a self-serve tool that scores a CV in minutes",
+      "Removed the team from the loop entirely for every free audit requested",
+      "Runs as a lead magnet on its own, with a clear next step into JobMingle's paid CV service",
+    ],
+    insight:
+      "If the team was going to check the same fifteen things on every CV anyway, that process belonged in software, not in someone's afternoon.",
     liveUrl: "https://jobminglecv.vercel.app",
-    image: {
-      src: "/images/cv-reviewer-hero.webp",
-      alt: "CV Reviewer landing page: most CVs get rejected before a human ever reads them",
-    },
+    images: [
+      {
+        src: "/images/cv-reviewer-hero.webp",
+        alt: "CV Reviewer landing page: most CVs get rejected before a human ever reads them",
+      },
+      {
+        src: "/images/cv-reviewer-results.webp",
+        alt: "CV Reviewer scoring Omole's own resume 87 out of 100, Very Strong, with a section-by-section breakdown",
+      },
+    ],
   },
 ];
 

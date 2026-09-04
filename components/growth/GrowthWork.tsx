@@ -1,4 +1,4 @@
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowUpRight, TrendingUp } from "lucide-react";
 import { growthWork } from "@/lib/growth-content";
 import { Reveal } from "@/components/Reveal";
 import { ScrollCard } from "@/components/ScrollCard";
@@ -17,49 +17,106 @@ export function GrowthWork() {
           </h2>
         </Reveal>
 
-        <div className="mt-14 space-y-16">
-          {growthWork.map((project, i) => (
-            <ScrollCard key={project.slug} direction={i % 2 === 0 ? -1 : 1}>
-              <ViewTracker eventType="project_view" resourceId={`growth-${project.slug}`}>
-                <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
-                  <div className={i % 2 === 1 ? "lg:order-2" : ""}>
-                    <BrowserFrame
-                      url={project.liveUrl}
-                      src={project.image.src}
-                      alt={project.image.alt}
-                    />
-                  </div>
-                  <div className={i % 2 === 1 ? "lg:order-1" : ""}>
-                    <p className="eyebrow text-gold-hover">{project.kind}</p>
-                    <h3 className="mt-3 text-2xl font-semibold text-ink">
-                      {project.name}
-                    </h3>
-                    <p className="mt-3 leading-relaxed text-muted">{project.blurb}</p>
-                    <ul className="mt-5 space-y-2.5">
-                      {project.highlights.map((point) => (
-                        <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-muted">
-                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold-hover" aria-hidden="true" />
-                          {point}
-                        </li>
-                      ))}
-                    </ul>
+        <div className="mt-14 space-y-20">
+          {growthWork.map((project, i) => {
+            const [firstImage, secondImage] = project.images;
+            return (
+              <ScrollCard key={project.slug} direction={i % 2 === 0 ? -1 : 1}>
+                <ViewTracker eventType="project_view" resourceId={`growth-${project.slug}`}>
+                  <div className="rounded-2xl border border-line bg-white p-6 shadow-[0_10px_30px_-20px_rgba(11,30,57,0.25)] md:p-10">
+                    <div className="max-w-2xl">
+                      <p className="eyebrow text-gold-hover">{project.kind}</p>
+                      <h3 className="mt-3 text-2xl font-semibold text-ink md:text-3xl">
+                        {project.name}
+                      </h3>
+                    </div>
+
+                    {firstImage ? (
+                      <div className="mt-8">
+                        <BrowserFrame
+                          url={project.liveUrl}
+                          src={firstImage.src}
+                          alt={firstImage.alt}
+                        />
+                      </div>
+                    ) : null}
+
+                    <div className="mt-10 max-w-2xl">
+                      <p className="eyebrow text-gold-hover">The problem</p>
+                      <div className="mt-4 space-y-4">
+                        {project.why.map((paragraph, j) => (
+                          <p key={j} className="leading-relaxed text-muted">
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="mt-10 max-w-2xl">
+                      <p className="eyebrow text-gold-hover">How I approached it</p>
+                      <ol className="mt-5 space-y-4">
+                        {project.approach.map((step, j) => (
+                          <li key={step} className="flex gap-4">
+                            <span className="font-display text-lg font-semibold text-gold">
+                              {String(j + 1).padStart(2, "0")}
+                            </span>
+                            <span className="mt-0.5 leading-relaxed text-muted">
+                              {step}
+                            </span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+
+                    {secondImage ? (
+                      <div className="mt-10">
+                        <BrowserFrame
+                          url={project.liveUrl}
+                          src={secondImage.src}
+                          alt={secondImage.alt}
+                        />
+                      </div>
+                    ) : null}
+
+                    <div className="mt-10 max-w-2xl">
+                      <p className="eyebrow text-gold-hover">The result</p>
+                      <ul className="mt-5 space-y-3">
+                        {project.results.map((point) => (
+                          <li key={point} className="flex gap-3 text-muted">
+                            <TrendingUp
+                              className="mt-1 h-4 w-4 shrink-0 text-gold-hover"
+                              aria-hidden="true"
+                            />
+                            <span className="leading-relaxed">{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="mt-10 max-w-2xl">
+                      <p className="eyebrow text-gold-hover">The thinking</p>
+                      <p className="mt-3 leading-relaxed text-muted">
+                        {project.insight}
+                      </p>
+                    </div>
+
                     <TrackedLink
                       href={project.liveUrl}
                       cta={`growth-${project.slug}-visit`}
                       external
-                      className="group mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-navy underline-offset-4 transition-colors hover:text-gold-hover hover:underline"
+                      className="group mt-10 inline-flex items-center gap-1.5 text-sm font-semibold text-navy underline-offset-4 transition-colors hover:text-gold-hover hover:underline"
                     >
                       Visit the site
-                      <ArrowRight
-                        className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                      <ArrowUpRight
+                        className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                         aria-hidden="true"
                       />
                     </TrackedLink>
                   </div>
-                </div>
-              </ViewTracker>
-            </ScrollCard>
-          ))}
+                </ViewTracker>
+              </ScrollCard>
+            );
+          })}
         </div>
       </div>
     </section>

@@ -188,12 +188,15 @@ knowing why they're there:
   cover. The same pattern applies to the GluFloat shots (raw files `glu1.png`,
   `glu2.png`, replacing an earlier pair), the CV Reviewer shots (raw files
   `cv1.png`, `cv2.png`), and the Designs & Konstruct shots (raw files `GL.png`,
-  `GL1.png`). The raw screenshots this script reads from live loose in the repo
-  root by convention (gitignored via `/Screenshot*.png`, and via `/cv1.png`,
-  `/cv2.png`, `/glu1.png`, `/glu2.png`, `/GL.png`, `/GL1.png` for the newer
-  ones since they don't match that glob), not inside `source-materials/`, even
-  though the redacted output goes to
-  `source-materials/redacted/` before being copied into `public/images/`.
+  `GL1.png`). `cv.png` (a second CV Reviewer shot, see below) also follows this
+  pattern; `fb.png` does not, since it isn't a desktop screenshot to crop — see
+  the **Audience-specific portfolios** section above. The raw screenshots this
+  script reads from live loose in the repo root by convention (gitignored via
+  `/Screenshot*.png`, and via `/cv1.png`, `/cv2.png`, `/glu1.png`, `/glu2.png`,
+  `/GL.png`, `/GL1.png`, `/fb.png`, `/cv.png` for the newer ones since they
+  don't match that glob), not inside `source-materials/`, even though the
+  redacted output goes to `source-materials/redacted/` before being copied
+  into `public/images/`.
 - **There is no problem-first section.** A `Problem`/"Before we start" section
   (pain points before the fix) was tried and explicitly removed as the most
   useless section on the site. Don't re-add one without being asked.
@@ -288,6 +291,35 @@ outreach message and never need to see the rest of the site.
   Toolkit (conversion copywriting), and CV Reviewer (a self-serve lead magnet).
   GluFloat, Powerhouse, WaterBrooks, and Designs & Konstruct are left out on
   purpose — they're product or web-design work, not growth marketing.
+- **`GrowthWork.tsx` renders each project as a real case study, not a blurb and
+  three bullets.** `GrowthProject` (`lib/growth-content.ts`) carries `why`
+  (the problem, 1-2 paragraphs), `approach` (2-3 numbered steps), `results`
+  (evidenced outcomes), `insight` (the closing thought), and an `images` array
+  (1-2 screenshots) — the same shape as `CaseStudy` in `lib/content.ts`, just
+  condensed since four of these live on one scrolling page instead of each
+  getting its own route. Section order inside each card mirrors
+  `CaseStudyDetail.tsx`: kind + name, first screenshot, "The problem," "How I
+  approached it," second screenshot (when there is one), "The result," "The
+  thinking," then a link out to the live site. A shorter version (blurb +
+  highlights, no proof screenshots) was tried first and reads thin next to the
+  main site's actual case studies — don't revert to that shape.
+- **`jobmingle-fb-results.webp`** (raw file `fb.png`) is a Meta Ads Manager
+  screenshot of JobMingle's campaigns, added as the second image on the
+  JobMingle growth-work card. It's the one screenshot that isn't a 2560x1440
+  desktop capture, so it doesn't fit `process-screenshots.py`'s shared
+  `CROP`/`SCALE`/`WATERMARK` pipeline: `NO_CROP` and `RAW_COORDS` (both in that
+  script) skip the crop/watermark step and the displayed-to-real coordinate
+  scaling for it specifically, since it's already a tight app-viewport capture
+  with real pixel coordinates, not a scaled desktop screenshot. Its Budget,
+  Amount spent, and Impressions columns are blurred (real ad spend and reach);
+  Results and Cost per result are left legible because they corroborate
+  numbers already public elsewhere on the site (16x ROAS, leads under $0.50
+  each) rather than reveal anything new.
+- **`cv-reviewer-results.webp`** (raw file `cv.png`) is a second CV Reviewer
+  screenshot, showing the tool scoring Omole's own resume (87/100), added as
+  the second image on the CV Reviewer growth-work card. It's his own CV, not a
+  real user's data, so — like `cv-reviewer-score` — it needed no redaction,
+  just the standard crop and watermark cover.
 - **`/web`** covers the five projects that are actual websites or web apps:
   WaterBrooks Technologies, Designs & Konstruct, the Sales Objections Toolkit,
   GluFloat, and CV Reviewer. JobMingle's own site is deliberately excluded here

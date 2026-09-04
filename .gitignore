@@ -26,6 +26,8 @@ next-env.d.ts
 /glu2.png
 /GL.png
 /GL1.png
+/fb.png
+/cv.png
 
 # Private reference doc, keep out of the public repo
 /COPYWRITING-PLAYBOOK.md

@@ -55,15 +55,36 @@ REGIONS = {
     "cv2.png": [],    # CV Reviewer public demo score card: nothing sensitive
     "GL.png": [],     # Designs & Konstruct public marketing hero: nothing sensitive
     "GL1.png": [],    # Designs & Konstruct public traction/trust section: public numbers kept
+    "cv.png": [],     # CV Reviewer result for Omole's own CV: not a real user's data
 }
+
+# Images that are already a tight app/browser-viewport capture with no OS
+# chrome, taskbar, or watermark to remove — skip CROP and WATERMARK for these.
+NO_CROP = {"fb.png"}
+
+# fb.png's regions are real pixel coordinates (not the shared displayed-space
+# used everywhere else), since it isn't a 2560x1440 desktop capture to scale
+# from. redact() skips the SCALE multiplication for names in this set.
+RAW_COORDS = {"fb.png"}
+
+# JobMingle Meta Ads Manager results: blur Budget / Amount spent / Impressions
+# (reveals real ad spend and reach) across all 4 campaign rows. Results and
+# Cost per result are left legible since they support numbers already public
+# elsewhere on the site (16x ROAS, leads under $0.50 each).
+REGIONS["fb.png"] = [
+    [1805, 470, 2015, 535], [2020, 470, 2240, 535], [2240, 470, 2460, 535],
+    [1805, 540, 2015, 605], [2020, 540, 2240, 605], [2240, 540, 2460, 605],
+    [1805, 608, 2015, 673], [2020, 608, 2240, 673], [2240, 608, 2460, 673],
+    [1805, 676, 2015, 741], [2020, 676, 2240, 741], [2240, 676, 2460, 741],
+]
 
 # "Activate Windows" watermark, present on all four (displayed coords).
 WATERMARK = [1500, 918, 1975, 1040]
 
 
-def redact(region, box):
+def redact(region, box, scale=SCALE):
     """Pixelate then blur a box so no text is legible."""
-    x1, y1, x2, y2 = [int(round(v * SCALE)) for v in box]
+    x1, y1, x2, y2 = [int(round(v * scale)) for v in box]
     x1, y1 = max(0, x1), max(0, y1)
     x2 = min(region.width, x2)
     y2 = min(region.height, y2)
@@ -85,12 +106,14 @@ def main():
             print(f"skip missing {name}")
             continue
         im = Image.open(src).convert("RGB")
+        box_scale = 1 if name in RAW_COORDS else SCALE
         for box in boxes:
-            redact(im, box)
-        redact(im, WATERMARK)
+            redact(im, box, box_scale)
 
-        crop = tuple(int(round(v * SCALE)) for v in CROP)
-        im = im.crop(crop)
+        if name not in NO_CROP:
+            redact(im, WATERMARK)
+            crop = tuple(int(round(v * SCALE)) for v in CROP)
+            im = im.crop(crop)
 
         slug = {
             "Screenshot (280).png": "leads-overview",
@@ -106,6 +129,8 @@ def main():
             "cv2.png": "cv-reviewer-score",
             "GL.png": "designs-konstruct-hero",
             "GL1.png": "designs-konstruct-traction",
+            "cv.png": "cv-reviewer-results",
+            "fb.png": "jobmingle-fb-results",
         }[name]
         im.save(OUT / f"{slug}.webp", "WEBP", quality=88, method=6)
         im.save(OUT / f"{slug}.png", "PNG")  # preview for review
