@@ -537,6 +537,16 @@ export const caseStudies: CaseStudy[] = [
     builtWith: ["Claude Code", "Next.js"],
     tags: ["Built with Claude Code", "Next.js", "Web design"],
     liveUrl: "https://designskonstruct.com",
+    images: [
+      {
+        src: "/images/designs-konstruct-hero.webp",
+        alt: "Designs & Konstruct landing page hero: glass work built to outlast the building around it",
+      },
+      {
+        src: "/images/designs-konstruct-traction.webp",
+        alt: "Designs & Konstruct traction section showing projects completed, success rate, quote response time, and trusted-by clients",
+      },
+    ],
   },
 ];
 

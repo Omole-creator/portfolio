@@ -100,6 +100,10 @@ export const webWork: WebProject[] = [
       "Built with search visibility in mind from the start",
     ],
     liveUrl: "https://designskonstruct.com",
+    image: {
+      src: "/images/designs-konstruct-hero.webp",
+      alt: "Designs & Konstruct landing page hero: glass work built to outlast the building around it",
+    },
   },
   {
     slug: "sales-objections-toolkit",

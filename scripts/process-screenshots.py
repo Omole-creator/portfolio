@@ -53,6 +53,8 @@ REGIONS = {
     "glu2.png": [],   # GluFloat public app screen: nothing sensitive
     "cv1.png": [],    # CV Reviewer public landing hero: nothing sensitive
     "cv2.png": [],    # CV Reviewer public demo score card: nothing sensitive
+    "GL.png": [],     # Designs & Konstruct public marketing hero: nothing sensitive
+    "GL1.png": [],    # Designs & Konstruct public traction/trust section: public numbers kept
 }
 
 # "Activate Windows" watermark, present on all four (displayed coords).
@@ -102,6 +104,8 @@ def main():
             "glu2.png": "glufloat-today",
             "cv1.png": "cv-reviewer-hero",
             "cv2.png": "cv-reviewer-score",
+            "GL.png": "designs-konstruct-hero",
+            "GL1.png": "designs-konstruct-traction",
         }[name]
         im.save(OUT / f"{slug}.webp", "WEBP", quality=88, method=6)
         im.save(OUT / f"{slug}.png", "PNG")  # preview for review

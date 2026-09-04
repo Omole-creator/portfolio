@@ -85,8 +85,11 @@ knowing why they're there:
   projects like the rest, not as a founder's special story next to a list of
   side work. CV Reviewer and Designs & Konstruct were added later, both
   tagged `"Built with Claude Code"` even though their write-ups don't say so
-  explicitly, for consistency with the rest of the list; Designs & Konstruct
-  carries no `images` field since no screenshots were supplied for it.
+  explicitly, for consistency with the rest of the list. Designs & Konstruct
+  went without an `images` field for a while since no screenshots were
+  supplied for it; `designs-konstruct-hero` and `designs-konstruct-traction`
+  (raw files `GL.png`, `GL1.png`, following the same pattern as the GluFloat
+  and CV Reviewer shots) filled that gap later.
   The old JobMingle Leads product is `name: "JobMingle CRM"` now (slug stays
   `jobmingle-leads`, that's just the URL, it doesn't need to match the
   display name) — "Leads" alone read as an unfinished placeholder name, and
@@ -183,12 +186,13 @@ knowing why they're there:
   GluFloat and WaterBrooks shots: no number-redaction regions (it's a public
   marketing page), just the standard browser-chrome crop and watermark
   cover. The same pattern applies to the GluFloat shots (raw files `glu1.png`,
-  `glu2.png`, replacing an earlier pair) and the CV Reviewer shots (raw files
-  `cv1.png`, `cv2.png`). The raw screenshots this script reads from live loose
-  in the repo root by convention (gitignored via `/Screenshot*.png`, and via
-  `/cv1.png`, `/cv2.png`, `/glu1.png`, `/glu2.png` for the newer ones since
-  they don't match that glob), not inside `source-materials/`, even though
-  the redacted output goes to
+  `glu2.png`, replacing an earlier pair), the CV Reviewer shots (raw files
+  `cv1.png`, `cv2.png`), and the Designs & Konstruct shots (raw files `GL.png`,
+  `GL1.png`). The raw screenshots this script reads from live loose in the repo
+  root by convention (gitignored via `/Screenshot*.png`, and via `/cv1.png`,
+  `/cv2.png`, `/glu1.png`, `/glu2.png`, `/GL.png`, `/GL1.png` for the newer
+  ones since they don't match that glob), not inside `source-materials/`, even
+  though the redacted output goes to
   `source-materials/redacted/` before being copied into `public/images/`.
 - **There is no problem-first section.** A `Problem`/"Before we start" section
   (pain points before the fix) was tried and explicitly removed as the most
@@ -299,11 +303,11 @@ outreach message and never need to see the rest of the site.
   failed before me" number was tried and reverted; the approved proof bar
   (`webProof` in `lib/web-content.ts`) is "24 hrs," "5" websites and web apps
   built end to end, and "9x" conversion lift, so don't reintroduce that metric
-  without checking first. `WebWork.tsx` handles the one project with no
-  screenshot (Designs & Konstruct, matching the same gap noted in the
-  case-studies section above): it renders a plain bordered text card instead
-  of a `BrowserFrame` when `project.image` is absent, rather than requiring
-  every entry to have one.
+  without checking first. `WebWork.tsx` renders a plain bordered text card
+  instead of a `BrowserFrame` when a project's `image` is absent, rather than
+  requiring every entry to have one — this was added for Designs & Konstruct
+  before it had a screenshot, and stays as the fallback for any future project
+  added without one.
 - **`COPYWRITING-PLAYBOOK.md`** (repo root) is a direct-response copywriting
   reference. It's written for long-form sales letters, not hero copy, but its
   house-style rules (Section 0.1: no em dashes, plain spoken language, push every
@@ -471,12 +475,14 @@ breakdowns GA4 doesn't give for free.
   2560px image via `SCALE`; when adjusting, re-run and visually verify no number is
   legible. The public sales page (`sales-toolkit`) intentionally keeps its public
   marketing headline. The GluFloat shots (`glufloat-hero`, `glufloat-today`), the
-  WaterBrooks shots (`waterbrooks-hero`, `waterbrooks-traction`), and the CV Reviewer
-  shots (`cv-reviewer-hero`, `cv-reviewer-score`) are public marketing/demo pages too,
-  so they carry no number-redaction regions: the script only crops the browser chrome
-  / taskbar and covers the "Activate Windows" watermark. CV Reviewer's score-card shot
-  shows a sample audit result (85/100), not a real user's data, so it needed no
-  redaction either. WaterBrooks keeps its public traction figures on purpose.
+  WaterBrooks shots (`waterbrooks-hero`, `waterbrooks-traction`), the CV Reviewer
+  shots (`cv-reviewer-hero`, `cv-reviewer-score`), and the Designs & Konstruct shots
+  (`designs-konstruct-hero`, `designs-konstruct-traction`, raw files `GL.png`,
+  `GL1.png`) are public marketing/demo pages too, so they carry no number-redaction
+  regions: the script only crops the browser chrome / taskbar and covers the
+  "Activate Windows" watermark. CV Reviewer's score-card shot shows a sample audit
+  result (85/100), not a real user's data, so it needed no redaction either.
+  WaterBrooks and Designs & Konstruct keep their public traction figures on purpose.
 - **`source-materials/` is gitignored and must stay out of git.** It holds the raw
   unblurred screenshots, the CV, and the original photo. The GitHub repo is public,
   so leaking these would expose the numbers the site redacts. Only the redacted
