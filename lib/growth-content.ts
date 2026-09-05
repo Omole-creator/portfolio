@@ -238,7 +238,7 @@ export const growthProcess = [
 ];
 
 export const growthTechnicalSkills = [
-  "Paid Social Advertising (Meta Ads Manager)",
+  "Paid Social Advertising (Meta Ads Manager, TikTok, Google Ads)",
   "Lead Generation & Funnel Optimization",
   "Conversion Copywriting",
   "Email Marketing (Kit)",
