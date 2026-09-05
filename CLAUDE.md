@@ -9,10 +9,10 @@ Next.js App Router, TypeScript, Tailwind, and Framer Motion. It is a multi-page 
 the home route (`app/page.tsx`) stacks section components, and there are dedicated
 `/work`, `/about`, and `/contact` routes that reuse those same section components.
 There is also a blog at `/blog` whose posts live in Supabase rather than in the repo,
-plus the `/admin` writing desk that manages them. `/growth` and `/web` are two
-separate, self-contained portfolios built for specific pitches rather than the
-general "work with me" story the rest of the site tells — see **Audience-specific
-portfolios** below before touching either.
+plus the `/admin` writing desk that manages them. `/growth`, `/web`, and
+`/marketing` are three separate, self-contained portfolios built for specific
+pitches rather than the general "work with me" story the rest of the site
+tells — see **Audience-specific portfolios** below before touching any of them.
 
 ## Commands
 
@@ -253,39 +253,42 @@ knowing why they're there:
   gaps and are intentionally still not on the site, no source confirmed for
   any of them yet.
 
-## Audience-specific portfolios (`/growth` and `/web`)
+## Audience-specific portfolios (`/growth`, `/web`, and `/marketing`)
 
-Two standalone landing pages, each built for one specific pitch rather than the
+Three standalone landing pages, each built for one specific pitch rather than the
 general "work with me" story the rest of the site tells. `/growth` targets growth
 marketing job applications and gigs. `/web` targets US business owners with an
-outdated or missing website, selling web design and development. Both are complete
-in themselves: someone can land on either one from a job application or a cold
-outreach message and never need to see the rest of the site.
+outdated or missing website, selling web design and development. `/marketing`
+targets creative marketing manager job applications, especially AI-first roles
+that want video, social content, and landing pages, not just growth ops. All
+three are complete in themselves: someone can land on any one of them from a job
+application or a cold outreach message and never need to see the rest of the site.
 
-- **Each has its own content file** (`lib/growth-content.ts`, `lib/web-content.ts`),
-  separate from `lib/content.ts`, and its own component tree
-  (`components/growth/*`, `components/web/*`) that mirrors the shape of the main
-  site's components (Hero, About, Services, Work, Contact, Nav, Footer) but never
-  imports from `lib/content.ts`. This is deliberate duplication, not an oversight:
-  the two pitches need different case studies, different proof, and different
-  framing, and keeping them in separate files means editing one can never
-  accidentally change the others.
-- **Neither page frames Omole as a founder, anywhere.** No "founder," no "my
-  company," no "the business I built," no JobMingle ownership language. This
-  matters because both pages exist to be sent to people evaluating him for
-  someone else's role or project (a growth marketing job, a client's website) —
-  founder framing reads as "busy running his own thing," which undercuts the
-  pitch. Where a case study is his own venture (JobMingle, GluFloat), the copy
-  describes what he *did* ("I ran growth for JobMingle, an edtech platform...",
-  "I designed and built GluFloat...") without claiming ownership of the company.
+- **Each has its own content file** (`lib/growth-content.ts`, `lib/web-content.ts`,
+  `lib/marketing-content.ts`), separate from `lib/content.ts`, and its own component
+  tree (`components/growth/*`, `components/web/*`, `components/marketing/*`) that
+  mirrors the shape of the main site's components (Hero, About, Services, Work,
+  Contact, Nav, Footer) but never imports from `lib/content.ts`. This is
+  deliberate duplication, not an oversight: each pitch needs different case
+  studies, different proof, and different framing, and keeping them in separate
+  files means editing one can never accidentally change the others.
+- **None of the three pages frame Omole as a founder, anywhere.** No "founder," no
+  "my company," no "the business I built," no JobMingle ownership language. This
+  matters because all three exist to be sent to people evaluating him for
+  someone else's role or project (a growth marketing job, a client's website, a
+  creative marketing manager role) — founder framing reads as "busy running his
+  own thing," which undercuts the pitch. Where a case study is his own venture
+  (JobMingle, GluFloat), the copy describes what he *did* ("I ran growth for
+  JobMingle, an edtech platform...", "I designed and built GluFloat...") without
+  claiming ownership of the company.
 - **`components/SiteChrome.tsx`** (mounted in `app/layout.tsx` in place of a
   plain `<Nav /> {children} <Footer />`) branches by `pathname`: `/growth` gets
-  `GrowthNav`/`GrowthFooter`, `/web` gets `WebNav`/`WebFooter`, everything else
-  gets the normal `Nav`/`Footer`. This exists so a visitor following a `/growth`
-  or `/web` link never lands back on the founder-framed main nav or a case study
-  aimed at the other audience — each variant's nav only links to anchors within
-  itself (`#work`, `#services`, `#about`, `#contact`), not to `/work`, `/about`,
-  etc.
+  `GrowthNav`/`GrowthFooter`, `/web` gets `WebNav`/`WebFooter`, `/marketing` gets
+  `MarketingNav`/`MarketingFooter`, everything else gets the normal `Nav`/`Footer`.
+  This exists so a visitor following a `/growth`, `/web`, or `/marketing` link
+  never lands back on the founder-framed main nav or a case study aimed at a
+  different audience — each variant's nav only links to anchors within itself
+  (`#work`, `#services`, `#about`, `#contact`), not to `/work`, `/about`, etc.
 - **`/growth`** covers only the projects that are actually growth marketing:
   JobMingle (community, content, paid ads, framed as growth work rather than
   founding), JobMingle CRM (marketing ops / lead capture), the Sales Objections
@@ -376,15 +379,109 @@ outreach message and never need to see the rest of the site.
   requiring every entry to have one — this was added for Designs & Konstruct
   before it had a screenshot, and stays as the fallback for any future project
   added without one.
+- **`/marketing`** was built by duplicating `/growth` and re-tailoring the
+  content to `Omole Usuangbon - Creative Marketing Manager CV.pdf` (raw file at
+  repo root, gitignored, same treatment as the growth CV), then further
+  calibrated against a specific job posting Omole was applying to: a fully
+  remote "Creative Marketing Manager (AI-First)" role asking for Reels/Shorts
+  and social video, social graphics and campaigns, landing page and UX work,
+  storytelling, AI-powered creative workflows as a must-have, and content
+  repurposing. That posting shaped emphasis and word choice (leading with
+  "AI-first," foregrounding video/social/landing-page services ahead of pure
+  growth-ops language) but the page was not written as a cover letter for that
+  one listing — it stays a general "work with me" creative portfolio, per the
+  same principle `/growth` and `/web` already follow.
+  - `lib/marketing-content.ts` mirrors `growth-content.ts`'s shape
+    (`marketingSite`, `marketingProof`, `marketingAbout`, `marketingServices`,
+    `marketingWork`, `marketingDifference`, `marketingProcess`,
+    `marketingTechnicalSkills`/`marketingSoftSkills`/`marketingCertifications`,
+    `marketingResume`, `marketingTracks`) and `components/marketing/*` mirrors
+    `components/growth/*` component for component, including the hero's
+    gold-highlight-via-`.split()` pattern (`MarketingHero.tsx` splits on
+    "AI-First" the way `GrowthHero.tsx` splits on "Paying Customers").
+  - **`marketingWork` covers five projects, matched one-to-one to the CV's
+    Work Experience and Projects sections**, recast around the creative half
+    of each rather than the growth-ops half: JobMingle (creative agency
+    coordination on UGC/influencer content, conversion copy, community and
+    event promotion — not the paid-ads-mechanics framing `/growth` already
+    owns), Self-Initiated AI Content (the CV's "Personal eBook Promotions"
+    project, expanded — see below), Rectixam (sales copy plus the Facebook ad
+    creative design work, reused from `/growth` with the emphasis shifted
+    toward the creative rather than the copy testing), Belly Fat Product
+    (reused from `/growth` near-verbatim, since it was already framed as ad
+    creative and sales pages), and a new fifth project, Content Repurposing
+    for a Real Estate Client, built from the CopyMachines row of the CV (10
+    videos a month turned into SEO blog posts, weekly webinar/social content
+    that grew a client's following 50%, an affiliate client ranked first on
+    Google for four keywords) — this project doesn't exist on `/growth` or
+    the main site, since content repurposing is a creative-manager-specific
+    story the other pages had no reason to tell.
+  - **JobMingle's images on `/marketing` are deliberately different from every
+    other page that features JobMingle.** The main site and `/growth` both
+    use `jobmingle-hero.webp` (and `/growth` adds the Meta Ads Manager
+    screenshot); `/marketing` instead uses two new images,
+    `jobmingle-instagram-followers.webp` and `jobmingle-linkedin-page.webp`
+    (raw files `soc1.jpg`, `soc2.jpg`, gitignored, converted to webp with
+    `sharp` since they're plain profile screenshots with no browser chrome to
+    crop and nothing sensitive to redact — public follower counts, not
+    revenue), showing JobMingle's Instagram (6,877 followers) and LinkedIn
+    page. This was a deliberate choice, not a placeholder: it evidences the
+    "9,000+ combined social media following... through consistent organic
+    posting" claim, and keeps `/marketing`'s JobMingle card visually distinct
+    from `/growth`'s paid-ads framing rather than reusing the same
+    screenshot a third time.
+  - **The CV's "Personal eBook Promotions" project became `marketingWork`'s
+    `ai-content-projects` entry**, and is the one project on the site with a
+    `media`/`extraMedia` shape richer than the usual one-or-two-screenshot
+    case study, because the raw source material for it was three videos and
+    four external design links, not screenshots. `MarketingProject.media` (0-2
+    items) still works exactly like `GrowthProject.images` — first item
+    renders large under the title, second large after "How I approached it" —
+    but each item is now a tagged union (`type: "image" | "video" | "link"`)
+    instead of always being an image, dispatched in `MarketingWork.tsx`'s
+    `MediaSlot` to `BrowserFrame`, the new `VideoFrame`, or the new
+    `MediaLinkCard` respectively. `MarketingProject.extraMedia` is an optional
+    array of labeled groups (`{ label, items }`) rendered as a grid after the
+    second media slot, before "The result" — used only by this one project,
+    for a "Video production" group (two self-hosted videos, `eve1.mp4` and
+    `eve2.mp4` from the CV's ElevenLabs-plus-stock-footage video, copied to
+    `public/videos/ebook-promo-1.mp4` and `-2.mp4`, with `ffmpeg`-extracted
+    poster frames at `public/images/ebook-promo-1-poster.webp` and `-2`) and a
+    "Design and carousels" group (four external links: the HeyGen avatar
+    video from the CV's other ebook promo, two AI-generated Instagram
+    carousels, and two Canva designs, all rendered as `MediaLinkCard`s since
+    none of them can be embedded — HeyGen's dashboard link and Instagram
+    posts both require the visitor to leave the site either way, the same
+    reasoning `Rectixam`'s Google Doc link already uses on `/growth`).
+    `components/VideoFrame.tsx` and `components/MediaLinkCard.tsx` are new
+    shared components (not under `components/marketing/`) since a self-hosted
+    video player and an external-link card are generic enough to reuse
+    elsewhere later, unlike the rest of `/marketing`'s components.
+  - **`marketingTechnicalSkills`, `marketingSoftSkills`, and
+    `marketingCertifications`** are pulled from
+    `Omole Usuangbon - Creative Marketing Manager CV.pdf`'s TECHNICAL SKILLS,
+    SOFT SKILLS, and CERTIFICATIONS sections directly (the soft skills and
+    certifications lists are identical to `/growth`'s, since that CV repeats
+    them verbatim; technical skills differ, leading with "Creative Campaign
+    Development" and "AI-Assisted Creative Workflows (Claude Code,
+    ElevenLabs, HeyGen)" rather than `/growth`'s paid-acquisition-first
+    ordering). `marketingResume` links to
+    `public/omole-usuangbon-creative-marketing-cv.pdf`, a clean copy of the
+    CV committed to `public/` the same way the growth CV is, downloadable
+    only from `/marketing`'s `MarketingCredentials.tsx`, on purpose, matching
+    the growth page's "CV download exists on `/growth` only" rule — don't add
+    it elsewhere without being asked.
 - **`COPYWRITING-PLAYBOOK.md`** (repo root) is a direct-response copywriting
   reference. It's written for long-form sales letters, not hero copy, but its
   house-style rules (Section 0.1: no em dashes, plain spoken language, push every
   line to the truth, cut anything that doesn't answer "so what?") and its
   specificity rule (Section 8: replace vague claims with concrete, oddly specific
-  numbers, since round numbers read as made up) are exactly what `/growth` and
-  `/web`'s hero and proof-bar copy should be checked against. It's why both
-  proof bars use "462" (leads from one Meta Ads campaign) rather than
-  something vaguer.
+  numbers, since round numbers read as made up) are exactly what `/growth`,
+  `/web`, and `/marketing`'s hero and proof-bar copy should be checked against.
+  It's why `/growth` and `/web`'s proof bars use "462" (leads from one Meta Ads
+  campaign) rather than something vaguer, and why `/marketing`'s uses "10"
+  (videos repurposed into content every month) and "50%" (follower growth
+  driven for a client) instead of a rounder, vaguer claim.
 - **`WebHero.tsx`'s single-word gold highlight ("Customers") carries
   `whitespace-nowrap`** so the browser can never split it mid-word across two
   lines; it just moves to the next line whole if it doesn't fit. `GrowthHero.tsx`
@@ -657,6 +754,15 @@ breakdowns GA4 doesn't give for free.
   pipeline numbers and are shown unredacted anyway, at Omole's explicit
   request. See **Audience-specific portfolios** above for the full story on
   why and where each is used.
+- `jobmingle-instagram-followers` and `jobmingle-linkedin-page` (raw files
+  `soc1.jpg`, `soc2.jpg`, `/marketing` only) are plain public-profile
+  screenshots, not `process-screenshots.py` output — there's no browser
+  chrome or taskbar to crop and no sensitive figure to blur, just a public
+  follower count, so they were converted straight to WebP with `sharp` and
+  used as-is. `ebook-promo-1-poster`/`-2-poster` (video poster frames for
+  `/marketing`'s self-initiated AI content project, extracted from `eve1.mp4`/
+  `eve2.mp4` with `ffmpeg`) are the same case: personal, self-made promo
+  content, nothing to redact.
 - **`source-materials/` is gitignored and must stay out of git.** It holds the raw
   unblurred screenshots, the CV, and the original photo. The GitHub repo is public,
   so leaking these would expose the numbers the site redacts. Only the redacted
