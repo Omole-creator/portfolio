@@ -193,8 +193,9 @@ knowing why they're there:
   the **Audience-specific portfolios** section above. The raw screenshots this
   script reads from live loose in the repo root by convention (gitignored via
   `/Screenshot*.png`, and via `/cv1.png`, `/cv2.png`, `/glu1.png`, `/glu2.png`,
-  `/GL.png`, `/GL1.png`, `/fb.png`, `/cv.png` for the newer ones since they
-  don't match that glob), not inside `source-materials/`, even though the
+  `/GL.png`, `/GL1.png`, `/fb.png`, `/cv.png`, `/crm.png`, `/crm1.png`,
+  `/pef1.png`, `/pef2.png` for the newer ones since they don't match that
+  glob), not inside `source-materials/`, even though the
   redacted output goes to `source-materials/redacted/` before being copied
   into `public/images/`.
 - **There is no problem-first section.** A `Problem`/"Before we start" section
@@ -285,12 +286,44 @@ outreach message and never need to see the rest of the site.
   aimed at the other audience — each variant's nav only links to anchors within
   itself (`#work`, `#services`, `#about`, `#contact`), not to `/work`, `/about`,
   etc.
-- **`/growth`** covers only the four projects that are actually growth marketing:
+- **`/growth`** covers only the projects that are actually growth marketing:
   JobMingle (community, content, paid ads, framed as growth work rather than
   founding), JobMingle CRM (marketing ops / lead capture), the Sales Objections
-  Toolkit (conversion copywriting), and CV Reviewer (a self-serve lead magnet).
-  GluFloat, Powerhouse, WaterBrooks, and Designs & Konstruct are left out on
-  purpose — they're product or web-design work, not growth marketing.
+  Toolkit (conversion copywriting), CV Reviewer (a self-serve lead magnet),
+  Belly Fat Product (self-funded D2C performance marketing, from the CV's
+  "Performance Marketer (Self-Employed) | Direct-to-Consumer Health Products"
+  role), and Rectixam (conversion copywriting for a herbal ulcer supplement,
+  from the CV's Rectixam Herbal Company role). GluFloat, Powerhouse,
+  WaterBrooks, and Designs & Konstruct are left out on purpose — they're
+  product or web-design work, not growth marketing.
+- **Belly Fat Product** and **Rectixam** are the two newest `growthWork`
+  entries and both deliberately omit `liveUrl` (now optional on
+  `GrowthProject`) rather than link to a guessed or unconfirmed URL:
+  Belly Fat Product was a self-funded ad campaign with no public site to
+  send visitors to, and no Rectixam sales-page URL was ever confirmed either.
+  `BrowserFrame`'s `url` prop and `GrowthWork.tsx`'s "Visit the site" link are
+  both conditional on `project.liveUrl` being present, so a project can skip
+  the URL pill and the outbound link entirely instead of showing something
+  invented. Belly Fat Product's two images (`belly-fat-orders.webp`,
+  `belly-fat-orders-2.webp`, raw files `pef1.png`, `pef2.png`) are Gmail
+  screenshots of real order-confirmation emails ("Meltdown - <customer
+  name> - ... out of my location..."), used as proof of the pay-on-delivery
+  order operations the CV bullet describes. Unlike every other screenshot on
+  the site, what needed redacting here was customer **names**, not business
+  numbers: `process-screenshots.py`'s `REGIONS["pef1.png"]` /
+  `REGIONS["pef2.png"]` blur only each customer's name span (measured by
+  profiling actual glyph pixel darkness per row and per word, not eyeballed —
+  eyeballed boxes landed on the bottom half of the text and left it fully
+  readable), leaving "Meltdown -", the "Inbox" label, and the rest of the
+  snippet ("out of my location in the next 24-48 hours...") legible. Both
+  files are real desktop screenshots with full browser chrome and the
+  Windows taskbar, so they go through the standard `CROP`/`WATERMARK` step
+  like any other screenshot; only their region coordinates are in
+  `RAW_COORDS` (measured directly in real 2560x1440 pixels via a grid
+  overlay, unlike the shared displayed-2000px convention everything else in
+  `REGIONS` uses). Rectixam has no screenshots (`images: []`) since none were
+  supplied — `GrowthWork.tsx` already renders fine with an empty array, no
+  fallback card needed the way `WebWork.tsx` has one.
 - **`GrowthWork.tsx` renders each project as a real case study, not a blurb and
   three bullets.** `GrowthProject` (`lib/growth-content.ts`) carries `why`
   (the problem, 1-2 paragraphs), `approach` (2-3 numbered steps), `results`
@@ -313,7 +346,7 @@ outreach message and never need to see the rest of the site.
   with real pixel coordinates, not a scaled desktop screenshot. Its Budget,
   Amount spent, and Impressions columns are blurred (real ad spend and reach);
   Results and Cost per result are left legible because they corroborate
-  numbers already public elsewhere on the site (16x ROAS, leads under $0.50
+  numbers already public elsewhere on the site (16x ROAS, leads under $1
   each) rather than reveal anything new.
 - **`cv-reviewer-results.webp`** (raw file `cv.png`) is a second CV Reviewer
   screenshot, showing the tool scoring Omole's own resume (87/100), added as

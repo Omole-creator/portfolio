@@ -62,6 +62,32 @@ REGIONS = {
     "crm.png": [],    # JobMingle CRM overview, a fresh/empty cohort: nothing sensitive, shown as-is at Omole's request
     "crm1.png": [],   # JobMingle CRM leads-by-source and pipeline charts: shown as-is at Omole's request
     "fb.png": [],     # JobMingle Meta Ads Manager results: shown unredacted at Omole's request
+    "pef1.png": [     # Gmail order-notification emails for the belly fat product: blur customer names only
+        # Boxes measured by profiling actual glyph pixel darkness per row/word
+        # (not eyeballed), so each covers exactly "Meltdown - <NAME>" 's name span.
+        [925, 542, 1335, 583],   # Chinonso thankGod ThankGod
+        [925, 622, 1092, 663],   # Uche Vivian
+        [925, 702, 1214, 743],   # Celine Clare Gbaruko
+        [925, 782, 1064, 823],   # Zoe Dami
+        [925, 862, 1121, 903],   # KC Chioma kc
+        [925, 942, 1125, 983],   # Kingsley Udoh
+        [925, 1022, 1115, 1063], # Joseph Glory
+        [925, 1102, 1100, 1143], # Victor Itomo
+        [925, 1182, 1086, 1223], # Ezekiel Mrs
+        [925, 1262, 1153, 1303], # justice Ihenacho
+    ],
+    "pef2.png": [     # Gmail order-notification emails, continued: blur customer names only
+        [925, 565, 1137, 606],   # Komolafe Toyin
+        [925, 645, 1123, 686],   # Solomon Akor
+        [925, 725, 1162, 766],   # Roseline Akpaoje
+        [925, 805, 1156, 846],   # Akinmade Bunmi
+        [925, 885, 1234, 926],   # Sunday Andrew Opoke
+        [925, 965, 1151, 1006],  # Echiejile Destiny
+        [925, 1045, 1311, 1086], # Florence George Unachukwu
+        [925, 1125, 1314, 1166], # Martin Chukwuemeka Udensi
+        [925, 1205, 1136, 1246], # Gilbert Nworah
+        [925, 1285, 1072, 1326], # Julie OGU
+    ],
 }
 
 # Images that are already a tight app/browser-viewport capture with no OS
@@ -71,8 +97,11 @@ NO_CROP = {"fb.png"}
 # fb.png's regions, if any are ever needed again, would be real pixel
 # coordinates (not the shared displayed-space used everywhere else), since
 # it isn't a 2560x1440 desktop capture to scale from. redact() skips the
-# SCALE multiplication for names in this set.
-RAW_COORDS = {"fb.png"}
+# SCALE multiplication for names in this set. pef1.png/pef2.png's name-blur
+# regions were also measured directly in real 2560x1440 pixels (via a grid
+# overlay), not the displayed 2000-wide space, so they belong here too, even
+# though they DO still go through the standard CROP/WATERMARK step below.
+RAW_COORDS = {"fb.png", "pef1.png", "pef2.png"}
 
 # "Activate Windows" watermark, present on all four (displayed coords).
 WATERMARK = [1500, 918, 1975, 1040]
@@ -129,6 +158,8 @@ def main():
             "fb.png": "jobmingle-fb-results",
             "crm.png": "jobmingle-crm-overview",
             "crm1.png": "jobmingle-crm-pipeline",
+            "pef1.png": "belly-fat-orders",
+            "pef2.png": "belly-fat-orders-2",
         }[name]
         im.save(OUT / f"{slug}.webp", "WEBP", quality=88, method=6)
         im.save(OUT / f"{slug}.png", "PNG")  # preview for review

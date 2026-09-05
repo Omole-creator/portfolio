@@ -5,11 +5,11 @@ export function BrowserFrame({
   src,
   alt,
 }: {
-  url: string;
+  url?: string;
   src: string;
   alt: string;
 }) {
-  const shownUrl = url.replace(/^https?:\/\//, "");
+  const shownUrl = url?.replace(/^https?:\/\//, "");
 
   return (
     <figure className="group/frame overflow-hidden rounded-xl border border-line bg-white shadow-[0_20px_50px_-24px_rgba(11,30,57,0.45)] transition-[transform,box-shadow] duration-500 hover:-translate-y-2 hover:shadow-[0_36px_70px_-30px_rgba(11,30,57,0.55)]">
@@ -19,13 +19,15 @@ export function BrowserFrame({
           <span className="h-3 w-3 rounded-full bg-[#e7bd52]" />
           <span className="h-3 w-3 rounded-full bg-[#66c56b]" />
         </div>
-        <div className="flex min-w-0 items-center gap-2 rounded-md border border-line bg-white px-3 py-1 text-xs text-muted">
-          <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#66c56b]/70" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#66c56b]" />
-          </span>
-          <span className="truncate">{shownUrl}</span>
-        </div>
+        {shownUrl ? (
+          <div className="flex min-w-0 items-center gap-2 rounded-md border border-line bg-white px-3 py-1 text-xs text-muted">
+            <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#66c56b]/70" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#66c56b]" />
+            </span>
+            <span className="truncate">{shownUrl}</span>
+          </div>
+        ) : null}
       </div>
       <Image
         src={src}

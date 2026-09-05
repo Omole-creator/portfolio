@@ -192,7 +192,7 @@ export const caseStudies: CaseStudy[] = [
     results: [
       "Grew a community past 10,000 members that brought in most of our customers",
       "Launched our first live cohort in April 2026 at a 16x return on ad spend",
-      "Enrolled 22 students into tech training programs, with leads under $0.50 each",
+      "Enrolled 22 students into tech training programs, with leads under $1 each",
       "Served over 200 clients through our career services line",
     ],
     insight: "I had made the switch myself. What beginners and career switchers needed was a clearer path, practical skills, and people willing to stick around once things got hard. Community made that journey less lonely, while giving people somewhere to learn, ask questions, and find opportunities together.",

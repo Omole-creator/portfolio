@@ -30,7 +30,7 @@ export const growthNav = [
 export const growthProof = [
   { value: "16x", label: "return on ad spend" },
   { value: "10,000+", label: "community members grown" },
-  { value: "<$0.50", label: "cost per lead" },
+  { value: "<$1", label: "cost per lead" },
   { value: "462", label: "leads from a single Meta Ads campaign" },
 ];
 
@@ -68,7 +68,7 @@ export type GrowthProject = {
   approach: string[];
   results: string[];
   insight: string;
-  liveUrl: string;
+  liveUrl?: string;
   images: { src: string; alt: string }[];
 };
 
@@ -87,7 +87,7 @@ export const growthWork: GrowthProject[] = [
       "Kept targeting and creative tight enough to turn a single campaign into 462 leads and a 16x return on ad spend.",
     ],
     results: [
-      "Generated 462 leads at under $0.50 each from a single Meta Ads campaign",
+      "Generated 462 leads at under $1 each from a single Meta Ads campaign",
       "Hit a 16x return on ad spend on the first live cohort launch",
       "Grew a community past 10,000 members across WhatsApp and Telegram that brought in most new customers",
     ],
@@ -196,6 +196,59 @@ export const growthWork: GrowthProject[] = [
         alt: "CV Reviewer scoring Omole's own resume 87 out of 100, Very Strong, with a section-by-section breakdown",
       },
     ],
+  },
+  {
+    slug: "belly-fat-product",
+    name: "Belly Fat Product",
+    kind: "Performance marketing for a self-funded D2C health product",
+    why: [
+      "Belly fat is one of the most searched, most anxious health problems people try to solve, which also makes it one of the most crowded and skeptical markets to sell into on Meta. Generic claims get scrolled past, and buyers have already seen enough bad ads to distrust anything vague.",
+      "I ran this campaign self-funded, on my own ₦10,000 daily ad budget, over nine months. That meant every naira had to earn its way back through an ad and a sales page I wrote myself, with no employer or client absorbing the loss if the offer did not convert.",
+    ],
+    approach: [
+      "Wrote every ad, offer, and sales page myself, drawing on a clinical pharmacy background to turn the product's health claims into copy that read as credible rather than hype.",
+      "Ran continuous creative testing and audience targeting on a fixed daily budget, cutting underperforming ads fast since there was no room to waste spend.",
+      "Managed pay-on-delivery order operations end to end, from the ad click through to a confirmed order, including verifying each customer's delivery location before dispatch.",
+    ],
+    results: [
+      "Generated 194 orders over nine months on a ₦10,000 daily ad budget",
+      "Ran the full funnel solo: creative, targeting, copy, and pay-on-delivery order operations",
+      "Verified delivery details for every order before dispatch, protecting margin on a self-funded budget",
+    ],
+    insight:
+      "When it is your own budget on the line, every ad either earns its spend back or it gets cut, there is no campaign report to soften that. Nine months of that discipline is what 194 orders on ₦10,000 a day actually proves.",
+    images: [
+      {
+        src: "/images/belly-fat-orders.webp",
+        alt: "Gmail inbox showing order-confirmation emails for the belly fat product, each customer asked to confirm their delivery location",
+      },
+      {
+        src: "/images/belly-fat-orders-2.webp",
+        alt: "More order-confirmation emails for the belly fat product, further down the inbox",
+      },
+    ],
+  },
+  {
+    slug: "rectixam",
+    name: "Rectixam",
+    kind: "Conversion copywriting for a herbal ulcer supplement",
+    why: [
+      "Rectixam Herbal Company was already running Meta ads for its ulcer supplement, but the sales copy behind them was not converting. The owner was paying for clicks that landed on a page that could not close the sale, which meant the ad spend itself was the thing losing money, not the traffic.",
+      "He needed a new sales letter that could beat what he already had running, not just a rewrite, but copy proven to outperform the control he was already paying to send traffic to.",
+    ],
+    approach: [
+      "Rewrote the sales letter from the offer up, testing the new version directly against the one already live rather than replacing it on faith.",
+      "Designed new Facebook ad creatives to run alongside the new copy, aimed at the same audience the old creatives were losing.",
+      "Wrote a second sales letter for the company's other product campaign, carrying over what had already proven to convert.",
+    ],
+    results: [
+      "New sales copy outperformed the existing control by 9x within two weeks",
+      "New ad creatives lifted ad clicks by 25%",
+      "Delivered two high-converting sales letters across two separate product campaigns",
+    ],
+    insight:
+      "A control tells you what already works, so beating one is not about writing good copy in a vacuum, it is proving your version pulls harder than what is already live. That is what actually convinced the owner to stop paying for the version that could not close.",
+    images: [],
   },
 ];
 
