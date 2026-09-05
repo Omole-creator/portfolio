@@ -107,7 +107,7 @@ export function GrowthWork() {
                         external
                         className="group mt-10 inline-flex items-center gap-1.5 text-sm font-semibold text-navy underline-offset-4 transition-colors hover:text-gold-hover hover:underline"
                       >
-                        Visit the site
+                        {project.linkLabel ?? "Visit the site"}
                         <ArrowUpRight
                           className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                           aria-hidden="true"

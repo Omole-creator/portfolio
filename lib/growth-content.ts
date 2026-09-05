@@ -69,6 +69,7 @@ export type GrowthProject = {
   results: string[];
   insight: string;
   liveUrl?: string;
+  linkLabel?: string;
   images: { src: string; alt: string }[];
 };
 
@@ -239,15 +240,18 @@ export const growthWork: GrowthProject[] = [
     approach: [
       "Rewrote the sales letter from the offer up, testing the new version directly against the one already live rather than replacing it on faith.",
       "Designed new Facebook ad creatives to run alongside the new copy, aimed at the same audience the old creatives were losing.",
-      "Wrote a second sales letter for the company's other product campaign, carrying over what had already proven to convert.",
+      "Wrote a second sales letter for the same product from a different angle, to see whether a fresh angle could pull even harder than the version already winning.",
     ],
     results: [
       "New sales copy outperformed the existing control by 9x within two weeks",
       "New ad creatives lifted ad clicks by 25%",
-      "Delivered two high-converting sales letters across two separate product campaigns",
+      "Delivered two high-converting sales letters for the same product, each built around a different angle",
     ],
     insight:
       "A control tells you what already works, so beating one is not about writing good copy in a vacuum, it is proving your version pulls harder than what is already live. That is what actually convinced the owner to stop paying for the version that could not close.",
+    liveUrl:
+      "https://docs.google.com/document/d/16de8bw3SQ9L0CgvZ3_0PVAPjJgAb7rs5/edit?usp=drive_link",
+    linkLabel: "Visit the copy",
     images: [],
   },
 ];
