@@ -11,7 +11,7 @@ export const marketingSite = {
   path: "/marketing",
   metaDescription:
     "Omole Usuangbon builds creative marketing campaigns with AI-first tools: ad creative, video, sales copy, and the landing pages they run on.",
-  headline: "Creative Campaigns That Return 16x On Ad Spend",
+  headline: "I Turn Strangers Into Paying Customers",
   subhead:
     "I write the copy, design the creative, and produce the video myself, using AI-first tools like Claude Code, ElevenLabs, and HeyGen, so a campaign moves from idea to launch without waiting on a bigger team.",
   contact: {
@@ -159,22 +159,21 @@ export const marketingWork: MarketingProject[] = [
   {
     slug: "personal-ebook-promotions",
     name: "Personal eBook Promotions",
-    kind: "A one-off Facebook ad campaign for two self-published ebooks",
+    kind: "Promotional videos for two self-published ebooks, made solo with AI tools",
     why: [
-      "This was a small side project, not an ongoing content push and not tied to any social media page. I had two self-published ebooks to sell, and the plan was a single Facebook ad campaign running straight to a sales page.",
-      "I wanted to see how much of a direct-response video ad AI tools could carry on their own.",
+      "This was a small side project, not an ongoing content push and not tied to any social media page. I had two self-published ebooks to promote, and wanted to see how far AI video tools could carry that on their own.",
+      "Neither ebook had the budget for a video team, so the only way to get a finished promotional video was to build one myself.",
     ],
     approach: [
-      "Used HeyGen to produce a finished avatar video for one ebook. It came out ready to run as is, with nothing left to edit.",
-      "For the other ebook, wrote the script, recorded the voiceover in ElevenLabs, and cut it over stock footage in CapCut to build two short video ads.",
-      "Ran all three as Facebook ads pointed at the sales page, not as posts on a page or profile.",
+      "Used HeyGen to produce a finished avatar video for one ebook. It came out ready to use as is, with nothing left to edit.",
+      "For the other ebook, wrote the script, recorded the voiceover in ElevenLabs, and cut it over stock video and photos in CapCut to build two short promotional videos.",
     ],
     results: [
-      "Three finished video ads, made without hiring anyone else to write, voice, or cut them",
-      "Ran as a single, one-off Facebook ad campaign, the only real cost being the ad spend itself",
+      "Three finished promotional videos, produced solo from script to final cut",
+      "Built with AI tools alone (HeyGen, ElevenLabs, CapCut), with no outside help hired to write, voice, or edit any of it",
     ],
     insight:
-      "Two ebooks and a small ad budget didn't need a bigger team behind them. HeyGen and ElevenLabs covered what that would have cost.",
+      "Two ebooks and a small budget didn't need a bigger team behind them. HeyGen and ElevenLabs covered what that would have cost.",
     media: [],
     extraMedia: [
       {
@@ -184,13 +183,13 @@ export const marketingWork: MarketingProject[] = [
             type: "video",
             src: "/videos/ebook-promo-1.mp4",
             poster: "/images/ebook-promo-1-poster.webp",
-            alt: "Short-form promotional video for a self-published ebook, built with ElevenLabs voiceover and stock footage",
+            alt: "Short-form promotional video for a self-published ebook, built with ElevenLabs voiceover over stock video and photos",
           },
           {
             type: "video",
             src: "/videos/ebook-promo-2.mp4",
             poster: "/images/ebook-promo-2-poster.webp",
-            alt: "Second short-form promotional video for a self-published ebook, built with ElevenLabs voiceover and stock footage",
+            alt: "Second short-form promotional video for a self-published ebook, built with ElevenLabs voiceover over stock video and photos",
           },
           {
             type: "link",
@@ -267,20 +266,20 @@ export const marketingWork: MarketingProject[] = [
     kind: "Video-to-blog content repurposing, remote for a US client",
     why: [
       "A real estate client was producing videos on a steady schedule, but almost none of it did anything once it was posted. It never turned into a blog post, and it never showed up again anywhere Google could rank it.",
-      "A separate affiliate client had a different problem. Searches for the client's own name were turning up negative content ahead of anything positive, which is a bad first impression for anyone looking them up.",
+      "A separate affiliate client had a different problem. Searches for the client's own name were turning up negative reviews from competitors ahead of anything positive, which is a bad first impression for anyone looking them up.",
     ],
     approach: [
       "Repurposed 10 videos a month into SEO-optimized blog posts, so each recording kept working long after it aired instead of disappearing.",
       "Wrote weekly webinar promotion emails and brand-awareness social content on a fixed schedule to keep the audience growing between videos.",
-      "Wrote and optimized new content for the affiliate client targeting their own name as the keywords, aimed at outranking the negative results sitting above it.",
+      "Wrote and optimized new content for the affiliate client targeting their own name as the keywords, aimed at outranking the competitors' negative reviews sitting above it.",
     ],
     results: [
       "Turned 10 monthly videos into SEO blog content every month, on an ongoing basis",
       "Grew the real estate client's following through consistent webinar and social content",
-      "Ranked the affiliate client first on Google for four name-based keywords within two months, pushing the negative content further down the page",
+      "Ranked the affiliate client first on Google for four name-based keywords within two months, pushing the competitors' negative reviews further down the page",
     ],
     insight:
-      "A video that runs once and disappears only works once. Turning it into a blog post is what lets it keep showing up in search months later. Outranking the affiliate client's negative result worked the same way: more good content beat it down the page instead of trying to get it taken down.",
+      "A video that runs once and disappears only works once. Turning it into a blog post is what lets it keep showing up in search months later. Outranking the competitors' negative reviews worked the same way: more good content beat them down the page instead of trying to get them taken down.",
     liveUrl: "https://drive.google.com/drive/folders/1KA8b6Ml80ZL0Blo-p0CnrwjhNrETKCwK",
     linkLabel: "Visit the folder",
     media: [],

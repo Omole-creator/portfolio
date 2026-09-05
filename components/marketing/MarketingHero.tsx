@@ -21,7 +21,7 @@ const item: Variants = {
 };
 
 export function MarketingHero() {
-  const [main, accent] = marketingSite.headline.split("16x");
+  const [main, accent] = marketingSite.headline.split("Paying Customers");
   const reduce = useReducedMotion();
   const start = reduce ? "visible" : "hidden";
 
@@ -54,7 +54,7 @@ export function MarketingHero() {
             className="text-[1.7rem] font-semibold leading-[1.15] tracking-tight sm:text-5xl sm:leading-[1.06] md:text-6xl lg:text-[4.25rem]"
           >
             {main}
-            <span className="text-gold">16x</span>
+            <span className="text-gold">Paying Customers</span>
             {accent}
           </motion.h1>
 
