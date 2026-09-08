@@ -1,7 +1,11 @@
 import type { JobTrack, NormalizedJob, QaPair } from "./types";
 
+// gemini-2.0-flash was retired (confirmed live: the API now 404s and names
+// gemini-3.6-flash as the replacement) - if this 404s again in the future,
+// check https://generativelanguage.googleapis.com/v1beta/models?key=$GEMINI_API_KEY
+// for the current free-tier flash model name rather than guessing.
 const GEMINI_ENDPOINT =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent";
 
 type DraftInput = {
   job: NormalizedJob;
