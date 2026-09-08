@@ -791,23 +791,29 @@ application **email**, and only after you've reviewed the draft and confirmed.
   called out as a poor answer to "there are 100,000+ companies in these countries,"
   and it's correct: there is no free API to search every company on Greenhouse or
   Lever, those platforms don't publish a directory, so one-at-a-time additions never
-  scale.** `lib/jobs/fetchers/remoteok.ts`, `remotive.ts`, `jobicy.ts`, and
-  `arbeitnow.ts` hit RemoteOK, Remotive, Jobicy, and Arbeitnow's free, public, no-auth
-  APIs, each already covering thousands of companies' remote postings (RemoteOK needs
-  a real `User-Agent` header or it 403s; the rest need nothing). These were a
-  deliberate exception to "must not come from a job board" from the very first
+  scale.** `lib/jobs/fetchers/remoteok.ts`, `remotive.ts`, `jobicy.ts`, `arbeitnow.ts`,
+  and `himalayas.ts` hit RemoteOK, Remotive, Jobicy, Arbeitnow, and Himalayas' free,
+  public, no-auth APIs, each already covering thousands of companies' remote postings
+  (RemoteOK needs a real `User-Agent` header or it 403s; the rest need nothing). These
+  were a deliberate exception to "must not come from a job board" from the very first
   request in this feature's history — they're aggregators, not individual companies'
   own systems, which is exactly the category that instruction ruled out, so this
   tradeoff was surfaced explicitly and confirmed before building it, not assumed.
-  Every job from these four still passes through the exact same `classify.ts`
-  pipeline as everything else — no separate, looser filter. For these four,
-  `job_sources.board_token` holds a category/tag filter (e.g. `"marketing"`) instead
-  of a per-company identifier, since there's no single company to scope to; `ats:
-  "remoteok" | "remotive" | "jobicy" | "arbeitnow"` are excluded from `detect.ts`'s
+  Every job from these five still passes through the exact same `classify.ts`
+  pipeline as everything else — no separate, looser filter. **Only Himalayas'
+  keyword search (`q` param) was confirmed live to actually narrow results —
+  Remotive's `category` and Jobicy's `tag` params were tested with wildly different
+  values (`marketing` vs. a nonsense string, `marketing` vs. `engineering`) and
+  returned the identical unfiltered set every time, so those two just fetch their
+  general feed and lean entirely on `classify.ts`'s own keyword matching.** For all
+  five, `job_sources.board_token` holds a category/tag/search-query value (e.g.
+  `"marketing"` or, for Himalayas, `"growth marketing"`) instead of a per-company
+  identifier, since there's no single company to scope to; `ats: "remoteok" |
+  "remotive" | "jobicy" | "arbeitnow" | "himalayas"` are excluded from `detect.ts`'s
   `RealAts` type (token-probing and URL-parsing don't apply to them) and from the
   primary "paste a URL" flow in `AddSourceForm.tsx` — they're added through the
-  manual-override panel, where the token field's label switches to "Category/tag
-  filter" for these four. Fixed one real bug found while building this: the old
+  manual-override panel, where the token field's label switches to "Category/tag or
+  search query" for these five. Fixed one real bug found while building this: the old
   `remoteNamesOtherCountry` only excluded a scoped location when the literal word
   "remote" appeared in `location_text` (true for Greenhouse-style `"Remote, Italy"`),
   which missed cases where remoteness comes from a separate structured flag and the
@@ -820,6 +826,31 @@ application **email**, and only after you've reviewed the draft and confirmed.
   bare `worldwide`/`anywhere`/`global` value) is a separate, earlier check in
   `checkEligibility` for aggregator fields that put that verdict directly in the
   location field rather than in prose.
+- **`app/api/jobs/sync/route.ts` inserts one row at a time with a plain `.insert()`,
+  never `.upsert(rows, { ignoreDuplicates: true })` — that was a real, previously
+  undetected bug, not a style choice.** `ignoreDuplicates: true` makes
+  `@supabase/postgrest-js` send `Prefer: resolution=ignore-duplicates` (`INSERT ...
+  ON CONFLICT DO NOTHING`), and Postgres's conflict-checking machinery for that needs
+  to read the potentially-conflicting existing row — which under RLS means evaluating
+  a SELECT policy, and `anon` deliberately has no SELECT policy on `job_matches` (it
+  holds cover letters and application emails, never meant to be publicly readable via
+  the anon key). The result was every insert attempt failing with `"new row violates
+  row-level security policy"` — including for genuinely new rows with no real
+  conflict at all — silently zeroing out every sync until aggregator sources finally
+  produced enough real matches to expose it (every company-specific source added
+  before that point happened to have zero matching postings, so the insert path had
+  never actually been exercised). Confirmed live with the anon key directly against
+  PostgREST: identical `Prefer: resolution=ignore-duplicates` reproduces the RLS
+  error every time, a plain `insert()` of a genuine duplicate instead returns a
+  normal, catchable `23505` unique-violation, and a plain `insert()` of a new row
+  succeeds outright. The fix keeps the RLS design intact (still no anon SELECT
+  policy) — it inserts each classified row individually and treats a `23505` error
+  as "already tracked, skip," logging anything else.
+- **`/admin/jobs`'s match list is grouped into a `<details>` per day** (`groupByDay`
+  in `page.tsx`), only the most recent day open by default, so the page stays a
+  bounded height as matches accumulate over weeks instead of growing without limit —
+  added once daily volume moved from a handful of matches to several dozen once the
+  aggregator sources were producing real results.
 - **Eligibility from Nigeria/Africa is a hard gate, not a nice-to-have — this was a
   correction, not the original design.** The first version of `classify.ts` only
   checked whether a job's location text mentioned "US" or "Australia," which had a

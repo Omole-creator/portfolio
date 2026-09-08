@@ -10,6 +10,30 @@ type Props = {
   searchParams: Promise<{ all?: string }>;
 };
 
+// Grouped into a <details> per day so the page stays a fixed height as
+// matches accumulate over weeks, instead of growing without bound - only
+// the most recent day is open by default. `matches` is already ordered by
+// first_seen_at desc from the query, so both group order and each group's
+// job order fall out of that for free.
+function groupByDay(matches: JobMatch[]): { dateKey: string; label: string; jobs: JobMatch[] }[] {
+  const groups = new Map<string, JobMatch[]>();
+  for (const job of matches) {
+    const dateKey = job.first_seen_at.slice(0, 10);
+    if (!groups.has(dateKey)) groups.set(dateKey, []);
+    groups.get(dateKey)!.push(job);
+  }
+  return Array.from(groups.entries()).map(([dateKey, jobs]) => ({
+    dateKey,
+    label: new Date(dateKey).toLocaleDateString("en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
+    jobs,
+  }));
+}
+
 export default async function JobsPage({ searchParams }: Props) {
   const params = await searchParams;
   const showAll = params.all === "1";
@@ -62,11 +86,25 @@ export default async function JobsPage({ searchParams }: Props) {
       ) : null}
 
       {matches.length ? (
-        <ul className="mt-8 space-y-4">
-          {matches.map((job) => (
-            <JobRow key={job.id} job={job} />
+        <div className="mt-8 space-y-4">
+          {groupByDay(matches).map((group, i) => (
+            <details
+              key={group.dateKey}
+              open={i === 0}
+              className="rounded-2xl border border-line bg-white"
+            >
+              <summary className="cursor-pointer select-none px-6 py-4 text-sm font-semibold text-ink">
+                {group.label}
+                <span className="ml-2 font-normal text-muted">({group.jobs.length})</span>
+              </summary>
+              <ul className="space-y-4 px-6 pb-6">
+                {group.jobs.map((job) => (
+                  <JobRow key={job.id} job={job} />
+                ))}
+              </ul>
+            </details>
           ))}
-        </ul>
+        </div>
       ) : (
         <div className="mt-8 rounded-3xl border border-dashed border-line bg-white p-10 text-center">
           <Briefcase className="mx-auto h-8 w-8 text-gold" aria-hidden="true" />

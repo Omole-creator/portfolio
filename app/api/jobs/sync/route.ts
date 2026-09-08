@@ -48,15 +48,21 @@ export async function GET(request: NextRequest) {
       })
       .filter((row): row is NonNullable<typeof row> => row !== null);
 
-    if (rows.length) {
-      const { error, count } = await supabase
-        .from("job_matches")
-        .upsert(rows, { onConflict: "ats,external_id", ignoreDuplicates: true, count: "exact" });
-
-      if (error) {
-        console.error(`job sync: ${source.company_name} upsert failed:`, error.message);
-      } else {
-        inserted += count ?? 0;
+    // Plain insert, one row at a time, not upsert(..., { ignoreDuplicates:
+    // true }): that sends Postgres an INSERT ... ON CONFLICT DO NOTHING,
+    // which needs to check for an existing conflicting row - and since anon
+    // has no SELECT policy on job_matches on purpose (it holds cover
+    // letters, application emails, etc., never meant to be publicly
+    // readable via the anon key), that conflict check itself gets rejected
+    // by RLS, even for rows with no real conflict at all. A plain insert
+    // triggers no such check; an actual duplicate just fails with a normal,
+    // catchable 23505 unique-violation instead.
+    for (const row of rows) {
+      const { error } = await supabase.from("job_matches").insert(row);
+      if (!error) {
+        inserted += 1;
+      } else if (error.code !== "23505") {
+        console.error(`job sync: ${source.company_name} insert failed:`, error.message);
       }
     }
   }

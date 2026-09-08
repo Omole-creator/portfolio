@@ -4,14 +4,19 @@
 // fallback that lets literally any career page on the internet be added as
 // a source, at the cost of being much noisier than a structured API.
 //
-// "remoteok" / "remotive" / "jobicy" / "arbeitnow" are a different kind of
-// source: free public remote-job aggregator APIs, each already covering
-// thousands of companies rather than one company per source row. They exist
-// because there's no way to search "every company on Greenhouse/Lever" for
-// free - individually adding companies one at a time doesn't scale to
-// meaningful coverage, so these fill that gap. Every job that comes through
-// them still passes the exact same track/remote/eligibility filters as
-// everything else in lib/jobs/classify.ts.
+// "remoteok" / "remotive" / "jobicy" / "arbeitnow" / "himalayas" are a
+// different kind of source: free public remote-job aggregator APIs, each
+// already covering thousands of companies rather than one company per
+// source row. They exist because there's no way to search "every company
+// on Greenhouse/Lever" for free - individually adding companies one at a
+// time doesn't scale to meaningful coverage, so these fill that gap. Every
+// job that comes through them still passes the exact same track/remote/
+// eligibility filters as everything else in lib/jobs/classify.ts. Of the
+// five, only Himalayas' keyword search (the `q` param) was confirmed live
+// to actually narrow results - Remotive's `category` and Jobicy's `tag`
+// params were tested and found to return the same unfiltered set
+// regardless of value, so those two just fetch their general feed and rely
+// on classify.ts to do the real filtering.
 export type JobAts =
   | "greenhouse"
   | "lever"
@@ -24,7 +29,8 @@ export type JobAts =
   | "remoteok"
   | "remotive"
   | "jobicy"
-  | "arbeitnow";
+  | "arbeitnow"
+  | "himalayas";
 export type JobTrack = "growth" | "marketing";
 export type JobSourceTrack = JobTrack | "both";
 // Whether the posting is confirmed open to a candidate anywhere (including

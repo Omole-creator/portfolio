@@ -8,7 +8,7 @@ import type { JobAts } from "./types";
 // arbeitnow) are excluded: none of them are identified by a per-company
 // token the way these seven are, so there's nothing to probe or parse a
 // URL for in the same shape as the others.
-export type RealAts = Exclude<JobAts, "custom" | "remoteok" | "remotive" | "jobicy" | "arbeitnow">;
+export type RealAts = Exclude<JobAts, "custom" | "remoteok" | "remotive" | "jobicy" | "arbeitnow" | "himalayas">;
 
 export type AtsProbeResult = { ats: RealAts; jobCount: number };
 

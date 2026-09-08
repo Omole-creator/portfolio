@@ -31,11 +31,12 @@ const ATS_LABELS: Record<JobAts, string> = {
   remotive: "Remotive (aggregator, all companies)",
   jobicy: "Jobicy (aggregator, all companies)",
   arbeitnow: "Arbeitnow (aggregator, all companies)",
+  himalayas: "Himalayas (aggregator, keyword search)",
 };
 
 // The four aggregators aren't a single company, so the "token" field means
 // something different for them: a category/tag filter, not an identifier.
-const AGGREGATOR_ATS: JobAts[] = ["remoteok", "remotive", "jobicy", "arbeitnow"];
+const AGGREGATOR_ATS: JobAts[] = ["remoteok", "remotive", "jobicy", "arbeitnow", "himalayas"];
 
 export function AddSourceForm() {
   const [state, action, pending] = useActionState(addJobSource, initial);
@@ -122,7 +123,7 @@ export function AddSourceForm() {
           <div>
             <label htmlFor="manual_token" className={label}>
               {AGGREGATOR_ATS.includes(manualAts)
-                ? "Category/tag filter (e.g. \"marketing\")"
+                ? "Category/tag or search query (e.g. \"marketing\" or \"growth marketing\")"
                 : "Board token (or full URL, if using Custom)"}
             </label>
             <div className="flex gap-2">
