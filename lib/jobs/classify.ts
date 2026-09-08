@@ -43,18 +43,19 @@ const MARKETING_KEYWORDS = [
 // Nigeria/Africa: citizenship/work-authorization/residency requirements,
 // or a flat refusal to sponsor. These override everything else.
 const EXCLUSION_PATTERNS: RegExp[] = [
-  /must be (a |an )?(u\.?s\.?|united states|australian)\s*citizen/i,
-  /(u\.?s\.?|united states|australian)\s*citizenship (is )?required/i,
-  /must be authorized to work in the (united states|u\.?s\.?|australia)/i,
-  /must (currently )?(be based|reside|be located) in (the )?(united states|u\.?s\.?|usa|australia)/i,
+  /must be (a |an )?(u\.?s\.?|united states|australian|singapore(an)?)\s*citizen/i,
+  /(u\.?s\.?|united states|australian|singapore(an)?)\s*citizenship (is )?required/i,
+  /must be authorized to work in (the )?(united states|u\.?s\.?|australia|singapore)/i,
+  /must (currently )?(be based|reside|be located) in (the )?(united states|u\.?s\.?|usa|australia|singapore)/i,
   /candidates? must (be based|reside|be located) in/i,
-  /open (only )?to (residents|candidates) (based |located )?in (the )?(united states|u\.?s\.?|australia)/i,
+  /open (only )?to (residents|candidates) (based |located )?in (the )?(united states|u\.?s\.?|australia|singapore)/i,
   /must be (a )?permanent resident/i,
+  /must hold (a )?valid singapore (work pass|employment pass)/i,
   /security clearance required/i,
   /unable to sponsor/i,
   /no visa sponsorship/i,
   /not able to (provide|offer) (visa )?sponsorship/i,
-  /this role is (based|located) in (the )?(united states|u\.?s\.?|australia)(?! or)/i,
+  /this role is (based|located) in (the )?(united states|u\.?s\.?|australia|singapore)(?! or)/i,
 ];
 
 // Explicit signals that a posting IS open to a candidate anywhere,

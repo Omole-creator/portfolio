@@ -81,3 +81,32 @@ export async function detectAts(token: string): Promise<AtsProbeResult[]> {
   const results = await Promise.all(PROBEABLE.map((ats) => probeOne(ats, token)));
   return results.filter((r): r is AtsProbeResult => r !== null);
 }
+
+// The whole point of "add a source" should be "paste the URL you're looking
+// at" - every platform's hosted job page puts the board token right in the
+// URL, so it can just be read off, no separate lookup needed. Tried in
+// order; the first pattern that matches wins.
+const URL_PATTERNS: { ats: Exclude<JobAts, "custom">; pattern: RegExp }[] = [
+  { ats: "greenhouse", pattern: /(?:job-)?boards\.greenhouse\.io\/([^/?#]+)/i },
+  { ats: "lever", pattern: /jobs\.lever\.co\/([^/?#]+)/i },
+  { ats: "ashby", pattern: /jobs\.ashbyhq\.com\/([^/?#]+)/i },
+  { ats: "workable", pattern: /apply\.workable\.com\/([^/?#]+)/i },
+  { ats: "workable", pattern: /([a-z0-9-]+)\.workable\.com/i },
+  { ats: "smartrecruiters", pattern: /jobs\.smartrecruiters\.com\/([^/?#]+)/i },
+  { ats: "recruitee", pattern: /([a-z0-9-]+)\.recruitee\.com/i },
+  { ats: "breezy", pattern: /([a-z0-9-]+)\.breezy\.hr/i },
+];
+
+/**
+ * Pure string matching, no network call - reads the board token straight
+ * out of a pasted careers/job URL. Returns null when the URL doesn't match
+ * any known platform (e.g. a company's own custom domain), in which case
+ * the caller should fall back to ats: "custom" with the URL as-is.
+ */
+export function parseCareersUrl(url: string): { ats: Exclude<JobAts, "custom">; token: string } | null {
+  for (const { ats, pattern } of URL_PATTERNS) {
+    const match = pattern.exec(url);
+    if (match?.[1]) return { ats, token: match[1] };
+  }
+  return null;
+}

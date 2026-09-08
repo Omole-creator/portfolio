@@ -768,17 +768,24 @@ application **email**, and only after you've reviewed the draft and confirmed.
   "Scraped, not an ATS - double-check details" badge on its matches so that noise is
   visible, not hidden. `lib/jobs/fetchers/index.ts` is a one-line-per-platform registry
   (`FETCHERS: Record<JobAts, ...>`) so adding another platform later is one new file
-  plus one new line, not a growing if/else chain. **`lib/jobs/detect.ts`** lets the
-  admin skip picking the ATS by hand: `detectAts(token)` probes all seven real
-  platforms in parallel with the same token and returns whichever ones actually
-  matched (checked by the response shape, e.g. Greenhouse/Ashby need a `jobs` array,
-  SmartRecruiters a `content` array, Lever/Breezy a bare array — not just an HTTP 200,
-  since some of these return `ok` responses for both a real board and a "not found"
-  case). `AddSourceForm.tsx`'s "Detect ATS" button (`formAction`-bound to a second
-  `useActionState`, same multi-action-per-form pattern `Editor.tsx`'s delete button
-  uses) shows every match found and auto-selects the ATS dropdown when exactly one
-  came back. `custom` is never probed this way — it takes a full URL, not a token, so
-  there's nothing to try it against.
+  plus one new line, not a growing if/else chain. **`lib/jobs/detect.ts`** exists so
+  the admin never has to know what a "board token" is or which ATS a company uses —
+  the primary flow in `AddSourceForm.tsx` is now "paste the URL you're looking at on
+  the company's jobs page." `parseCareersUrl(url)` is pure regex, no network call: it
+  reads the token straight out of the URL for whichever known platform's domain
+  pattern matches (`boards.greenhouse.io/<token>`, `jobs.lever.co/<token>`, etc.), and
+  falls back to `ats: "custom"` with the URL used as-is when nothing matches (a
+  company's own custom domain). A collapsed "Not detected right? Fix it manually"
+  panel exposes the older flow for edge cases: a manual ATS select plus
+  `detectAts(token)`, which instead makes a live network probe against all seven
+  platforms in parallel with a typed-in token and reports back whichever ones actually
+  matched (checked by response shape, e.g. Greenhouse/Ashby need a `jobs` array,
+  SmartRecruiters a `content` array — not just an HTTP 200, since some of these
+  platforms return `ok` responses for both a real board and a "not found" case). Both
+  the token-check button and the outer "Add source" submit are bound to the same
+  `<form>` via the `formAction`-per-button pattern `Editor.tsx`'s delete button
+  already uses, each with its own `useActionState`. `custom` is never probed over the
+  network — it takes a full URL, not a token, so there's nothing to try it against.
 - **Eligibility from Nigeria/Africa is a hard gate, not a nice-to-have — this was a
   correction, not the original design.** The first version of `classify.ts` only
   checked whether a job's location text mentioned "US" or "Australia," which had a
@@ -809,6 +816,21 @@ application **email**, and only after you've reviewed the draft and confirmed.
   Nigerians can apply for," which is backwards: it was a tiebreaker for one narrow
   ambiguous case, never a positive eligibility signal on its own. If you see
   `region_hint`/`JobRegionHint`/`region_match` anywhere, it's stale.
+- **`EXCLUSION_PATTERNS` also covers Singapore-specific citizenship/work-authorization/
+  work-pass language**, not just US/Australia — Omole's targeting is specifically
+  jobs from US, Australia, and Singapore companies that Nigerians/Africans can apply
+  to, per his own instruction, not "any remote job from anywhere." There is
+  deliberately **no stored field for "which country is this company based in"** —
+  `job_sources` is entirely admin-curated already (Omole chooses which companies to
+  add), so that targeting is achieved by which companies get added as sources, not by
+  a database column. Adding one anyway was considered and rejected: it would either do
+  nothing (purely cosmetic, the same mistake `region_hint` already made once) or need
+  real enforcement logic nobody asked for. `remoteNamesOtherCountry` in `classify.ts`
+  was already generic before Singapore was named explicitly — it excludes "Remote,
+  &lt;any country&gt;" for any named country, not just US/Australia, so a
+  Singapore-scoped-only remote listing was already handled correctly without changes;
+  only the prose `EXCLUSION_PATTERNS` needed Singapore added for postings that state
+  the restriction in a sentence rather than in the location field.
 - **`lib/jobs/extractQuestions.ts`'s `extractApplicationDetails` does two best-effort
   things off one fetch of the job's real apply page**: pulls out custom question
   labels (works only when the ATS server-renders its form — Ashby and many Lever
