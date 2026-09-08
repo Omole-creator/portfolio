@@ -100,7 +100,9 @@ export default async function JobsPage({ searchParams }: Props) {
                 <div>
                   <p className="font-semibold text-ink">{source.company_name}</p>
                   <p className="text-xs text-muted">
-                    {source.ats} · {source.board_token} · {source.region_hint} · {source.track}
+                    {source.ats} · {source.board_token} ·{" "}
+                    {source.hires_globally ? "Hires globally" : "Scope unconfirmed"} ·{" "}
+                    {source.track}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">

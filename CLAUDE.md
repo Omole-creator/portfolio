@@ -725,6 +725,13 @@ breakdowns GA4 doesn't give for free.
   -rolled inline SVG/CSS, matching how everything else visual in this repo
   (`BrowserFrame`, `GlowButton`, `ScrollCard`) is bespoke rather than pulled from a UI
   kit. Swap in a real charting library later only if richer interaction is needed.
+- **"Which portfolio gets viewed" (`portfolioBreakdown` in `getAnalyticsDashboardData`)**
+  buckets every `page_view` by path into "Growth portfolio," "Web portfolio,"
+  "Marketing portfolio," or "Main site" (everything else — `/work`, `/about`, `/blog`,
+  etc., the general "work with me" site) and ranks by unique visitor. `PageViewTracker`
+  is mounted globally in `app/layout.tsx`, so this was already being logged for
+  `/growth`, `/web`, and `/marketing` before this section existed — it just wasn't
+  surfaced as its own breakdown anywhere in the dashboard.
 - **Known gaps, by design, not bugs**: country/region reads "Unknown" on `localhost`
   (Vercel-only headers); ad blockers that blocklist `/track`-like paths will
   undercount; the two tracking cookies are long-lived and server-set, which plausibly
@@ -761,7 +768,17 @@ application **email**, and only after you've reviewed the draft and confirmed.
   "Scraped, not an ATS - double-check details" badge on its matches so that noise is
   visible, not hidden. `lib/jobs/fetchers/index.ts` is a one-line-per-platform registry
   (`FETCHERS: Record<JobAts, ...>`) so adding another platform later is one new file
-  plus one new line, not a growing if/else chain.
+  plus one new line, not a growing if/else chain. **`lib/jobs/detect.ts`** lets the
+  admin skip picking the ATS by hand: `detectAts(token)` probes all seven real
+  platforms in parallel with the same token and returns whichever ones actually
+  matched (checked by the response shape, e.g. Greenhouse/Ashby need a `jobs` array,
+  SmartRecruiters a `content` array, Lever/Breezy a bare array — not just an HTTP 200,
+  since some of these return `ok` responses for both a real board and a "not found"
+  case). `AddSourceForm.tsx`'s "Detect ATS" button (`formAction`-bound to a second
+  `useActionState`, same multi-action-per-form pattern `Editor.tsx`'s delete button
+  uses) shows every match found and auto-selects the ATS dropdown when exactly one
+  came back. `custom` is never probed this way — it takes a full URL, not a token, so
+  there's nothing to try it against.
 - **Eligibility from Nigeria/Africa is a hard gate, not a nice-to-have — this was a
   correction, not the original design.** The first version of `classify.ts` only
   checked whether a job's location text mentioned "US" or "Australia," which had a
@@ -778,14 +795,20 @@ application **email**, and only after you've reviewed the draft and confirmed.
   residency requirement, or if "Remote" names a specific non-Africa country. It's only
   accepted if there's an explicit worldwide/anywhere/employer-of-record signal
   (`WORLDWIDE_PATTERNS`), or — for an ambiguous bare "Remote" with no other
-  signal — only when its `job_sources.region_hint` is tagged `remote_global` by the
-  admin. There is no "excluded" status stored on `job_matches`; a rejected posting is
-  just never inserted. The stored `eligibility` column (`'worldwide' | 'unconfirmed'`)
-  records *why* a match was let through, and `JobRow.tsx` shows it as a badge
-  ("Worldwide" vs. "Unconfirmed scope, check before applying") so an "unconfirmed" one
-  gets a second look before applying, since no automated filter can be fully certain
-  here. This column used to be called `region_match` (`'us' | 'australia' | 'remote'`)
-  before the rework; if you see that name anywhere it's stale.
+  signal — only when its `job_sources.hires_globally` is `true`. There is no
+  "excluded" status stored on `job_matches`; a rejected posting is just never
+  inserted. The stored `eligibility` column (`'worldwide' | 'unconfirmed'`) records
+  *why* a match was let through, and `JobRow.tsx` shows it as a badge ("Worldwide" vs.
+  "Unconfirmed scope, check before applying") so an "unconfirmed" one gets a second
+  look before applying, since no automated filter can be fully certain here.
+  `job_sources.hires_globally` (a plain boolean, `supabase/migrations/0004_simplify_region_hint.sql`)
+  used to be a four-option `region_hint` field (`'us' | 'australia' | 'us_or_australia' | 'remote_global'`)
+  — dropped because three of those four options were functionally identical to each
+  other (`checkEligibility` only ever branched on `'remote_global'` vs. everything
+  else) and, worse, easy to misread as "this job is located in the US/Australia, which
+  Nigerians can apply for," which is backwards: it was a tiebreaker for one narrow
+  ambiguous case, never a positive eligibility signal on its own. If you see
+  `region_hint`/`JobRegionHint`/`region_match` anywhere, it's stale.
 - **`lib/jobs/extractQuestions.ts`'s `extractApplicationDetails` does two best-effort
   things off one fetch of the job's real apply page**: pulls out custom question
   labels (works only when the ATS server-renders its form — Ashby and many Lever

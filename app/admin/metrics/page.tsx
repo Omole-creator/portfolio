@@ -75,6 +75,13 @@ export default async function MetricsPage({ searchParams }: Props) {
         <TimeSeriesChart data={data.timeSeries} />
       </Section>
 
+      <Section title="Which portfolio gets viewed">
+        <BarList
+          rows={data.portfolioBreakdown}
+          emptyLabel="No visits yet."
+        />
+      </Section>
+
       <div className="grid gap-8 lg:grid-cols-2">
         <Section title="Most-viewed projects">
           <BarList

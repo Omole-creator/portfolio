@@ -1,10 +1,4 @@
-import type {
-  JobEligibility,
-  JobRegionHint,
-  JobSource,
-  JobTrack,
-  NormalizedJob,
-} from "./types";
+import type { JobEligibility, JobSource, JobTrack, NormalizedJob } from "./types";
 
 // Plain keyword lists, not a smart classifier. Bad matches get dismissed
 // from /admin/jobs rather than engineered away here.
@@ -112,7 +106,7 @@ function remoteNamesOtherCountry(locationText: string | null): boolean {
 
 function checkEligibility(
   job: NormalizedJob,
-  regionHint: JobRegionHint,
+  hiresGlobally: boolean,
 ): JobEligibility | "excluded" {
   const text = `${job.location_text ?? ""} ${job.description_text ?? ""}`;
 
@@ -124,7 +118,7 @@ function checkEligibility(
   // this source is known to hire globally; otherwise the safe default is
   // to exclude, since most companies scope "Remote" to specific countries
   // they already have payroll set up for.
-  return regionHint === "remote_global" ? "unconfirmed" : "excluded";
+  return hiresGlobally ? "unconfirmed" : "excluded";
 }
 
 /**
@@ -166,7 +160,7 @@ export function classifyJob(
 
   if (!track) return null;
 
-  const eligibility = checkEligibility(job, source.region_hint);
+  const eligibility = checkEligibility(job, source.hires_globally);
   if (eligibility === "excluded") return null;
 
   return { track, keyword_hits: keywordHits, eligibility };

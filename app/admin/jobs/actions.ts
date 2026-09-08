@@ -4,9 +4,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prepareJobApplication } from "@/lib/jobs/prepare";
 import { sendApplicationEmail as sendViaGmail } from "@/lib/jobs/gmail";
-import type { JobAts, JobMatch, JobRegionHint, JobSourceTrack } from "@/lib/jobs/types";
+import { detectAts, type AtsProbeResult } from "@/lib/jobs/detect";
+import type { JobAts, JobMatch, JobSourceTrack } from "@/lib/jobs/types";
 
 export type ActionState = { error?: string; message?: string };
+export type DetectState = { error?: string; matches?: AtsProbeResult[] };
 
 const ATS_VALUES: JobAts[] = [
   "greenhouse",
@@ -18,7 +20,6 @@ const ATS_VALUES: JobAts[] = [
   "breezy",
   "custom",
 ];
-const REGION_HINT_VALUES: JobRegionHint[] = ["us", "australia", "us_or_australia", "remote_global"];
 const SOURCE_TRACK_VALUES: JobSourceTrack[] = ["growth", "marketing", "both"];
 
 export async function prepareApplication(
@@ -150,7 +151,7 @@ export async function addJobSource(
   const companyName = String(formData.get("company_name") ?? "").trim();
   const ats = String(formData.get("ats") ?? "") as JobAts;
   const boardToken = String(formData.get("board_token") ?? "").trim();
-  const regionHint = String(formData.get("region_hint") ?? "") as JobRegionHint;
+  const hiresGlobally = formData.get("hires_globally") === "on";
   const track = String(formData.get("track") ?? "") as JobSourceTrack;
 
   if (!companyName) return { error: "Give the company a name." };
@@ -163,7 +164,6 @@ export async function addJobSource(
           : "Enter the board token from the company's careers URL.",
     };
   }
-  if (!REGION_HINT_VALUES.includes(regionHint)) return { error: "Choose a region." };
   if (!SOURCE_TRACK_VALUES.includes(track)) return { error: "Choose a track." };
 
   const supabase = await createClient();
@@ -176,13 +176,34 @@ export async function addJobSource(
     company_name: companyName,
     ats,
     board_token: boardToken,
-    region_hint: regionHint,
+    hires_globally: hiresGlobally,
     track,
   });
 
   if (error) return { error: friendly(error.message) };
 
   redirect("/admin/jobs");
+}
+
+/**
+ * Probes every real ATS platform with the given token in parallel, so the
+ * admin doesn't have to already know which one a company uses. "custom" is
+ * never returned here - it takes a full URL, not a token, and can't be
+ * probed the same way.
+ */
+export async function detectJobSourceAts(
+  _prev: DetectState,
+  formData: FormData,
+): Promise<DetectState> {
+  const boardToken = String(formData.get("board_token") ?? "").trim();
+  if (!boardToken) return { error: "Enter a board token to check first." };
+
+  const matches = await detectAts(boardToken);
+  if (!matches.length) {
+    return { error: "Not found on any recognized ATS. Double-check the token, or use \"Custom careers page\" with the full URL instead." };
+  }
+
+  return { matches };
 }
 
 export async function toggleJobSource(formData: FormData) {

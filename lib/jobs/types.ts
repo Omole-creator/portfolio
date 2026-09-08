@@ -14,16 +14,10 @@ export type JobAts =
   | "custom";
 export type JobTrack = "growth" | "marketing";
 export type JobSourceTrack = JobTrack | "both";
-// Only matters as a tiebreaker for an ambiguous bare "Remote" posting with
-// no other signal (see lib/jobs/classify.ts): "remote_global" lets those
-// through for this source, anything else keeps them excluded by default,
-// since a company's "Remote" listings are usually scoped to specific
-// countries it already has payroll/legal set up for, not open worldwide.
-export type JobRegionHint = "us" | "australia" | "us_or_australia" | "remote_global";
 // Whether the posting is confirmed open to a candidate anywhere (including
 // Nigeria/Africa), or only passed the filter on an "unconfirmed" basis (a
 // bare "Remote" listing with no explicit scope, accepted only because its
-// source is tagged remote_global) - surfaced in the admin UI so an
+// source's hires_globally is true) - surfaced in the admin UI so an
 // "unconfirmed" match gets a second look before applying.
 export type JobEligibility = "worldwide" | "unconfirmed";
 export type JobMatchStatus = "new" | "prepared" | "applied" | "dismissed";
@@ -36,7 +30,14 @@ export type JobSource = {
   // careers URL (e.g. Greenhouse's "acme" in boards.greenhouse.io/acme).
   // For ats === "custom": the full URL of the company's careers/jobs page.
   board_token: string;
-  region_hint: JobRegionHint;
+  // Only matters as a tiebreaker for an ambiguous bare "Remote" posting with
+  // no other eligibility signal (see lib/jobs/classify.ts): true lets those
+  // through for this source (marked "unconfirmed" in job_matches), false
+  // keeps them excluded by default, since a company's "Remote" listings are
+  // usually scoped to specific countries it already has payroll/legal set
+  // up for, not open worldwide. This is your own judgment about the
+  // company, not something detected automatically.
+  hires_globally: boolean;
   track: JobSourceTrack;
   active: boolean;
   created_at: string;

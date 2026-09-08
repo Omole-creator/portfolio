@@ -52,6 +52,7 @@ export type AnalyticsDashboardData = {
   devices: RankedRow[];
   browsers: RankedRow[];
   newVsReturning: { new: number; returning: number };
+  portfolioBreakdown: RankedRow[];
 };
 
 // Africa/Lagos is a fixed UTC+1 with no DST, so a flat offset is correct.
@@ -113,6 +114,17 @@ function rankByUniqueVisitor(
 function postSlugFromPath(path: string): string | null {
   const match = /^\/blog\/([^/]+)\/?$/.exec(path);
   return match ? match[1] : null;
+}
+
+// /growth, /web, and /marketing are separate, self-contained portfolios
+// pitched to different audiences (see CLAUDE.md's Audience-specific
+// portfolios section) - everything else, including /work, /about, /blog,
+// falls under the general "work with me" main site.
+function portfolioBucket(path: string): string {
+  if (path === "/growth" || path.startsWith("/growth/")) return "Growth portfolio";
+  if (path === "/web" || path.startsWith("/web/")) return "Web portfolio";
+  if (path === "/marketing" || path.startsWith("/marketing/")) return "Marketing portfolio";
+  return "Main site";
 }
 
 export async function getAnalyticsDashboardData(
@@ -222,5 +234,6 @@ export async function getAnalyticsDashboardData(
     devices: rankByUniqueVisitor(pageViews, (r) => r.device_type ?? "unknown"),
     browsers: rankByUniqueVisitor(pageViews, (r) => r.browser ?? "unknown"),
     newVsReturning: { new: newVisitors.size, returning: returningVisitors.size },
+    portfolioBreakdown: rankByUniqueVisitor(pageViews, (r) => portfolioBucket(r.path)),
   };
 }
