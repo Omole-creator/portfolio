@@ -27,6 +27,12 @@ export default function AdminLayout({
           >
             Metrics
           </Link>
+          <Link
+            href="/admin/jobs"
+            className="rounded-full px-4 py-1.5 text-muted transition-colors hover:text-ink"
+          >
+            Jobs
+          </Link>
         </nav>
       </div>
       {children}

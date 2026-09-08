@@ -9,10 +9,13 @@ Next.js App Router, TypeScript, Tailwind, and Framer Motion. It is a multi-page 
 the home route (`app/page.tsx`) stacks section components, and there are dedicated
 `/work`, `/about`, and `/contact` routes that reuse those same section components.
 There is also a blog at `/blog` whose posts live in Supabase rather than in the repo,
-plus the `/admin` writing desk that manages them. `/growth`, `/web`, and
-`/marketing` are three separate, self-contained portfolios built for specific
-pitches rather than the general "work with me" story the rest of the site
-tells — see **Audience-specific portfolios** below before touching any of them.
+plus the `/admin` writing desk that manages them, and `/admin/jobs`, a daily
+job-application machine that matches remote growth/marketing roles Omole (in Nigeria)
+is actually eligible for and drafts the application — see **Job application machine**
+below. `/growth`, `/web`, and `/marketing` are three separate, self-contained
+portfolios built for specific pitches rather than the general "work with me" story the
+rest of the site tells — see **Audience-specific portfolios** below before touching
+any of them.
 
 ## Commands
 
@@ -728,6 +731,136 @@ breakdowns GA4 doesn't give for free.
   needs a consent flow for EU/UK visitors that this feature does not include; "new vs
   returning" means "a known visitor found a new resource," not "came back to browse
   again," since a genuine repeat view of an already-seen page produces no new row.
+
+## Job application machine (`/admin/jobs`)
+
+A daily-refreshed feed of remote growth-marketing and creative-marketing roles Omole
+can actually apply to from Nigeria, with a one-tap "Prepare application" per job that
+drafts a tailored cover letter, picks the right CV and portfolio link, and (best-effort)
+drafts answers to that job's own custom application questions. **It never submits or
+sends anything without an explicit confirming tap** — full browser automation of ATS
+forms was deliberately ruled out (ATS bot-detection can get an automated submission
+silently flagged and rejected, worse than not automating at all, and Vercel functions
+can't run a real browser anyway). The one thing it can send on your behalf is a direct
+application **email**, and only after you've reviewed the draft and confirmed.
+
+- **Sourcing is companies' own hiring systems, never a job board.** `lib/jobs/fetchers/`
+  has one fetcher per platform: Greenhouse, Lever, Ashby, Workable, SmartRecruiters,
+  Recruitee, and Breezy HR each have a free, public, unauthenticated JSON API for a
+  company's own postings — every fetcher was verified against a real live company
+  before being trusted, not written from documentation alone (e.g. Greenhouse's
+  `content` field turned out to be HTML-entity-double-encoded, `&lt;div&gt;` rather
+  than a literal `<div>`, only caught by fetching GitLab's real board).
+  **BambooHR was deliberately not built** — confirmed via research to have no public
+  API, only an undocumented internal widget endpoint, not something to depend on.
+  `lib/jobs/fetchers/custom.ts` is the fallback for a company with no recognized ATS:
+  a best-effort scraper that guesses at job links on a given careers page by text
+  heuristics, then fetches each candidate's own page for a plain-text description
+  (needed since a generic page has no structured location/remote field). It is
+  meaningfully noisier than the structured fetchers, and `JobRow.tsx` shows a distinct
+  "Scraped, not an ATS - double-check details" badge on its matches so that noise is
+  visible, not hidden. `lib/jobs/fetchers/index.ts` is a one-line-per-platform registry
+  (`FETCHERS: Record<JobAts, ...>`) so adding another platform later is one new file
+  plus one new line, not a growing if/else chain.
+- **Eligibility from Nigeria/Africa is a hard gate, not a nice-to-have — this was a
+  correction, not the original design.** The first version of `classify.ts` only
+  checked whether a job's location text mentioned "US" or "Australia," which had a
+  real bug (city names like "New York" matched even for fully on-site roles) and a
+  bigger conceptual gap: most "Remote" listings from Greenhouse/Lever/Ashby-hosted
+  companies are scoped to hire someone already based in one specific country for
+  payroll/legal reasons (confirmed live: GitLab's own postings said "Remote, Italy,"
+  Ramp's said "Remote (US)" / "Remote (Canada)," neither open to Nigeria), not open
+  worldwide the way "remote" sounds like it should mean. `classify.ts` now requires a
+  job to be remote at all (`is_remote` from the ATS when it exposes one — Ashby does,
+  Greenhouse/Lever/Recruitee/Workable/Breezy don't, so it falls back to scanning
+  `location_text`, and for the custom scraper's null `location_text`, `description_text`
+  too), then excludes it if the description contains a citizenship/work-authorization/
+  residency requirement, or if "Remote" names a specific non-Africa country. It's only
+  accepted if there's an explicit worldwide/anywhere/employer-of-record signal
+  (`WORLDWIDE_PATTERNS`), or — for an ambiguous bare "Remote" with no other
+  signal — only when its `job_sources.region_hint` is tagged `remote_global` by the
+  admin. There is no "excluded" status stored on `job_matches`; a rejected posting is
+  just never inserted. The stored `eligibility` column (`'worldwide' | 'unconfirmed'`)
+  records *why* a match was let through, and `JobRow.tsx` shows it as a badge
+  ("Worldwide" vs. "Unconfirmed scope, check before applying") so an "unconfirmed" one
+  gets a second look before applying, since no automated filter can be fully certain
+  here. This column used to be called `region_match` (`'us' | 'australia' | 'remote'`)
+  before the rework; if you see that name anywhere it's stale.
+- **`lib/jobs/extractQuestions.ts`'s `extractApplicationDetails` does two best-effort
+  things off one fetch of the job's real apply page**: pulls out custom question
+  labels (works only when the ATS server-renders its form — Ashby and many Lever
+  boards render entirely client-side and this returns `[]`, which is expected, not a
+  bug, and callers must degrade to "no custom questions, cover letter + CV + portfolio
+  only" rather than treat it as an error), and looks for a direct application email —
+  a `mailto:` link first, otherwise an email address found near application-sounding
+  language ("email your resume," "send your CV," etc.) in the page text or the job
+  description, filtered against a denylist of generic addresses (`privacy@`,
+  `support@`, and similar) so a company's general contact address doesn't get treated
+  as an application inbox.
+- **`lib/jobs/gemini.ts`** drafts the cover letter and any per-question answers via
+  Gemini Flash's free tier, plain REST fetch to `generativelanguage.googleapis.com`
+  (no SDK, matching how this repo talks to every other external API), reading
+  `GEMINI_API_KEY` (free from Google AI Studio, no billing required within its
+  free-tier rate limits), using Gemini's
+  `responseSchema` structured-output feature so the response is directly parseable
+  JSON. `lib/jobs/candidateContext.ts` builds the grounding text fed into that prompt
+  from `growthAbout`/`growthWork`/etc. (`lib/growth-content.ts`) or the marketing
+  equivalents (`lib/marketing-content.ts`) depending on the job's track — the same
+  real case-study data the public `/growth` and `/marketing` pages use, never invented.
+- **`lib/jobs/prepare.ts`** is the orchestrator behind "Prepare application": picks
+  the CV/portfolio pair for the job's track (growth →
+  `/omole-usuangbon-growth-marketing-cv.pdf` + `https://omoleportfolio.vercel.app/growth`;
+  marketing → the marketing equivalents), runs the best-effort extraction, builds the
+  candidate context, calls Gemini, and returns a result the server action stores —
+  never writes to the database itself.
+- **`lib/jobs/gmail.ts`** is the only thing in this feature that actually sends
+  anything, and only for jobs where `extractApplicationDetails` found a direct
+  application email. Plain REST against the Gmail API (no SDK): exchanges a long-lived
+  refresh token for an access token (`https://oauth2.googleapis.com/token`), builds a
+  raw RFC 2822 MIME message (cover letter as the body, the matching CV read from
+  `public/` and attached as base64), and posts it to
+  `https://gmail.googleapis.com/gmail/v1/users/me/messages/send`. Needs
+  `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_REFRESH_TOKEN` — obtained via
+  Google Cloud Console (OAuth consent screen, scope `gmail.send`, publishing status
+  **"In production"** so the refresh token doesn't expire after 7 days the way
+  "Testing" status tokens do) and Google's OAuth Playground (exchange an authorization
+  code for a refresh token there, using your own Client ID/Secret via its "use your own
+  OAuth credentials" setting). Still entirely free — Gmail API sending has no cost
+  within normal personal-account limits. `JobRow.tsx`'s "Send application to
+  `<email>`" button only appears once a job is `prepared` and has an `apply_email`,
+  gates on `window.confirm()` first (same pattern `Editor.tsx`'s post-delete button
+  uses), and on success sets `status: 'applied'` and `email_sent_at` directly — no
+  separate "mark applied" tap needed for these.
+- **`app/api/jobs/sync/route.ts`** is the daily cron entry point (`vercel.json`'s
+  `crons` array, `0 6 * * *`, gated by comparing the request's `Authorization: Bearer`
+  header against `CRON_SECRET` — Vercel auto-sends that header once the env var is set
+  on the project). It reads active `job_sources` via the anon Supabase client (no user
+  session exists for a cron-triggered request), fetches + classifies + upserts into
+  `job_matches` with `onConflict: "ats,external_id", ignoreDuplicates: true`, so a
+  posting already prepared or applied to is never clobbered by a re-sync.
+- **RLS on `job_sources`/`job_matches`** (`supabase/migrations/0003_job_application_machine.sql`)
+  follows `analytics_events`' pattern exactly: `anon` gets only the narrow grants the
+  cron route needs (select active sources, insert/update matches), `authenticated`
+  gets full access for the admin UI. No use of `SUPABASE_SERVICE_ROLE_KEY` — that key
+  stays unused everywhere in this repo, per the blog section above.
+- **`app/admin/jobs/`**: `page.tsx` (server component, lists matches + a collapsible
+  "Manage sources" panel), `JobRow.tsx` (client component — needs its own
+  `useActionState` per row since "Prepare application" and "Send application email"
+  both take a few seconds), `AddSourceForm.tsx` (client component, its board-token
+  field's label and help text change per selected ATS — for `ats = 'custom'` the
+  "board token" is actually the full careers page URL), `actions.ts` (server actions,
+  `ActionState` convention matching `app/admin/actions.ts`).
+- **Explicit scope boundaries, don't re-litigate these without being asked**: no
+  automation ever submits a web-form application; question extraction and the custom
+  scraper are both best-effort and expected to come back empty/noisy often, never
+  treated as errors; `job_sources` starts empty and should only ever be seeded with
+  board tokens verified against a live request, never guessed ones.
+- **Known unverified spot**: `lib/jobs/fetchers/breezy.ts`'s exact field names weren't
+  confirmed against a populated real posting during development (every account tried
+  had zero current openings, only the endpoint shape and empty-array response were
+  confirmed live) — check its first real sync output against a Breezy-sourced company
+  and correct the field names in that file if anything comes back empty that
+  shouldn't.
 
 ## Screenshots and sensitive data
 
