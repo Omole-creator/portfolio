@@ -76,6 +76,12 @@ const WORLDWIDE_PATTERNS: RegExp[] = [
   /\bnigeria\b/i,
 ];
 
+// A bare location VALUE (not prose) that already says everything: remote
+// job aggregators (Remotive, Jobicy) put this straight in a
+// candidate_required_location-style field, e.g. "Worldwide" on its own
+// with no other text.
+const WORLDWIDE_LOCATION_VALUES = /\b(worldwide|anywhere|global)\b/i;
+
 function findHits(haystack: string, keywords: string[]): string[] {
   return keywords.filter((keyword) => haystack.includes(keyword));
 }
@@ -91,17 +97,22 @@ function isRemoteJob(job: NormalizedJob): boolean {
 }
 
 /**
- * A location like "Remote, Italy" or "Remote (US)" names a specific
- * country alongside "remote" - on Greenhouse/Lever/Ashby that almost always
- * means the req is scoped to hire someone already based there, not open
- * worldwide. A bare "Remote" with nothing else attached doesn't make that
- * claim either way.
+ * Once a job is already known to be remote (isRemoteJob), a location value
+ * naming a specific place other than Africa/Nigeria means it's scoped to
+ * that place, not open worldwide - whether that's Greenhouse-style "Remote,
+ * Italy" (the word "remote" literally in the string), an Ashby posting
+ * whose is_remote flag is true but whose location text is just an office
+ * city like "New York, NY (HQ)" (no "remote" wording at all, just a
+ * structural flag elsewhere), or an aggregator's candidate_required_location
+ * field with a bare value like "USA". All three cases mean the same thing
+ * once is_remote is already established: strip the word "remote" if it's
+ * there, and anything left over is a scope.
  */
 function remoteNamesOtherCountry(locationText: string | null): boolean {
-  const location = (locationText ?? "").toLowerCase();
-  if (!location.includes("remote")) return false;
+  const location = (locationText ?? "").toLowerCase().trim();
+  if (!location) return false;
   if (/africa|nigeria/.test(location)) return false;
-  const withoutRemote = location.replace(/remote/g, "").replace(/[\s,()-]/g, "");
+  const withoutRemote = location.replace(/\bremote\b/g, "").replace(/[\s,()-]/g, "");
   return withoutRemote.length > 0;
 }
 
@@ -113,6 +124,7 @@ function checkEligibility(
 
   if (EXCLUSION_PATTERNS.some((pattern) => pattern.test(text))) return "excluded";
   if (WORLDWIDE_PATTERNS.some((pattern) => pattern.test(text))) return "worldwide";
+  if (job.location_text && WORLDWIDE_LOCATION_VALUES.test(job.location_text)) return "worldwide";
   if (remoteNamesOtherCountry(job.location_text)) return "excluded";
 
   // A bare "Remote" listing with no other signal - only let it through if

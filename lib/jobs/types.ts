@@ -3,6 +3,15 @@
 // company doesn't use any of the recognized platforms below. It's the
 // fallback that lets literally any career page on the internet be added as
 // a source, at the cost of being much noisier than a structured API.
+//
+// "remoteok" / "remotive" / "jobicy" / "arbeitnow" are a different kind of
+// source: free public remote-job aggregator APIs, each already covering
+// thousands of companies rather than one company per source row. They exist
+// because there's no way to search "every company on Greenhouse/Lever" for
+// free - individually adding companies one at a time doesn't scale to
+// meaningful coverage, so these fill that gap. Every job that comes through
+// them still passes the exact same track/remote/eligibility filters as
+// everything else in lib/jobs/classify.ts.
 export type JobAts =
   | "greenhouse"
   | "lever"
@@ -11,7 +20,11 @@ export type JobAts =
   | "smartrecruiters"
   | "recruitee"
   | "breezy"
-  | "custom";
+  | "custom"
+  | "remoteok"
+  | "remotive"
+  | "jobicy"
+  | "arbeitnow";
 export type JobTrack = "growth" | "marketing";
 export type JobSourceTrack = JobTrack | "both";
 // Whether the posting is confirmed open to a candidate anywhere (including
@@ -29,6 +42,9 @@ export type JobSource = {
   // For a real ATS: the short board/account token from the company's
   // careers URL (e.g. Greenhouse's "acme" in boards.greenhouse.io/acme).
   // For ats === "custom": the full URL of the company's careers/jobs page.
+  // For an aggregator ats (remoteok/remotive/jobicy/arbeitnow): a
+  // category/tag filter passed straight to that API (e.g. "marketing"),
+  // not a company token - there's no single company to identify.
   board_token: string;
   // Only matters as a tiebreaker for an ambiguous bare "Remote" posting with
   // no other eligibility signal (see lib/jobs/classify.ts): true lets those

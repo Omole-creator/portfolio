@@ -7,6 +7,10 @@ import { fetchSmartRecruitersJobs } from "./smartrecruiters";
 import { fetchRecruiteeJobs } from "./recruitee";
 import { fetchBreezyJobs } from "./breezy";
 import { fetchCustomJobs } from "./custom";
+import { fetchRemoteOkJobs } from "./remoteok";
+import { fetchRemotiveJobs } from "./remotive";
+import { fetchJobicyJobs } from "./jobicy";
+import { fetchArbeitnowJobs } from "./arbeitnow";
 
 const FETCHERS: Record<JobAts, (source: JobSource) => Promise<NormalizedJob[]>> = {
   greenhouse: fetchGreenhouseJobs,
@@ -17,6 +21,10 @@ const FETCHERS: Record<JobAts, (source: JobSource) => Promise<NormalizedJob[]>> 
   recruitee: fetchRecruiteeJobs,
   breezy: fetchBreezyJobs,
   custom: fetchCustomJobs,
+  remoteok: fetchRemoteOkJobs,
+  remotive: fetchRemotiveJobs,
+  jobicy: fetchJobicyJobs,
+  arbeitnow: fetchArbeitnowJobs,
 };
 
 /** Dispatches to the right fetcher for a source's ats. Adding a new platform means one new file plus one new line here. */

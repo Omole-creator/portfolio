@@ -786,6 +786,40 @@ application **email**, and only after you've reviewed the draft and confirmed.
   `<form>` via the `formAction`-per-button pattern `Editor.tsx`'s delete button
   already uses, each with its own `useActionState`. `custom` is never probed over the
   network — it takes a full URL, not a token, so there's nothing to try it against.
+- **Coverage across many companies at once comes from four remote-job aggregator
+  APIs, not from individually adding companies — that per-company approach was
+  called out as a poor answer to "there are 100,000+ companies in these countries,"
+  and it's correct: there is no free API to search every company on Greenhouse or
+  Lever, those platforms don't publish a directory, so one-at-a-time additions never
+  scale.** `lib/jobs/fetchers/remoteok.ts`, `remotive.ts`, `jobicy.ts`, and
+  `arbeitnow.ts` hit RemoteOK, Remotive, Jobicy, and Arbeitnow's free, public, no-auth
+  APIs, each already covering thousands of companies' remote postings (RemoteOK needs
+  a real `User-Agent` header or it 403s; the rest need nothing). These were a
+  deliberate exception to "must not come from a job board" from the very first
+  request in this feature's history — they're aggregators, not individual companies'
+  own systems, which is exactly the category that instruction ruled out, so this
+  tradeoff was surfaced explicitly and confirmed before building it, not assumed.
+  Every job from these four still passes through the exact same `classify.ts`
+  pipeline as everything else — no separate, looser filter. For these four,
+  `job_sources.board_token` holds a category/tag filter (e.g. `"marketing"`) instead
+  of a per-company identifier, since there's no single company to scope to; `ats:
+  "remoteok" | "remotive" | "jobicy" | "arbeitnow"` are excluded from `detect.ts`'s
+  `RealAts` type (token-probing and URL-parsing don't apply to them) and from the
+  primary "paste a URL" flow in `AddSourceForm.tsx` — they're added through the
+  manual-override panel, where the token field's label switches to "Category/tag
+  filter" for these four. Fixed one real bug found while building this: the old
+  `remoteNamesOtherCountry` only excluded a scoped location when the literal word
+  "remote" appeared in `location_text` (true for Greenhouse-style `"Remote, Italy"`),
+  which missed cases where remoteness comes from a separate structured flag and the
+  location text is just a plain place name with no "remote" wording at all — e.g. an
+  Ashby posting with `isRemote: true` but `location: "New York, NY (HQ)"`
+  (confirmed live on a real Ramp posting), or an aggregator's bare
+  `candidate_required_location: "USA"`. It now strips the word "remote" if present and
+  treats whatever's left as a scope either way, once `isRemoteJob` has already
+  established the posting is remote by some means. `WORLDWIDE_LOCATION_VALUES` (a
+  bare `worldwide`/`anywhere`/`global` value) is a separate, earlier check in
+  `checkEligibility` for aggregator fields that put that verdict directly in the
+  location field rather than in prose.
 - **Eligibility from Nigeria/Africa is a hard gate, not a nice-to-have — this was a
   correction, not the original design.** The first version of `classify.ts` only
   checked whether a job's location text mentioned "US" or "Australia," which had a

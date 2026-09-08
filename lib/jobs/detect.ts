@@ -4,12 +4,15 @@ import type { JobAts } from "./types";
 // the same short board token - so instead of making the admin guess which
 // platform a company uses, this tries the token against all of them at
 // once and reports back whichever ones actually returned a real board.
-// "custom" is excluded: it takes a full careers page URL, not a token, so
-// there's nothing to probe with the same shape as the others.
+// "custom" and the four remote-job aggregators (remoteok/remotive/jobicy/
+// arbeitnow) are excluded: none of them are identified by a per-company
+// token the way these seven are, so there's nothing to probe or parse a
+// URL for in the same shape as the others.
+export type RealAts = Exclude<JobAts, "custom" | "remoteok" | "remotive" | "jobicy" | "arbeitnow">;
 
-export type AtsProbeResult = { ats: Exclude<JobAts, "custom">; jobCount: number };
+export type AtsProbeResult = { ats: RealAts; jobCount: number };
 
-const PROBEABLE: Exclude<JobAts, "custom">[] = [
+const PROBEABLE: RealAts[] = [
   "greenhouse",
   "lever",
   "ashby",
@@ -19,7 +22,7 @@ const PROBEABLE: Exclude<JobAts, "custom">[] = [
   "breezy",
 ];
 
-function probeUrl(ats: Exclude<JobAts, "custom">, token: string): string {
+function probeUrl(ats: RealAts, token: string): string {
   switch (ats) {
     case "greenhouse":
       return `https://boards-api.greenhouse.io/v1/boards/${token}/jobs`;
@@ -39,7 +42,7 @@ function probeUrl(ats: Exclude<JobAts, "custom">, token: string): string {
 }
 
 /** Returns a job count if the response shape matches this platform's real API, null if the token doesn't exist there. */
-function extractJobCount(ats: Exclude<JobAts, "custom">, data: unknown): number | null {
+function extractJobCount(ats: RealAts, data: unknown): number | null {
   if (data === null || data === undefined) return null;
 
   if (ats === "lever" || ats === "breezy") {
@@ -64,7 +67,7 @@ function extractJobCount(ats: Exclude<JobAts, "custom">, data: unknown): number 
   return null;
 }
 
-async function probeOne(ats: Exclude<JobAts, "custom">, token: string): Promise<AtsProbeResult | null> {
+async function probeOne(ats: RealAts, token: string): Promise<AtsProbeResult | null> {
   try {
     const res = await fetch(probeUrl(ats, token), { signal: AbortSignal.timeout(8000) });
     if (!res.ok) return null;
@@ -86,7 +89,7 @@ export async function detectAts(token: string): Promise<AtsProbeResult[]> {
 // at" - every platform's hosted job page puts the board token right in the
 // URL, so it can just be read off, no separate lookup needed. Tried in
 // order; the first pattern that matches wins.
-const URL_PATTERNS: { ats: Exclude<JobAts, "custom">; pattern: RegExp }[] = [
+const URL_PATTERNS: { ats: RealAts; pattern: RegExp }[] = [
   { ats: "greenhouse", pattern: /(?:job-)?boards\.greenhouse\.io\/([^/?#]+)/i },
   { ats: "lever", pattern: /jobs\.lever\.co\/([^/?#]+)/i },
   { ats: "ashby", pattern: /jobs\.ashbyhq\.com\/([^/?#]+)/i },
@@ -103,7 +106,7 @@ const URL_PATTERNS: { ats: Exclude<JobAts, "custom">; pattern: RegExp }[] = [
  * any known platform (e.g. a company's own custom domain), in which case
  * the caller should fall back to ats: "custom" with the URL as-is.
  */
-export function parseCareersUrl(url: string): { ats: Exclude<JobAts, "custom">; token: string } | null {
+export function parseCareersUrl(url: string): { ats: RealAts; token: string } | null {
   for (const { ats, pattern } of URL_PATTERNS) {
     const match = pattern.exec(url);
     if (match?.[1]) return { ats, token: match[1] };

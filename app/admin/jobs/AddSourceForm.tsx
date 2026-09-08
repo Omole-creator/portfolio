@@ -27,7 +27,15 @@ const ATS_LABELS: Record<JobAts, string> = {
   recruitee: "Recruitee",
   breezy: "Breezy HR",
   custom: "Custom (no recognized ATS)",
+  remoteok: "RemoteOK (aggregator, all companies)",
+  remotive: "Remotive (aggregator, all companies)",
+  jobicy: "Jobicy (aggregator, all companies)",
+  arbeitnow: "Arbeitnow (aggregator, all companies)",
 };
+
+// The four aggregators aren't a single company, so the "token" field means
+// something different for them: a category/tag filter, not an identifier.
+const AGGREGATOR_ATS: JobAts[] = ["remoteok", "remotive", "jobicy", "arbeitnow"];
 
 export function AddSourceForm() {
   const [state, action, pending] = useActionState(addJobSource, initial);
@@ -113,7 +121,9 @@ export function AddSourceForm() {
         <div className="sm:col-span-2 grid gap-4 rounded-xl border border-line bg-paper p-4 sm:grid-cols-2">
           <div>
             <label htmlFor="manual_token" className={label}>
-              Board token (or full URL, if using Custom)
+              {AGGREGATOR_ATS.includes(manualAts)
+                ? "Category/tag filter (e.g. \"marketing\")"
+                : "Board token (or full URL, if using Custom)"}
             </label>
             <div className="flex gap-2">
               <input
@@ -123,16 +133,18 @@ export function AddSourceForm() {
                 onChange={(e) => setManualToken(e.target.value)}
                 className={field}
               />
-              <button
-                type="submit"
-                formAction={detectAction}
-                formNoValidate
-                disabled={detectPending || !manualToken}
-                className="mt-1 inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-line px-3 text-xs font-semibold text-ink transition hover:border-gold disabled:opacity-60"
-              >
-                <Search className="h-3.5 w-3.5" aria-hidden="true" />
-                {detectPending ? "Checking..." : "Check token"}
-              </button>
+              {!AGGREGATOR_ATS.includes(manualAts) ? (
+                <button
+                  type="submit"
+                  formAction={detectAction}
+                  formNoValidate
+                  disabled={detectPending || !manualToken}
+                  className="mt-1 inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-line px-3 text-xs font-semibold text-ink transition hover:border-gold disabled:opacity-60"
+                >
+                  <Search className="h-3.5 w-3.5" aria-hidden="true" />
+                  {detectPending ? "Checking..." : "Check token"}
+                </button>
+              ) : null}
             </div>
             {detectState.error ? (
               <p className="mt-2 text-xs font-medium text-red-700">{detectState.error}</p>
