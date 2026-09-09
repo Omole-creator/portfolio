@@ -1051,20 +1051,36 @@ application **email**, and only after you've reviewed the draft and confirmed.
   could only ever be added by a direct database write, never through the actual
   admin UI form, which would have rejected the submission with "Choose which ATS this
   company uses."
-- **The five remote-job aggregator sources (RemoteOK, Remotive, Jobicy, Arbeitnow,
-  Himalayas) are deactivated, not deleted, and should stay that way.** Confirmed live,
-  not guessed: none of their public APIs expose the real employer's own application
-  link — `apply_url` always comes back pointing at the aggregator's own hosted job
-  page, which has its own in-house "Apply" flow (Arbeitnow's is literally a form
-  called `button_send_application` on arbeitnow.com itself; RemoteOK's and Remotive's
-  `url`/`apply_url` fields are their own `/remote-jobs/...` pages, never the company's
-  domain). This was the actual cause of "every match sends me to fill a form or a
-  sign-up page" — not a UI bug, a real gap in what these APIs return. Omole confirmed
-  he'd rather have fewer matches from real employers than more matches that dead-end
-  on a job board's own gate, so these five stay off; the fetcher code stays in
-  `lib/jobs/fetchers/` (still correct, still worth having if this tradeoff is ever
-  revisited) but `job_sources.active = false` for all five. Don't reactivate without
-  asking first.
+- **`MARKETING_KEYWORDS` was broadened after a live diagnostic caught real, common
+  title phrasings it was missing entirely** - a run that logged every remote/fresh/
+  junior posting that matched zero keywords surfaced "Social Media Lead" and "Content
+  Writer" as genuine, on-persona titles the list simply didn't cover (it only had
+  "social media manager" and "content marketer"/"content creator"). Added those plus
+  several other standard variants not seen that specific day but common enough to be
+  worth covering (digital marketing, email marketing, marketing specialist/
+  coordinator/associate, seo specialist/manager). Moved that day's keyword-match count
+  from 8 to 12, eligible matches from 1 to 2 - a real but modest gain, confirming the
+  keyword list was a minor leak, not the main bottleneck.
+- **Definitive answer to "can 20 matches/day be reached with the current sources,
+  by tuning filters" - no, confirmed by testing the absolute ceiling, not argued
+  from principle.** With MAX_POSTING_AGE_DAYS pushed to 30, the seniority filter and
+  the experience-years filter both disabled entirely (accepting Director-level titles
+  and any stated years of experience - a deliberately extreme test, not a serious
+  proposed config) and the broadened keyword list above, the maximum across all 85
+  sources on the day tested was **5 matches, from only 3 sources** (Remotive: 3,
+  Griffin: 1, Working Nomads: 1) - every other source, all 82 of them, contributed
+  zero even at maximum looseness. Filter tuning has hit its ceiling; the only lever
+  left with real headroom is more sources structured like the ones that actually
+  produced matches (redirect-style aggregators, or individual companies confirmed
+  - not assumed - to hire globally), not further filter adjustments on the existing
+  85.
+- **Superseded note, kept only so this doesn't get rediscovered as new information:**
+  an earlier pass deactivated all five aggregators that existed at the time on the
+  theory that none of them link to the real employer. That reasoning turned out to be
+  half right - see "'Must not require account sign-up to apply' is the actual bar..."
+  above for the corrected finding (RemoteOK, Remotive, and Arbeitnow are all
+  reactivated; only Jobicy and Himalayas actually stay off, for different confirmed
+  reasons each) and "Working Nomads..." for the sixth aggregator added since.
 - **`classify.ts` also gates on seniority and posting age**, added for the same
   reason: Omole is only applying to roles reachable with at most 4 years of
   experience, posted within the last week. `SENIOR_TITLE_PATTERN` rejects a title
