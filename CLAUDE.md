@@ -1051,23 +1051,37 @@ application **email**, and only after you've reviewed the draft and confirmed.
   on every individual posting regardless of source, so a source being one of these five
   countries doesn't make its postings automatically eligible - a US/UK/AU/CA/SG company
   can and does post plenty of country-scoped roles that still get excluded.
-- **As of 2026-09-09 there are 30 active sources, every board token confirmed live
-  before adding, none guessed:**
-  - **UK**: Monzo, Trustpilot, Deliveroo, Paddle, Canonical
-  - **Singapore**: Ahrefs, Airwallex (dual Singapore/Melbourne HQ)
-  - **Canada**: Float, Hootsuite, Later, D2L, Wealthsimple, Thinkific, Immutable
-  - **Australia**: Culture Amp, Deputy, Eucalyptus, Xero
-  - **US**: Deel, GitLab, Elastic, Twilio, Datadog, Okta, Fastly, Cloudflare, Asana,
-    Gusto, Discord, Notion
-  - All added with `hires_globally: false` except Canonical and Deel (`true`, both
+- **As of 2026-09-09 there are 100 active sources** (grown from an initial 6, to 30
+  after "6 is too small," to 100 after "make it 100" - each jump verified the same
+  way: every board token confirmed live with a real, non-empty response before adding,
+  none guessed). Full company list is in the database, not repeated here since it's
+  long and will keep changing; the shape that matters:
+  - Split roughly 42 US / 19 UK / 4 Australia / 4 Canada / 1 Singapore for the final
+    70-source batch - a deliberate rebalance, not a byproduct of research luck. Sorting
+    every verified candidate by current open-job count and taking the top 70 would have
+    produced a near-all-US list (US companies dominate what these seven ATS platforms
+    surface), so every non-US candidate found was kept regardless of its current job
+    count, and only the remaining slots were filled with the highest-volume US boards.
+  - All 100 use `hires_globally: false` except Canonical and Deel (`true`, both
     confirmed to have explicit worldwide/EMEA-scoped postings at add time). `false` is
-    the safe default for the rest: it doesn't block anything real - an ambiguous bare
-    "Remote" posting still gets excluded either way per `checkEligibility` in
-    `lib/jobs/classify.ts`, only a posting that explicitly says
-    worldwide/anywhere/EMEA/Africa/Nigeria ever surfaces a match - so these sources can
-    only ever add real matches, never wrongly-eligible ones. Don't flip any of them to
-    `true` without direct evidence for that specific company's actual hiring policy,
-    not just company reputation.
+    the deliberate default for the rest, including every company added in the 100-source
+    push: it doesn't block anything real - an ambiguous bare "Remote" posting still
+    gets excluded either way per `checkEligibility` in `lib/jobs/classify.ts`, only a
+    posting that explicitly says worldwide/anywhere/EMEA/Africa/Nigeria ever surfaces a
+    match - so these sources can only ever add real matches, never wrongly-eligible
+    ones. Don't flip any of them to `true` without direct evidence for that specific
+    company's actual hiring policy, not just company reputation or headline job count.
+  - **Volume was optimized company-by-company, which has a real ceiling**: at 100
+    sources, most still won't produce an eligible growth/marketing match on any given
+    day, since the vast majority of their postings are scoped to a single office
+    location. This was a deliberate tradeoff (see "no. only us, australia, canada
+    jobs" above) - broader-net company sourcing over aggregators, in exchange for every
+    match actually landing on the employer's own application, not a job board's.
+    Getting materially past 100 with this same approach means diminishing returns per
+    company added; the next lever, if more volume is needed, is more of the same
+    research (this list is nowhere near exhaustive - GitLab, Twilio, Datadog etc.'s
+    2000+ combined listings were barely scratched for country-scoped variety), not a
+    different mechanism.
   - A parallel search tried guessing tokens for Remote.com (the EOR company) and came
     up empty on purpose: its own Greenhouse board (`remotecom`) is real, but nearly
     every posting's own boilerplate company description repeats "we hire
