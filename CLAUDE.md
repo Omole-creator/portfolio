@@ -1139,18 +1139,33 @@ application **email**, and only after you've reviewed the draft and confirmed.
   rejected that direction ("no. only us, australia, canada jobs"), so all seven were
   deactivated, along with Ahrefs (Singapore) and Canonical (UK) for not fitting that
   narrower list. He then added Singapore and UK back to the allowed list and asked to
-  keep researching until 30 sources. **The current standing rule: only add a job
-  source for a company headquartered in the US, UK, Australia, Canada, or Singapore.**
-  Don't add a company from any other country (Nigerian/African companies included)
-  without asking first - that specific direction was tried and reversed once already.
-  This is a sourcing filter, not a `classify.ts` change: `checkEligibility` still runs
-  on every individual posting regardless of source, so a source being one of these five
-  countries doesn't make its postings automatically eligible - a US/UK/AU/CA/SG company
-  can and does post plenty of country-scoped roles that still get excluded.
-- **As of 2026-09-09 there are 100 active sources** (grown from an initial 6, to 30
-  after "6 is too small," to 100 after "make it 100" - each jump verified the same
-  way: every board token confirmed live with a real, non-empty response before adding,
-  none guessed). Full company list is in the database, not repeated here since it's
+  keep researching until 30 sources. Germany was added to the allowed list
+  2026-09-09. **The current standing rule: only add a job source for a company
+  headquartered in the US, UK, Australia, Canada, Singapore, or Germany.** Don't add
+  a company from any other country (Nigerian/African companies included) without
+  asking first - that specific direction was tried and reversed once already. This is
+  a sourcing filter, not a `classify.ts` change: `checkEligibility` still runs on
+  every individual posting regardless of source, so a source being one of these six
+  countries doesn't make its postings automatically eligible - a US/UK/AU/CA/SG/DE
+  company can and does post plenty of country-scoped roles that still get excluded.
+  **Germany specifically confirmed this pattern harder than any other country
+  tried**: ~30 German companies were probed live (N26, GetYourGuide, Celonis,
+  HelloFresh, Solarisbank, Raisin, DeepL, Enpal, commercetools, StepStone, Moss,
+  Tacto, Isar Aerospace, Grover, Refurbed, Forto, Choco, Vay, Auto1, Delivery Hero,
+  and others that came up empty or 404) and not a single genuinely remote-worldwide
+  or remote-EMEA marketing/growth role was found anywhere - every hit was scoped to
+  a specific office city (Berlin, Munich, London, Boston), hybrid at best. The 20
+  German companies with real verified boards were still added (`hires_globally:
+  false`, same low-risk broad-net logic as the US/UK batch), since a real board can
+  always post something eligible later even if today's snapshot has nothing - but
+  don't expect volume from them specifically; this is the same "direct companies
+  rarely say Worldwide" finding from the ceiling-test section above, just confirmed
+  country by country now rather than only in aggregate.
+- **As of 2026-09-09 there are 105 active sources** (grown from an initial 6, to 30
+  after "6 is too small," to 100 after "make it 100," to 105 after Germany was added
+  to the allowed country list - each jump verified the same way: every board token
+  confirmed live with a real, non-empty response before adding, none guessed). Full
+  company list is in the database, not repeated here since it's
   long and will keep changing; the shape that matters:
   - Split roughly 42 US / 19 UK / 4 Australia / 4 Canada / 1 Singapore for the final
     70-source batch - a deliberate rebalance, not a byproduct of research luck. Sorting
