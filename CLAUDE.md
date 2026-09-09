@@ -1242,6 +1242,40 @@ this feature.
   agency- and freelance-marketplace-shaped searches, not more general SaaS company
   lists - a structurally different research pass than the growth/marketing sourcing
   above.
+- **Sources should target companies paying roughly $1,000-5,000/month, not enterprise
+  SaaS - and picking companies from memory was the wrong method for that, corrected
+  once already.** Omole pointed out that guessing famous company names (the method
+  used to build the first 100+ sources) is inherently biased toward large,
+  well-funded, expensive-market companies - the ones anyone would already know by
+  name - and structurally can't surface the smaller, leaner companies actually in his
+  target budget. **None of the seven ATS platforms' public list APIs expose a
+  compensation field** (confirmed by inspecting Ashby's raw JSON response directly -
+  no salary data anywhere in it, and this matches what's already known about
+  Greenhouse/Lever from earlier fetcher work) - budget fit can't be filtered
+  programmatically the way remote/eligibility/seniority can, only inferred from
+  company stage and description text, or confirmed by hand when actually applying.
+  **Live web search (`site:jobs.ashbyhq.com "growth marketer" remote seed startup`
+  style queries), not memory, is now the sourcing method** - it surfaced real,
+  currently-smaller companies memory-based guessing never would have (Allium,
+  GetPoppy AI, Checkly, Resend, turbopuffer, all added as sources 2026-09-09, all
+  `ats: ashby`), confirming Ashby also skews toward earlier-stage companies more than
+  Greenhouse does in practice, on top of already being the platform Deel/Canonical/etc.
+  came from. Two query patterns that looked promising turned out not to work and
+  shouldn't be retried as-is: a direct salary-figure search
+  (`"$2,000" OR "$3,000" per month`) returned zero real postings, only marketing
+  -agency pricing blog content; an exact-phrase location search (`"remote worldwide"`,
+  `"remote, anywhere"`) mostly returned SEO listicle pages, not real postings, since
+  that phrasing is too rare in actual job copy to search for directly. **Even among
+  these smaller companies, most currently-open matching roles are still country
+  -scoped, not genuinely worldwide-open - the same scarcity the earlier 100-source
+  simulation found, just starting from a better-fitting company pool.** Two promising
+  leads for the `web` track specifically didn't pan out enough to add yet: Platform
+  Venture Studio (a "No Code/Low Code Developer, Bubble/Webflow" role, exactly
+  on-persona) had a Lever board that couldn't be found under any guessed token; Sommo
+  (a no-code dev studio literally describing itself as hiring Bubble/Webflow
+  developers "all over the world") has no ATS board at all, likely hires via LinkedIn
+  or direct contact - neither is addable without either the real board token or
+  falling back to the noisier `custom` scraper.
 
 ## Screenshots and sensitive data
 
