@@ -1034,16 +1034,58 @@ application **email**, and only after you've reviewed the draft and confirmed.
   model with a 400 - `thinkingLevel` is the 3.x replacement, confirmed live.
 - **Job sources are admin-curated data, not schema, so they're added/removed directly
   against Supabase rather than through a migration file** - unlike the versioned SQL
-  in `supabase/migrations/`, which is schema only. The six active sources as of this
-  writing are Ahrefs, Canonical, Culture Amp, Deel, Deputy, and Float (Canonical added
-  2026-09-09 the same session the five aggregators above were deactivated, both
-  verified live before the change - Canonical because it has real, current, remote
-  -anywhere-EMEA marketing roles, several of which survive the new seniority filter).
-  **Float's existing source (`ats: workable`, token `floatjobs`) currently returns
-  zero jobs, but Float also has an active Ashby board (`ats: ashby`, token `float`,
-  ~20 open roles) - confirmed live, not yet acted on.** Those Ashby-side roles are all
-  Toronto/Canada-scoped though, so switching wouldn't add eligible matches; flagged
-  here rather than fixed, since it wasn't asked for.
+  in `supabase/migrations/`, which is schema only. As of 2026-09-09 there are 20 active
+  sources: the original Ahrefs, Culture Amp, Deel, Deputy, Float; Canonical (added
+  first, the same session the five aggregators above were deactivated - it has real,
+  current, remote-anywhere/EMEA marketing roles, several of which survive the new
+  seniority filter); then, once Omole asked for more volume, a second batch of 14 more,
+  every board token confirmed live before adding, none guessed:
+  - **Nigerian/pan-African companies** (Moniepoint, Carbon, Kuda, FairMoney, Renmoney,
+    Helium Health), `hires_globally: true` - a "Remote" posting from a Nigeria-HQ'd
+    company is a reasonable bet to mean Nigeria/Africa-remote even with no country
+    named, and any posting that already names Nigeria/Africa explicitly passes
+    regardless of this flag. **These companies' remote-flagged growth/marketing
+    openings were thin at add time (a handful across all six combined)** - added for
+    the trend, not a current volume guarantee: real Nigerian/African companies with
+    real, actively-hiring boards, on the reasoning that as these boards grow they're
+    Omole's best long-run source of trivially-eligible remote roles, not because
+    today's snapshot was full of matches.
+  - **Andela** (Ashby, `hires_globally: false`) - African-founded global talent
+    marketplace, but its actual open roles skewed North-America-scoped at add time, so
+    left conservative rather than assumed.
+  - **GitLab, Elastic, Twilio, Datadog, Okta, Fastly, Cloudflare** (all Greenhouse,
+    `hires_globally: false`) - large companies with real, substantial growth/marketing
+    hiring volume, added as a broader net even though most of their current postings
+    are scoped to specific US/EU/APAC locations, not confirmed open to Nigeria. This is
+    deliberately low-risk, not padding: `hires_globally: false` means an ambiguous bare
+    "Remote" posting from any of these still gets excluded by default (per
+    `checkEligibility` in `lib/jobs/classify.ts`) - only a posting that explicitly says
+    worldwide/anywhere/EMEA/Africa/Nigeria will ever surface a match from these seven,
+    so they can only ever add real matches, never wrongly-eligible ones. Don't flip any
+    of the seven to `hires_globally: true` without direct evidence for that specific
+    company, the same standard Canonical and the Nigerian companies above were held to.
+  - A parallel search tried guessing tokens for Remote.com (the EOR company) and came
+    up empty on purpose: its own Greenhouse board (`remotecom`) is real, but nearly
+    every posting's own boilerplate company description repeats "we hire
+    internationally"-style language regardless of that specific role's actual
+    single-country scope (confirmed live: identical "worldwide" signal fired on roles
+    individually scoped to France, Portugal, Morocco, Canada, and more). Adding it
+    would have produced systematically false "worldwide" eligibility labels under the
+    current `WORLDWIDE_PATTERNS` check, which trusts that language wherever it appears
+    in the combined location+description text - not added, and worth remembering if an
+    EOR-style company (Remote, Oyster, Multiplier, Papaya, Deel-alikes) comes up again:
+    check several individual postings' actual scope, not just the company's own
+    about-us framing, before trusting a "we hire globally" phrase from a source like
+    this.
+  - Dozens more Nigerian fintech/startup token guesses (PiggyVest, Cowrywise,
+    Flutterwave, Paystack, Bolt, Moove, Busha, Yellow Card, and others) came up as 404s
+    across every supported ATS - these companies likely run on Workday, BambooHR (not
+    supported, see below), or a proprietary system, not evidence they don't exist.
+  - **Float's existing source (`ats: workable`, token `floatjobs`) currently returns
+    zero jobs, but Float also has an active Ashby board (`ats: ashby`, token `float`,
+    ~20 open roles) - confirmed live, not yet acted on.** Those Ashby-side roles are all
+    Toronto/Canada-scoped though, so switching wouldn't add eligible matches; flagged
+    here rather than fixed, since it wasn't asked for.
 
 ## Screenshots and sensitive data
 
