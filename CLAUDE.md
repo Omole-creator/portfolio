@@ -987,15 +987,70 @@ application **email**, and only after you've reviewed the draft and confirmed.
   is Cloudflare-protected against plain fetches (repeatedly confirmed 403, even with a
   realistic browser User-Agent), so its actual apply flow still can't be verified
   either way - **stays deactivated on "no evidence it's clean," not on "confirmed
-  bad."** Jobicy was never activated as a source at all (only ever a candidate),
-  unaffected either way. If Himalayas' apply flow is ever actually confirmed (a real
-  browser session, not a plain fetch), revisit reactivating it with the same
-  page-by-page evidence standard used for the other three, not a guess.
+  bad."** If Himalayas' apply flow is ever actually confirmed (a real browser session,
+  not a plain fetch), revisit reactivating it with the same page-by-page evidence
+  standard used for the other three, not a guess.
+- **Jobicy was checked with the same standard and confirmed NOT clean - stays
+  excluded, not just "never gotten to."** Its job pages have `apply_with_resume` and
+  `resume_id` markup and heavy register/password/login language (confirmed live: 9
+  "password", 27 "register", 11 "login" occurrences on one sample job page), meaning
+  applying stores a resume against a Jobicy account rather than a one-time form -
+  Omole confirmed explicitly not to add it.
 - **Every job source must be a genuinely free API, forever - no source that gates
   behind a paid job-board tier for either the recruiter or the candidate.** All 100+
   sources already meet this by construction (each is a company's own free public ATS
   API, or a free aggregator API), so this hasn't required removing anything - it's
   recorded here as a hard constraint on anything added later, not a correction.
+- **A live funnel simulation (rebuilt fresh against the then-current 84 sources)
+  found the deepest bottleneck isn't any of the filters - it's that direct-company
+  ATS boards almost never label a posting genuinely worldwide-open, even when every
+  other filter (freshness, seniority, experience) is maxed out.** With freshness
+  widened to 30 days and the seniority/experience filters disabled entirely (a
+  deliberately extreme test, not the real running config), only 2 postings passed
+  eligibility out of 105 keyword hits across all 84 sources that day - and **both
+  came from Remotive, zero from any of the 79 direct-company sources.** Direct
+  companies almost always scope "Remote" to a specific country for payroll/legal
+  reasons; aggregators are structurally the only sources that consistently label a
+  posting with an explicit worldwide/anywhere value. This reframes the whole sourcing
+  strategy: aggregators aren't a stopgap for coverage, they're the primary lever for
+  eligible volume specifically, and adding more individual companies one at a time -
+  the approach used to build the first 100+ sources - has a low ceiling by
+  comparison.
+- **Working Nomads (`ats: workingnomads`) is a sixth aggregator, added 2026-09-09,
+  structurally different from the other five: it's a genuine pass-through, not a
+  page it hosts itself.** Its listing `url` is a `workingnomads.com/job/go/<id>/`
+  redirect that resolves straight to the real employer's own application page
+  (confirmed live across all 49 then-current postings: `apply.workable.com`,
+  `career.proxify.io`, etc.) - the cleanest structural fit for "must not require
+  account sign-up" of any aggregator here, since the destination is whatever ATS or
+  system the employer already uses, the same standard already trusted for every
+  direct-company source. Because the destination varies per posting, though, it isn't
+  uniformly clean the way the other five's own fixed apply flow is: one real posting
+  (out of 49) resolved straight to `markervideo.com/api/auth/signup` - the employer's
+  own system requires an account. `lib/jobs/fetchers/workingnomads.ts` follows the
+  redirect itself and checks the *resolved* URL against `SIGNUP_URL_PATTERN`
+  (`/sign-up`, `/register`, `/create-account` in the path), dropping that one posting
+  rather than trusting the aggregator's own apply flow the way the other five do -
+  the only per-posting sign-up check anywhere in this codebase, everywhere else the
+  check happens once per source, not once per job. A real bug was caught and fixed
+  while building this: the first version discarded a job whenever the *resolved
+  destination page itself* returned a non-2xx status, which turned out to silently
+  drop 13 of 15 sample postings - `career.proxify.io`'s apply page 403s a plain
+  server-side fetch (bot protection against the request itself, confirmed a real
+  browser opening the identical resolved URL works fine), but `redirect: "follow"`
+  had already completed and `res.url` already held the correct final destination
+  regardless of that status code. Fixed by using `res.url` unconditionally once the
+  fetch itself succeeds, only discarding a posting on an actual network failure.
+  After the fix: 48 of 49 kept, exactly the one genuine signup case filtered, zero
+  false drops. Like Remotive/Jobicy, Working Nomads' own `category` filter param was
+  tested live and confirmed to not narrow results, so `board_token` is unused here,
+  one "all jobs" source. **A second, separate, pre-existing bug was found and fixed
+  while adding this: `ATS_VALUES` in `app/admin/jobs/actions.ts` never included any
+  aggregator type at all**, even though `AddSourceForm.tsx`'s manual-override panel
+  has always let the admin pick one - meaning every aggregator source before this fix
+  could only ever be added by a direct database write, never through the actual
+  admin UI form, which would have rejected the submission with "Choose which ATS this
+  company uses."
 - **The five remote-job aggregator sources (RemoteOK, Remotive, Jobicy, Arbeitnow,
   Himalayas) are deactivated, not deleted, and should stay that way.** Confirmed live,
   not guessed: none of their public APIs expose the real employer's own application
@@ -1030,7 +1085,7 @@ application **email**, and only after you've reviewed the draft and confirmed.
   Himalayas' `created_at`/`pubDate` (both unix seconds). Workable, SmartRecruiters,
   Recruitee, and Breezy's date fields are best-effort, unconfirmed the same way
   Breezy's other fields are (above) - every account probed during development had zero
-  open postings to check against. `supabase/migrations/0005_job_matches_posted_at.sql`
+  open postings to check against. `supabase/migrations/0007_job_matches_posted_at.sql`
   adds the column; nothing backfills old rows.
 - **Two eligibility gaps in `classify.ts` were found and fixed by testing real live
   postings, not by inspection.** The "must be authorized to work in the United
@@ -1219,7 +1274,7 @@ this feature.
   `/web` the way `growthTechnicalSkills`/`marketingTechnicalSkills` do, so that list is
   inlined directly in the branch instead, kept in sync with the CV's Technical Skills
   section by hand if either changes.
-- **`supabase/migrations/0006_web_track.sql`** drops and re-adds both
+- **`supabase/migrations/0008_web_track.sql`** drops and re-adds both
   `job_sources_track_check` and `job_matches_track_check` to include `'web'` (the
   latter without `'both'`, matching the existing pattern - `job_matches.track` is
   always resolved to one specific track by `classifyJob`, never stored as `'both'`,

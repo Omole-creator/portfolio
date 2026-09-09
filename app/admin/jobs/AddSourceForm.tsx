@@ -32,11 +32,19 @@ const ATS_LABELS: Record<JobAts, string> = {
   jobicy: "Jobicy (aggregator, all companies)",
   arbeitnow: "Arbeitnow (aggregator, all companies)",
   himalayas: "Himalayas (aggregator, keyword search)",
+  workingnomads: "Working Nomads (aggregator, all companies)",
 };
 
-// The four aggregators aren't a single company, so the "token" field means
+// The aggregators aren't a single company, so the "token" field means
 // something different for them: a category/tag filter, not an identifier.
-const AGGREGATOR_ATS: JobAts[] = ["remoteok", "remotive", "jobicy", "arbeitnow", "himalayas"];
+const AGGREGATOR_ATS: JobAts[] = [
+  "remoteok",
+  "remotive",
+  "jobicy",
+  "arbeitnow",
+  "himalayas",
+  "workingnomads",
+];
 
 export function AddSourceForm() {
   const [state, action, pending] = useActionState(addJobSource, initial);

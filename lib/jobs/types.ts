@@ -4,19 +4,28 @@
 // fallback that lets literally any career page on the internet be added as
 // a source, at the cost of being much noisier than a structured API.
 //
-// "remoteok" / "remotive" / "jobicy" / "arbeitnow" / "himalayas" are a
-// different kind of source: free public remote-job aggregator APIs, each
-// already covering thousands of companies rather than one company per
-// source row. They exist because there's no way to search "every company
-// on Greenhouse/Lever" for free - individually adding companies one at a
-// time doesn't scale to meaningful coverage, so these fill that gap. Every
-// job that comes through them still passes the exact same track/remote/
-// eligibility filters as everything else in lib/jobs/classify.ts. Of the
-// five, only Himalayas' keyword search (the `q` param) was confirmed live
-// to actually narrow results - Remotive's `category` and Jobicy's `tag`
-// params were tested and found to return the same unfiltered set
-// regardless of value, so those two just fetch their general feed and rely
-// on classify.ts to do the real filtering.
+// "remoteok" / "remotive" / "jobicy" / "arbeitnow" / "himalayas" /
+// "workingnomads" are a different kind of source: free public remote-job
+// aggregator APIs, each already covering thousands of companies rather than
+// one company per source row. They exist because there's no way to search
+// "every company on Greenhouse/Lever" for free - individually adding
+// companies one at a time doesn't scale to meaningful coverage, so these
+// fill that gap. Every job that comes through them still passes the exact
+// same track/remote/eligibility filters as everything else in
+// lib/jobs/classify.ts. Of the six, only Himalayas' keyword search (the `q`
+// param) was confirmed live to actually narrow results - Remotive's
+// `category`, Jobicy's `tag`, and Working Nomads' `category` params were all
+// tested and found to return the same unfiltered set regardless of value,
+// so those three just fetch their general feed and rely on classify.ts to
+// do the real filtering. Working Nomads is structurally different from the
+// other five: its listing URL is a genuine redirect to the real employer's
+// own application page (confirmed live - resolves to apply.workable.com,
+// career.proxify.io, etc.), not a page the aggregator itself hosts, so
+// lib/jobs/fetchers/workingnomads.ts resolves that redirect and checks the
+// real destination for a signup requirement itself (confirmed live: one
+// posting resolved straight to a "/auth/signup" endpoint on the employer's
+// own site) rather than trusting the aggregator's own apply flow the way
+// the other five do.
 export type JobAts =
   | "greenhouse"
   | "lever"
@@ -30,7 +39,8 @@ export type JobAts =
   | "remotive"
   | "jobicy"
   | "arbeitnow"
-  | "himalayas";
+  | "himalayas"
+  | "workingnomads";
 // "web" is the AI-assisted rapid web/product builder track, matched to
 // /web's positioning (design + development + copy, moving fast with AI
 // tools like Claude Code, not a traditional CS-background engineer) - see

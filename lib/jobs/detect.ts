@@ -4,11 +4,14 @@ import type { JobAts } from "./types";
 // the same short board token - so instead of making the admin guess which
 // platform a company uses, this tries the token against all of them at
 // once and reports back whichever ones actually returned a real board.
-// "custom" and the four remote-job aggregators (remoteok/remotive/jobicy/
-// arbeitnow) are excluded: none of them are identified by a per-company
-// token the way these seven are, so there's nothing to probe or parse a
-// URL for in the same shape as the others.
-export type RealAts = Exclude<JobAts, "custom" | "remoteok" | "remotive" | "jobicy" | "arbeitnow" | "himalayas">;
+// "custom" and the remote-job aggregators (remoteok/remotive/jobicy/
+// arbeitnow/himalayas/workingnomads) are excluded: none of them are
+// identified by a per-company token the way these seven are, so there's
+// nothing to probe or parse a URL for in the same shape as the others.
+export type RealAts = Exclude<
+  JobAts,
+  "custom" | "remoteok" | "remotive" | "jobicy" | "arbeitnow" | "himalayas" | "workingnomads"
+>;
 
 export type AtsProbeResult = { ats: RealAts; jobCount: number };
 

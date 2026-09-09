@@ -10,6 +10,11 @@ import type { JobAts, JobMatch, JobSourceTrack } from "@/lib/jobs/types";
 export type ActionState = { error?: string; message?: string };
 export type DetectState = { error?: string; matches?: AtsProbeResult[] };
 
+// Includes the aggregator types even though the primary "paste a URL" flow
+// never produces one - the manual-override panel in AddSourceForm.tsx lets
+// the admin pick one directly, and this validation was rejecting that
+// choice before this fix (every aggregator source so far was added by
+// direct database insert instead, never through this form).
 const ATS_VALUES: JobAts[] = [
   "greenhouse",
   "lever",
@@ -19,6 +24,12 @@ const ATS_VALUES: JobAts[] = [
   "recruitee",
   "breezy",
   "custom",
+  "remoteok",
+  "remotive",
+  "jobicy",
+  "arbeitnow",
+  "himalayas",
+  "workingnomads",
 ];
 const SOURCE_TRACK_VALUES: JobSourceTrack[] = ["growth", "marketing", "web", "both"];
 
