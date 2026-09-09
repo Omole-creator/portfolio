@@ -1034,36 +1034,40 @@ application **email**, and only after you've reviewed the draft and confirmed.
   model with a 400 - `thinkingLevel` is the 3.x replacement, confirmed live.
 - **Job sources are admin-curated data, not schema, so they're added/removed directly
   against Supabase rather than through a migration file** - unlike the versioned SQL
-  in `supabase/migrations/`, which is schema only. As of 2026-09-09 there are 20 active
-  sources: the original Ahrefs, Culture Amp, Deel, Deputy, Float; Canonical (added
-  first, the same session the five aggregators above were deactivated - it has real,
-  current, remote-anywhere/EMEA marketing roles, several of which survive the new
-  seniority filter); then, once Omole asked for more volume, a second batch of 14 more,
-  every board token confirmed live before adding, none guessed:
-  - **Nigerian/pan-African companies** (Moniepoint, Carbon, Kuda, FairMoney, Renmoney,
-    Helium Health), `hires_globally: true` - a "Remote" posting from a Nigeria-HQ'd
-    company is a reasonable bet to mean Nigeria/Africa-remote even with no country
-    named, and any posting that already names Nigeria/Africa explicitly passes
-    regardless of this flag. **These companies' remote-flagged growth/marketing
-    openings were thin at add time (a handful across all six combined)** - added for
-    the trend, not a current volume guarantee: real Nigerian/African companies with
-    real, actively-hiring boards, on the reasoning that as these boards grow they're
-    Omole's best long-run source of trivially-eligible remote roles, not because
-    today's snapshot was full of matches.
-  - **Andela** (Ashby, `hires_globally: false`) - African-founded global talent
-    marketplace, but its actual open roles skewed North-America-scoped at add time, so
-    left conservative rather than assumed.
-  - **GitLab, Elastic, Twilio, Datadog, Okta, Fastly, Cloudflare** (all Greenhouse,
-    `hires_globally: false`) - large companies with real, substantial growth/marketing
-    hiring volume, added as a broader net even though most of their current postings
-    are scoped to specific US/EU/APAC locations, not confirmed open to Nigeria. This is
-    deliberately low-risk, not padding: `hires_globally: false` means an ambiguous bare
-    "Remote" posting from any of these still gets excluded by default (per
-    `checkEligibility` in `lib/jobs/classify.ts`) - only a posting that explicitly says
-    worldwide/anywhere/EMEA/Africa/Nigeria will ever surface a match from these seven,
-    so they can only ever add real matches, never wrongly-eligible ones. Don't flip any
-    of the seven to `hires_globally: true` without direct evidence for that specific
-    company, the same standard Canonical and the Nigerian companies above were held to.
+  in `supabase/migrations/`, which is schema only.
+- **Company HQ country is a hard sourcing filter, decided by Omole directly, not
+  inferred from job content.** He first asked for volume (6 sources felt too small),
+  which led to a first pass adding Nigerian/pan-African companies (Moniepoint, Carbon,
+  Kuda, FairMoney, Renmoney, Helium Health, Andela) on the reasoning that a
+  Nigeria-HQ'd company's "Remote" posting is trivially eligible - he then explicitly
+  rejected that direction ("no. only us, australia, canada jobs"), so all seven were
+  deactivated, along with Ahrefs (Singapore) and Canonical (UK) for not fitting that
+  narrower list. He then added Singapore and UK back to the allowed list and asked to
+  keep researching until 30 sources. **The current standing rule: only add a job
+  source for a company headquartered in the US, UK, Australia, Canada, or Singapore.**
+  Don't add a company from any other country (Nigerian/African companies included)
+  without asking first - that specific direction was tried and reversed once already.
+  This is a sourcing filter, not a `classify.ts` change: `checkEligibility` still runs
+  on every individual posting regardless of source, so a source being one of these five
+  countries doesn't make its postings automatically eligible - a US/UK/AU/CA/SG company
+  can and does post plenty of country-scoped roles that still get excluded.
+- **As of 2026-09-09 there are 30 active sources, every board token confirmed live
+  before adding, none guessed:**
+  - **UK**: Monzo, Trustpilot, Deliveroo, Paddle, Canonical
+  - **Singapore**: Ahrefs, Airwallex (dual Singapore/Melbourne HQ)
+  - **Canada**: Float, Hootsuite, Later, D2L, Wealthsimple, Thinkific, Immutable
+  - **Australia**: Culture Amp, Deputy, Eucalyptus, Xero
+  - **US**: Deel, GitLab, Elastic, Twilio, Datadog, Okta, Fastly, Cloudflare, Asana,
+    Gusto, Discord, Notion
+  - All added with `hires_globally: false` except Canonical and Deel (`true`, both
+    confirmed to have explicit worldwide/EMEA-scoped postings at add time). `false` is
+    the safe default for the rest: it doesn't block anything real - an ambiguous bare
+    "Remote" posting still gets excluded either way per `checkEligibility` in
+    `lib/jobs/classify.ts`, only a posting that explicitly says
+    worldwide/anywhere/EMEA/Africa/Nigeria ever surfaces a match - so these sources can
+    only ever add real matches, never wrongly-eligible ones. Don't flip any of them to
+    `true` without direct evidence for that specific company's actual hiring policy,
+    not just company reputation.
   - A parallel search tried guessing tokens for Remote.com (the EOR company) and came
     up empty on purpose: its own Greenhouse board (`remotecom`) is real, but nearly
     every posting's own boilerplate company description repeats "we hire
@@ -1077,10 +1081,12 @@ application **email**, and only after you've reviewed the draft and confirmed.
     check several individual postings' actual scope, not just the company's own
     about-us framing, before trusting a "we hire globally" phrase from a source like
     this.
-  - Dozens more Nigerian fintech/startup token guesses (PiggyVest, Cowrywise,
-    Flutterwave, Paystack, Bolt, Moove, Busha, Yellow Card, and others) came up as 404s
-    across every supported ATS - these companies likely run on Workday, BambooHR (not
-    supported, see below), or a proprietary system, not evidence they don't exist.
+  - Dozens of token guesses came up as 404s across every supported ATS during this
+    research (Nigerian fintechs during the reverted first pass; several Singapore
+    companies - Grab, Shopee, Carousell, Ninja Van, PropertyGuru, Aspire, Nium, Carro,
+    and others - during the second) - not evidence these companies don't exist, just
+    that they likely run on Workday, BambooHR (not supported, see below), or a
+    proprietary system outside what `lib/jobs/fetchers/` covers.
   - **Float's existing source (`ats: workable`, token `floatjobs`) currently returns
     zero jobs, but Float also has an active Ashby board (`ats: ashby`, token `float`,
     ~20 open roles) - confirmed live, not yet acted on.** Those Ashby-side roles are all
