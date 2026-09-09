@@ -1,11 +1,31 @@
 import type { JobTrack, NormalizedJob, QaPair } from "./types";
 
-// gemini-2.0-flash was retired (confirmed live: the API now 404s and names
-// gemini-3.6-flash as the replacement) - if this 404s again in the future,
-// check https://generativelanguage.googleapis.com/v1beta/models?key=$GEMINI_API_KEY
-// for the current free-tier flash model name rather than guessing.
-const GEMINI_ENDPOINT =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent";
+// The free tier's real, hard limit turned out to be much lower than the
+// earlier 503-retry fix accounted for: confirmed live, gemini-3.6-flash's
+// free tier allows only 20 requests per DAY, total
+// ("GenerateRequestsPerDayPerProjectPerModel-FreeTier", quotaValue 20) - not
+// a per-minute rate limit a short retry can wait out. A single busy day of
+// "Prepare application" taps exhausts it outright, and once exhausted every
+// request that day 429s with RESOURCE_EXHAUSTED regardless of how long the
+// retry delay is. The fix isn't a longer retry - it's that each Gemini
+// model has its OWN separate daily quota bucket (confirmed live: with
+// gemini-3.6-flash's quota already exhausted, gemini-flash-latest,
+// gemini-3.5-flash-lite, gemini-flash-lite-latest, and gemini-3.7-flash all
+// still returned 200), so MODEL_FALLBACK_CHAIN tries the next model
+// entirely rather than retrying the same exhausted one. This multiplies the
+// effective daily capacity by the number of models tried, not just the
+// number of attempts on one model.
+const MODEL_FALLBACK_CHAIN = [
+  "gemini-3.6-flash",
+  "gemini-flash-latest",
+  "gemini-3.5-flash-lite",
+  "gemini-flash-lite-latest",
+  "gemini-3.7-flash",
+] as const;
+
+function endpointFor(model: string): string {
+  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+}
 
 type DraftInput = {
   job: NormalizedJob;
@@ -24,17 +44,16 @@ type DraftResult = { coverLetter: string; qaPairs: QaPair[] };
 // and "thinkingLevel: low" was confirmed live to drop thoughtsTokenCount to
 // zero while still returning a valid draft (thinkingBudget: 0, the
 // documented way to disable thinking on 2.5-series models, is rejected by
-// this model with a 400 - thinkingLevel is the 3.x replacement).
+// this model with a 400 - thinkingLevel is the 3.x replacement). Sent to
+// every model in the fallback chain, not just gemini-3.6-flash - harmless
+// on models that ignore it.
 const THINKING_CONFIG = { thinkingLevel: "low" as const };
 
-// The single most common cause of "Could not generate a draft right now" in
-// practice, confirmed live: gemini-3.6-flash intermittently returns a 503
-// "currently experiencing high demand" even on a totally ordinary request,
-// with no retry built in previously - one transient blip failed the whole
-// "Prepare application" tap. A 429 (quota/rate limit) is the other
-// retryable case. Both clear up within a few seconds, so a short retry loop
-// fixes the vast majority of these without the admin ever seeing an error.
-const RETRYABLE_STATUS = new Set([429, 503]);
+// A 503 ("currently experiencing high demand") is a genuine transient blip,
+// confirmed live, worth a short retry on the SAME model. A 429 is not worth
+// retrying on the same model - see MODEL_FALLBACK_CHAIN above, a 429 moves
+// to the next model immediately instead.
+const RETRYABLE_STATUS = new Set([503]);
 const MAX_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 1500;
 
@@ -77,54 +96,59 @@ export async function draftApplication(input: DraftInput): Promise<DraftResult |
     },
   };
 
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
-    try {
-      const res = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(30000),
-      });
+  for (const model of MODEL_FALLBACK_CHAIN) {
+    const endpoint = endpointFor(model);
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        if (RETRYABLE_STATUS.has(res.status) && attempt < MAX_ATTEMPTS) {
-          console.error(`Gemini request failed (attempt ${attempt}): ${res.status} ${errorText}, retrying...`);
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+      try {
+        const res = await fetch(`${endpoint}?key=${apiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(30000),
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          if (RETRYABLE_STATUS.has(res.status) && attempt < MAX_ATTEMPTS) {
+            console.error(`Gemini ${model} failed (attempt ${attempt}): ${res.status} ${errorText}, retrying...`);
+            await wait(RETRY_DELAY_MS * attempt);
+            continue;
+          }
+          console.error(`Gemini ${model} failed: ${res.status} ${errorText}`);
+          break; // try the next model in the chain
+        }
+
+        const data = await res.json();
+        const text: string | undefined = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) {
+          console.error(`Gemini ${model} response had no text part:`, JSON.stringify(data).slice(0, 500));
+          break; // try the next model in the chain
+        }
+
+        const parsed = JSON.parse(text) as { cover_letter?: string; qa_answers?: QaPair[] };
+        if (!parsed.cover_letter || typeof parsed.cover_letter !== "string") {
+          console.error(`Gemini ${model} response missing cover_letter.`);
+          break; // try the next model in the chain
+        }
+
+        return {
+          coverLetter: parsed.cover_letter.trim(),
+          qaPairs: Array.isArray(parsed.qa_answers) ? parsed.qa_answers : [],
+        };
+      } catch (error) {
+        if (attempt < MAX_ATTEMPTS) {
+          console.error(`Gemini ${model} errored (attempt ${attempt}), retrying:`, error);
           await wait(RETRY_DELAY_MS * attempt);
           continue;
         }
-        console.error(`Gemini request failed: ${res.status} ${errorText}`);
-        return null;
+        console.error(`Gemini ${model} failed after retries:`, error);
+        break; // try the next model in the chain
       }
-
-      const data = await res.json();
-      const text: string | undefined = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!text) {
-        console.error("Gemini response had no text part:", JSON.stringify(data).slice(0, 500));
-        return null;
-      }
-
-      const parsed = JSON.parse(text) as { cover_letter?: string; qa_answers?: QaPair[] };
-      if (!parsed.cover_letter || typeof parsed.cover_letter !== "string") {
-        console.error("Gemini response missing cover_letter.");
-        return null;
-      }
-
-      return {
-        coverLetter: parsed.cover_letter.trim(),
-        qaPairs: Array.isArray(parsed.qa_answers) ? parsed.qa_answers : [],
-      };
-    } catch (error) {
-      if (attempt < MAX_ATTEMPTS) {
-        console.error(`Gemini draft errored (attempt ${attempt}), retrying:`, error);
-        await wait(RETRY_DELAY_MS * attempt);
-        continue;
-      }
-      console.error("Gemini draft failed:", error);
-      return null;
     }
   }
 
+  console.error("Gemini draft failed: every model in the fallback chain was exhausted or errored.");
   return null;
 }
 
