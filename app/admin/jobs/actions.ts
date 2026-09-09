@@ -20,7 +20,7 @@ const ATS_VALUES: JobAts[] = [
   "breezy",
   "custom",
 ];
-const SOURCE_TRACK_VALUES: JobSourceTrack[] = ["growth", "marketing", "both"];
+const SOURCE_TRACK_VALUES: JobSourceTrack[] = ["growth", "marketing", "web", "both"];
 
 export async function prepareApplication(
   _prev: ActionState,

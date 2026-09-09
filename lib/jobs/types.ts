@@ -31,7 +31,11 @@ export type JobAts =
   | "jobicy"
   | "arbeitnow"
   | "himalayas";
-export type JobTrack = "growth" | "marketing";
+// "web" is the AI-assisted rapid web/product builder track, matched to
+// /web's positioning (design + development + copy, moving fast with AI
+// tools like Claude Code, not a traditional CS-background engineer) - see
+// lib/web-content.ts and Omole Usuangbon - Web Developer CV.pdf.
+export type JobTrack = "growth" | "marketing" | "web";
 export type JobSourceTrack = JobTrack | "both";
 // Whether the posting is confirmed open to a candidate anywhere (including
 // Nigeria/Africa), or only passed the filter on an "unconfirmed" basis (a

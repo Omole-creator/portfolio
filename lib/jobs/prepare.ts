@@ -12,6 +12,10 @@ const CV_AND_PORTFOLIO: Record<JobTrack, { cv_path: string; portfolio_url: strin
     cv_path: "/omole-usuangbon-creative-marketing-cv.pdf",
     portfolio_url: "https://omoleportfolio.vercel.app/marketing",
   },
+  web: {
+    cv_path: "/omole-usuangbon-web-developer-cv.pdf",
+    portfolio_url: "https://omoleportfolio.vercel.app/web",
+  },
 };
 
 type PrepareResult =

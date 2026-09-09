@@ -202,7 +202,8 @@ export function AddSourceForm() {
         <select id="track" name="track" required className={field} defaultValue="both">
           <option value="growth">Growth marketing</option>
           <option value="marketing">Creative marketing</option>
-          <option value="both">Both</option>
+          <option value="web">AI web/product builder</option>
+          <option value="both">Any</option>
         </select>
       </div>
 

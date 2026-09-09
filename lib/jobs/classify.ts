@@ -39,6 +39,36 @@ const MARKETING_KEYWORDS = [
   "content strategist",
 ];
 
+// The AI-assisted rapid web/product builder track, matched to /web's actual
+// positioning: design + copy + development, moving fast with AI tools
+// (Claude Code), not a traditional CS-background software engineer. Kept
+// deliberately narrow to titles that signal that specific persona - "web
+// developer" or "software engineer" alone were left out on purpose, since a
+// plain title match against those would pull in traditional engineering
+// roles this CV doesn't actually compete for.
+const WEB_KEYWORDS = [
+  "no-code developer",
+  "no code developer",
+  "low-code developer",
+  "webflow developer",
+  "webflow designer",
+  "framer developer",
+  "framer designer",
+  "landing page designer",
+  "landing page developer",
+  "website designer",
+  "web designer",
+  "founding designer",
+  "ai product builder",
+  "creative technologist",
+  "rapid prototyper",
+  "vibe coder",
+  "vibe coding",
+  "shopify developer",
+  "wordpress developer",
+  "squarespace designer",
+];
+
 // Explicit signals that a posting is NOT open to someone applying from
 // Nigeria/Africa: citizenship/work-authorization/residency requirements,
 // or a flat refusal to sponsor. These override everything else.
@@ -210,27 +240,31 @@ export function classifyJob(
 
   const haystack = `${job.title} ${job.description_text ?? ""}`.toLowerCase();
 
-  const growthHits = findHits(haystack, GROWTH_KEYWORDS);
-  const marketingHits = findHits(haystack, MARKETING_KEYWORDS);
+  const hitsByTrack: Record<JobTrack, string[]> = {
+    growth: findHits(haystack, GROWTH_KEYWORDS),
+    marketing: findHits(haystack, MARKETING_KEYWORDS),
+    web: findHits(haystack, WEB_KEYWORDS),
+  };
+
+  // A source tagged for one specific track only considers that track's
+  // keywords; "both" (really "any") and a source whose tagged track simply
+  // didn't match consider all three and pick whichever scored highest - a
+  // posting matching keywords from an untagged track still gets kept rather
+  // than dropped, since the actual content is a better signal than the
+  // source's own label.
+  const eligibleTracks: JobTrack[] =
+    source.track === "both" ? ["growth", "marketing", "web"] : [source.track];
+  const candidateTracks = eligibleTracks.some((t) => hitsByTrack[t].length)
+    ? eligibleTracks
+    : (["growth", "marketing", "web"] as JobTrack[]);
 
   let track: JobTrack | null = null;
   let keywordHits: string[] = [];
-
-  if (source.track === "growth" && growthHits.length) {
-    track = "growth";
-    keywordHits = growthHits;
-  } else if (source.track === "marketing" && marketingHits.length) {
-    track = "marketing";
-    keywordHits = marketingHits;
-  } else if (source.track === "both" && (growthHits.length || marketingHits.length)) {
-    track = growthHits.length >= marketingHits.length ? "growth" : "marketing";
-    keywordHits = track === "growth" ? growthHits : marketingHits;
-  } else if (growthHits.length || marketingHits.length) {
-    // The source is tagged for one track but this particular posting only
-    // matched keywords from the other - use whichever actually matched
-    // rather than dropping it.
-    track = growthHits.length >= marketingHits.length ? "growth" : "marketing";
-    keywordHits = track === "growth" ? growthHits : marketingHits;
+  for (const candidate of candidateTracks) {
+    if (hitsByTrack[candidate].length > keywordHits.length) {
+      track = candidate;
+      keywordHits = hitsByTrack[candidate];
+    }
   }
 
   if (!track) return null;

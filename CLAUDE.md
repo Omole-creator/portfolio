@@ -971,6 +971,31 @@ application **email**, and only after you've reviewed the draft and confirmed.
   confirmed live) — check its first real sync output against a Breezy-sourced company
   and correct the field names in that file if anything comes back empty that
   shouldn't.
+- **"Must not require account sign-up to apply" is the actual bar, not "must be the
+  company's own page" - a real distinction, corrected once already.** The first pass
+  deactivated all five remote-job aggregator sources (RemoteOK, Remotive, Jobicy,
+  Arbeitnow, Himalayas) on the reasoning that their `apply_url` points to their own
+  hosted page instead of the employer's. Omole clarified that was the wrong bar:
+  applying somewhere other than the company's own page is fine, only an actual account
+  signup is the problem. Re-verified live, page by page, not by inference this time:
+  Arbeitnow's own apply page is a plain one-time form (first name, last name, email;
+  zero mentions of "password," "sign up," "register," or "login" anywhere on the
+  page) that posts and shows "Your job application has been sent successfully" - not
+  an account. RemoteOK's and Remotive's "Log in" / "sign-up" links are unrelated
+  top-nav site chrome (join the aggregator's mailing list, an employer posting flow),
+  nowhere near the actual "Apply for this job" action - re-activated, both. Himalayas
+  is Cloudflare-protected against plain fetches (repeatedly confirmed 403, even with a
+  realistic browser User-Agent), so its actual apply flow still can't be verified
+  either way - **stays deactivated on "no evidence it's clean," not on "confirmed
+  bad."** Jobicy was never activated as a source at all (only ever a candidate),
+  unaffected either way. If Himalayas' apply flow is ever actually confirmed (a real
+  browser session, not a plain fetch), revisit reactivating it with the same
+  page-by-page evidence standard used for the other three, not a guess.
+- **Every job source must be a genuinely free API, forever - no source that gates
+  behind a paid job-board tier for either the recruiter or the candidate.** All 100+
+  sources already meet this by construction (each is a company's own free public ATS
+  API, or a free aggregator API), so this hasn't required removing anything - it's
+  recorded here as a hard constraint on anything added later, not a correction.
 - **The five remote-job aggregator sources (RemoteOK, Remotive, Jobicy, Arbeitnow,
   Himalayas) are deactivated, not deleted, and should stay that way.** Confirmed live,
   not guessed: none of their public APIs expose the real employer's own application
@@ -1106,6 +1131,117 @@ application **email**, and only after you've reviewed the draft and confirmed.
     ~20 open roles) - confirmed live, not yet acted on.** Those Ashby-side roles are all
     Toronto/Canada-scoped though, so switching wouldn't add eligible matches; flagged
     here rather than fixed, since it wasn't asked for.
+- **Whether 100 sources can actually produce 20 matches a day was tested empirically,
+  not guessed - the real answer at the time was close to zero, and the gap is why the
+  "web" track (below) exists.** A one-off simulation script re-implemented
+  `classify.ts`'s actual logic in a standalone Node script, fetched live data from all
+  100 sources, and ran the full funnel: of 9,509 total postings, 4,186 were remote, 338
+  posted in the last 7 days, 160 passed the seniority filter, 112 passed the
+  experience-years filter, only 9 mentioned a growth/marketing keyword at all, and only
+  2 of those passed eligibility - and even those 2 were false positives from the plain
+  keyword scan (a "Business Development Representative" and a "Solutions Architect"),
+  not real matches. Widening the freshness window to 30 days barely moved it (3 matches,
+  same false-positive pattern) - freshness was never the bottleneck. The real
+  bottleneck: growth/marketing roles are a small slice of any single company's postings,
+  and 98 of the 100 sources are `hires_globally: false` by design (see above), so almost
+  nothing survives the full intersection of remote + fresh + junior + track-keyword +
+  eligible. More companies with the same profile (large SaaS, no confirmed global
+  hiring) would not fix this - it is a multiplication problem, not an addition problem.
+  This same simulation script is the fastest way to sanity-check any future claim about
+  match volume against live data rather than guessing; it was not saved to the repo
+  (built and run from the scratchpad, one-off), so re-build it from `lib/jobs/classify.ts`
+  and `lib/jobs/fetchers/*.ts` if this needs re-checking later - it's a straight
+  reimplementation of both, not new logic.
+
+## The "web" track: AI-assisted rapid web/product builder
+
+A third job track alongside growth and marketing, added 2026-09-09 after the volume
+simulation above showed the first 100 sources (general SaaS companies) essentially
+never produce a match, and Omole pointed out his `/web` portfolio - AI-assisted web
+design and development, building fast (the WaterBrooks 24-hour build), not a
+traditional CS-background software engineer - was an entirely untapped persona for
+this feature.
+
+- **`JobTrack` (`lib/jobs/types.ts`) is now `"growth" | "marketing" | "web"`.**
+  `lib/jobs/classify.ts`'s track-resolution logic was generalized from a two-branch
+  if/else into a `Record<JobTrack, string[]>` keyword-hit map plus a "pick whichever
+  scored highest among the eligible tracks" loop, so adding a fourth track later is a
+  data change (a new keyword list, one more `Record` entry) rather than another
+  rewrite of the branching logic. A source's own `track` still narrows which tracks are
+  even considered ("both" means "any of the three," not literally two) - a posting
+  matching an untagged track's keywords is still kept, not dropped, same as before.
+- **`WEB_KEYWORDS`** is deliberately narrow: "no-code developer," "webflow
+  developer/designer," "framer developer/designer," "landing page designer/developer,"
+  "website designer," "web designer," "founding designer," "ai product builder,"
+  "creative technologist," "rapid prototyper," "vibe coder"/"vibe coding," "shopify
+  developer," "wordpress developer," "squarespace designer." Deliberately excludes
+  "web developer" and "software engineer" on their own - a plain match against those
+  would flood the track with traditional engineering roles this CV doesn't compete
+  for, the exact failure mode confirmed live while researching sources for it (a search
+  across all 100+ existing sources for "AI-native"/"AI-first"/"founding engineer"
+  style titles returned 24 hits, and every single one - "AI Native Web Platform
+  Engineer" at Databricks, "Founding Engineering Lead" at Datadog, "AI Marketing
+  Technologist Lead" at Plaid - was a traditional software engineering role at a large
+  SaaS company, not this persona, confirming the existing 100 sources are the wrong
+  company type for this track entirely).
+- **`Omole Usuangbon - Web Developer CV.pdf`** did not exist before this - Omole asked
+  for it to be generated from scratch, following `cvwriting.md`'s house template (name
+  centered 21pt blue `#1F4E79`, role line, thick blue rule, section order, right
+  -aligned dates via flex not a table, 2-page target) and populated only from facts
+  already published and vetted elsewhere: the same five-role work history as the
+  growth/creative CVs, bullets reframed toward building rather than campaigns, plus a
+  new "Web Projects" section listing all five `webWork` entries (WaterBrooks, GluFloat,
+  CV Reviewer, Sales Objections Toolkit, Designs & Konstruct) verbatim from their
+  already-published site copy. **One inference, not a verbatim existing claim, flagged
+  here per `cvwriting.md`'s own "tell Omole every assumption" rule**: the CV connects
+  the CV Reviewer tool to the "career services line (CV writing...) that has served
+  200+ paying clients" bullet already on the growth CV, since the tool is a plausible
+  automation of that same manual CV-review work - true if that's what actually
+  happened, but it was never stated as one fact anywhere, so treat it as unconfirmed
+  until Omole says otherwise. Certifications were deliberately dropped from this CV
+  (the existing four are all Growth Marketing-branded Udemy/LinkedIn Learning courses,
+  which would read as mismatched on a web developer CV, not a matching credential) -
+  the same "don't give the client skills they do not have" principle from
+  `cvwriting.md`, applied to certifications rather than skills. Built as HTML with the
+  same CSS-columns/flex approach used elsewhere in this codebase (no tables, per the
+  ATS-parsing rule in `cvwriting.md`), rendered to PDF with headless Edge
+  (`--headless=new --disable-gpu --no-pdf-header-footer --print-to-pdf`, the same tool
+  and flags `cvwriting.md` specifies) rather than the Word-COM-automation docx path
+  also described there, since only a PDF is actually needed here (there is no client
+  -facing docx deliverable for this use case, unlike the CV-writing service business
+  `cvwriting.md` was written for). Lives at
+  `public/omole-usuangbon-web-developer-cv.pdf`, wired into
+  `lib/jobs/prepare.ts`'s `CV_AND_PORTFOLIO` map alongside the growth and marketing
+  entries, pointing at `https://omoleportfolio.vercel.app/web`.
+- **`lib/jobs/candidateContext.ts`** gained a `web` branch building Gemini's grounding
+  text from `lib/web-content.ts`'s `webAbout` and `webWork` (the same five projects the
+  CV's new Projects section lists) - no separate technical-skills export exists for
+  `/web` the way `growthTechnicalSkills`/`marketingTechnicalSkills` do, so that list is
+  inlined directly in the branch instead, kept in sync with the CV's Technical Skills
+  section by hand if either changes.
+- **`supabase/migrations/0006_web_track.sql`** drops and re-adds both
+  `job_sources_track_check` and `job_matches_track_check` to include `'web'` (the
+  latter without `'both'`, matching the existing pattern - `job_matches.track` is
+  always resolved to one specific track by `classifyJob`, never stored as `'both'`,
+  same as `job_sources` before this change let the admin tag a source that way).
+- **First verified source for this track: Superside** (`ats: lever`, token
+  `superside`, `hires_globally: true`, track `web`) - a "design as a service" creative
+  agency with several roles whose location is the literal bare value `Global`
+  (`Creative Technologist`, `Conceptual Art Director`, others), the strongest possible
+  eligibility signal short of naming Africa/Nigeria outright. Genuinely came from a
+  different company category than the growth/marketing sources (a creative agency, not
+  a SaaS product company) - that's expected to be the pattern for this track generally,
+  not a one-off. A parallel search across other no-code/AI-builder-adjacent companies
+  (Bubble, Glide, Contra, Durable, Instrument, MetaLab, Fantasy) came up empty or
+  irrelevant: Bubble and Durable's own internal hiring is for traditional software
+  engineers building their product, not this persona; Glide's Greenhouse/Lever/Ashby
+  boards under that name turned out to belong to an unrelated San Francisco health and
+  social-services nonprofit, not the no-code app builder; Contra's and Instrument's
+  open roles are onsite NYC/SF; MetaLab's and Fantasy's are Director/Lead-tier and get
+  filtered by the seniority gate. Finding more sources for this track will keep needing
+  agency- and freelance-marketplace-shaped searches, not more general SaaS company
+  lists - a structurally different research pass than the growth/marketing sourcing
+  above.
 
 ## Screenshots and sensitive data
 

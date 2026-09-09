@@ -129,7 +129,8 @@ export async function draftApplication(input: DraftInput): Promise<DraftResult |
 }
 
 function buildPrompt({ job, track, candidateContext, questions }: DraftInput): string {
-  const trackLabel = track === "growth" ? "growth marketing" : "creative marketing";
+  const trackLabel =
+    track === "growth" ? "growth marketing" : track === "web" ? "AI-assisted web design and development" : "creative marketing";
 
   const questionsBlock = questions.length
     ? `The application form for this specific job also asks these questions. Draft a genuine, specific answer for each one, grounded only in the background below:\n${questions.map((q, i) => `${i + 1}. ${q}`).join("\n")}`
