@@ -10,6 +10,10 @@ type SmartRecruitersListItem = {
 type SmartRecruitersDetail = {
   postingUrl?: string;
   jobAd?: { sections?: Record<string, { text?: string }> };
+  // Not confirmed against a real posting - documented by SmartRecruiters as
+  // the posting's release date. Best-effort; correct if it comes back
+  // empty on a real synced posting.
+  releasedDate?: string;
 };
 
 /**
@@ -63,6 +67,7 @@ export async function fetchSmartRecruitersJobs(source: JobSource): Promise<Norma
           apply_url: detail.postingUrl ?? "",
           description_text: description ? description.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : null,
           is_remote: item.location?.remote ?? null,
+          posted_at: detail.releasedDate ?? null,
         });
       } catch (error) {
         console.error(`SmartRecruiters detail fetch failed for ${source.company_name} / ${item.id}:`, error);

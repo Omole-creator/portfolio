@@ -9,6 +9,7 @@ type ArbeitnowJob = {
   remote?: boolean;
   url: string;
   location?: string;
+  created_at?: number;
 };
 
 /**
@@ -39,6 +40,8 @@ export async function fetchArbeitnowJobs(_source: JobSource): Promise<Normalized
       apply_url: job.url,
       description_text: job.description ? stripHtml(job.description) : null,
       is_remote: typeof job.remote === "boolean" ? job.remote : null,
+      posted_at:
+        typeof job.created_at === "number" ? new Date(job.created_at * 1000).toISOString() : null,
     }));
   } catch (error) {
     console.error("Arbeitnow fetch errored:", error);

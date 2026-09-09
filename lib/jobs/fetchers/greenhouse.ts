@@ -7,6 +7,7 @@ type GreenhouseJob = {
   absolute_url: string;
   location?: { name?: string };
   content?: string;
+  first_published?: string;
 };
 
 /** Greenhouse's public per-company job board API. Never throws; degrades to []. */
@@ -32,6 +33,7 @@ export async function fetchGreenhouseJobs(source: JobSource): Promise<Normalized
       apply_url: job.absolute_url,
       description_text: job.content ? stripHtml(job.content) : null,
       is_remote: null, // Greenhouse's public API has no structured remote flag
+      posted_at: job.first_published ?? null,
     }));
   } catch (error) {
     console.error(`Greenhouse fetch errored for ${source.company_name}:`, error);

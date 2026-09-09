@@ -96,6 +96,10 @@ export type JobMatch = {
   // apply_email jobs, and guards against sending the same application
   // twice.
   email_sent_at: string | null;
+  // When the company actually posted this job, per the ATS's own data -
+  // null when the source doesn't expose one (see NormalizedJob.posted_at).
+  // Distinct from first_seen_at, which is when our own sync first found it.
+  posted_at: string | null;
   prepared_at: string | null;
   first_seen_at: string;
   updated_at: string;
@@ -115,4 +119,12 @@ export type NormalizedJob = {
   apply_url: string;
   description_text: string | null;
   is_remote: boolean | null;
+  // ISO timestamp of when the company actually posted this job, straight
+  // from the ATS's own data (confirmed live per platform: Greenhouse's
+  // first_published, Lever's createdAt, Ashby's publishedAt, RemoteOK's
+  // date, Remotive's publication_date, Jobicy's pubDate, Arbeitnow's and
+  // Himalayas' pubDate/created_at). null when a source exposes no such
+  // field at all - classify.ts's freshness gate treats null as "unknown
+  // age" and lets it through rather than guessing.
+  posted_at: string | null;
 };

@@ -33,6 +33,16 @@ function statusLabel(status: JobMatch["status"]) {
   return "New";
 }
 
+function postedLabel(postedAt: string | null): string | null {
+  if (!postedAt) return null;
+  const ageMs = Date.now() - new Date(postedAt).getTime();
+  if (Number.isNaN(ageMs)) return null;
+  const days = Math.floor(ageMs / (24 * 60 * 60 * 1000));
+  if (days <= 0) return "Posted today";
+  if (days === 1) return "Posted yesterday";
+  return `Posted ${days} days ago`;
+}
+
 function eligibilityNote(eligibility: JobMatch["eligibility"]) {
   if (eligibility === "worldwide") {
     return { label: "Worldwide", className: "bg-green-50 text-green-800" };
@@ -94,6 +104,12 @@ export function JobRow({ job }: { job: JobMatch }) {
             {job.company_name}
             {job.location_text ? <span aria-hidden="true"> · </span> : null}
             {job.location_text}
+            {postedLabel(job.posted_at) ? (
+              <>
+                <span aria-hidden="true"> · </span>
+                {postedLabel(job.posted_at)}
+              </>
+            ) : null}
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             <span

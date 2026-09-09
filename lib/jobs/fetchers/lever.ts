@@ -6,6 +6,7 @@ type LeverPosting = {
   hostedUrl: string;
   categories?: { location?: string };
   descriptionPlain?: string;
+  createdAt?: number;
 };
 
 /** Lever's public per-company postings API. Returns an array directly (no wrapper object). Never throws; degrades to []. */
@@ -32,6 +33,8 @@ export async function fetchLeverJobs(source: JobSource): Promise<NormalizedJob[]
       apply_url: posting.hostedUrl,
       description_text: posting.descriptionPlain ?? null,
       is_remote: null, // Lever's public postings API has no structured remote flag
+      posted_at:
+        typeof posting.createdAt === "number" ? new Date(posting.createdAt).toISOString() : null,
     }));
   } catch (error) {
     console.error(`Lever fetch errored for ${source.company_name}:`, error);

@@ -45,7 +45,12 @@ const MARKETING_KEYWORDS = [
 const EXCLUSION_PATTERNS: RegExp[] = [
   /must be (a |an )?(u\.?s\.?|united states|australian|singapore(an)?)\s*citizen/i,
   /(u\.?s\.?|united states|australian|singapore(an)?)\s*citizenship (is )?required/i,
-  /must be authorized to work in (the )?(united states|u\.?s\.?|australia|singapore)/i,
+  // Matches both "authorized to work in the United States" and "authorized
+  // to work for any employer in the United States" (confirmed live on a
+  // real Himalayas-sourced posting: the original narrower pattern missed
+  // this exact phrasing, and only an unrelated "unable to sponsor" pattern
+  // elsewhere in this list happened to catch that one instead).
+  /must be authorized to work( for [^.]*?)? in (the )?(united states|u\.?s\.?|australia|singapore)/i,
   /must (currently )?(be based|reside|be located) in (the )?(united states|u\.?s\.?|usa|australia|singapore)/i,
   /candidates? must (be based|reside|be located) in/i,
   /open (only )?to (residents|candidates) (based |located )?in (the )?(united states|u\.?s\.?|australia|singapore)/i,
@@ -82,6 +87,54 @@ const WORLDWIDE_PATTERNS: RegExp[] = [
 // with no other text.
 const WORLDWIDE_LOCATION_VALUES = /\b(worldwide|anywhere|global)\b/i;
 
+// Omole is targeting roles reachable with at most 4 years of experience.
+// Two independent, deliberately blunt heuristics, matching this file's
+// existing "plain keyword list, not a smart classifier" approach:
+//
+// 1. A title that's unambiguously a senior-tier role almost always wants
+//    5+ years regardless of whether the posting spells out a number.
+//    "Lead" is deliberately excluded from this list even though it reads
+//    senior in some companies - GROWTH_KEYWORDS above targets "growth
+//    lead" directly, and plenty of "growth lead" openings at small
+//    startups are a 2-4 year role, not a director-equivalent one.
+// 2. An explicit "N years of experience" style requirement in the
+//    description. Only the smaller number in a range counts (a "3-5
+//    years" posting is reachable with 3), and a number only counts if the
+//    word "experience" appears in a short window after it, so an unrelated
+//    number of years (company age, funding history) doesn't trigger a
+//    false exclusion.
+const MAX_YEARS_EXPERIENCE = 4;
+
+const SENIOR_TITLE_PATTERN =
+  /\b(senior|sr\.?|staff|principal|director|vice president|vp|head of|chief|executive)\b/i;
+
+const EXPERIENCE_YEARS_PATTERN = /(\d{1,2})\s*(?:\+|-|to)?\s*(?:\d{1,2})?\+?\s*years?/gi;
+
+function requiresTooMuchExperience(text: string): boolean {
+  for (const match of text.matchAll(EXPERIENCE_YEARS_PATTERN)) {
+    const years = Number(match[1]);
+    if (!Number.isFinite(years) || years <= MAX_YEARS_EXPERIENCE) continue;
+    const start = match.index ?? 0;
+    const window = text.slice(start, start + (match[0]?.length ?? 0) + 40).toLowerCase();
+    if (window.includes("experience")) return true;
+  }
+  return false;
+}
+
+// Omole wants only postings from the last week - a role that's been open
+// longer than that is more likely to already have a shortlist. posted_at is
+// only as reliable as each ATS's own data (see NormalizedJob): when a
+// source doesn't expose a posting date at all, there's no signal to filter
+// on, so an unknown date is let through rather than excluded.
+const MAX_POSTING_AGE_DAYS = 7;
+
+function isTooOld(postedAt: string | null): boolean {
+  if (!postedAt) return false;
+  const posted = new Date(postedAt).getTime();
+  if (Number.isNaN(posted)) return false;
+  return Date.now() - posted > MAX_POSTING_AGE_DAYS * 24 * 60 * 60 * 1000;
+}
+
 function findHits(haystack: string, keywords: string[]): string[] {
   return keywords.filter((keyword) => haystack.includes(keyword));
 }
@@ -107,11 +160,17 @@ function isRemoteJob(job: NormalizedJob): boolean {
  * field with a bare value like "USA". All three cases mean the same thing
  * once is_remote is already established: strip the word "remote" if it's
  * there, and anything left over is a scope.
+ *
+ * "EMEA" is treated the same as a literal Africa/Nigeria mention - it's the
+ * standard corporate acronym for Europe, Middle East, and Africa, so a role
+ * scoped "Home based - EMEA" (confirmed live on real Canonical postings)
+ * factually includes Nigeria even though the word "Africa" never appears.
+ * "APAC" and "Americas" get no such exception - neither includes Africa.
  */
 function remoteNamesOtherCountry(locationText: string | null): boolean {
   const location = (locationText ?? "").toLowerCase().trim();
   if (!location) return false;
-  if (/africa|nigeria/.test(location)) return false;
+  if (/africa|nigeria|\bemea\b/.test(location)) return false;
   const withoutRemote = location.replace(/\bremote\b/g, "").replace(/[\s,()-]/g, "");
   return withoutRemote.length > 0;
 }
@@ -145,6 +204,9 @@ export function classifyJob(
   source: JobSource,
 ): { track: JobTrack; keyword_hits: string[]; eligibility: JobEligibility } | null {
   if (!isRemoteJob(job)) return null;
+  if (isTooOld(job.posted_at)) return null;
+  if (SENIOR_TITLE_PATTERN.test(job.title)) return null;
+  if (requiresTooMuchExperience(`${job.title} ${job.description_text ?? ""}`)) return null;
 
   const haystack = `${job.title} ${job.description_text ?? ""}`.toLowerCase();
 

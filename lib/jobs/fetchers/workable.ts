@@ -15,6 +15,13 @@ type WorkableJob = {
   };
   full_description?: string;
   description?: string;
+  // Not confirmed against a real posting (every account tried during
+  // development had zero open jobs) - both names are documented by
+  // Workable for different widget response shapes. Best-effort, same as
+  // Breezy below; correct this the first time a real posting comes through
+  // with neither field populated.
+  published_on?: string;
+  created_at?: string;
 };
 
 /** Workable's public widget API. `details=true` returns full_description in the same call, no second fetch needed. Never throws; degrades to []. */
@@ -51,6 +58,7 @@ export async function fetchWorkableJobs(source: JobSource): Promise<NormalizedJo
         apply_url: job.shortlink ?? job.url ?? "",
         description_text: description,
         is_remote: isRemote,
+        posted_at: job.published_on ?? job.created_at ?? null,
       };
     });
   } catch (error) {

@@ -8,6 +8,7 @@ type HimalayasJob = {
   locationRestrictions?: string[];
   description?: string;
   applicationLink?: string;
+  pubDate?: number;
 };
 
 const MAX_JOBS = 100;
@@ -43,6 +44,7 @@ export async function fetchHimalayasJobs(source: JobSource): Promise<NormalizedJ
       apply_url: job.applicationLink ?? "",
       description_text: job.description ? stripHtml(job.description) : null,
       is_remote: true, // Himalayas only lists remote jobs by definition
+      posted_at: typeof job.pubDate === "number" ? new Date(job.pubDate * 1000).toISOString() : null,
     }));
   } catch (error) {
     console.error("Himalayas fetch errored:", error);

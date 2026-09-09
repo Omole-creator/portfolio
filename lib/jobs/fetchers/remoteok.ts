@@ -10,6 +10,7 @@ type RemoteOkJob = {
   apply_url?: string;
   url?: string;
   description?: string;
+  date?: string;
 };
 
 const MAX_JOBS = 300;
@@ -46,6 +47,7 @@ export async function fetchRemoteOkJobs(_source: JobSource): Promise<NormalizedJ
         apply_url: job.apply_url ?? job.url ?? "",
         description_text: job.description ? stripHtml(job.description) : null,
         is_remote: true, // RemoteOK only lists remote jobs by definition
+        posted_at: job.date ?? null,
       }));
   } catch (error) {
     console.error("RemoteOK fetch errored:", error);

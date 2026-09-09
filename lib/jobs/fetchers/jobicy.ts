@@ -8,6 +8,7 @@ type JobicyJob = {
   companyName: string;
   jobGeo?: string;
   jobDescription?: string;
+  pubDate?: string;
 };
 
 /**
@@ -39,6 +40,7 @@ export async function fetchJobicyJobs(source: JobSource): Promise<NormalizedJob[
       apply_url: job.url,
       description_text: job.jobDescription ? stripHtml(job.jobDescription) : null,
       is_remote: true, // Jobicy only lists remote jobs by definition
+      posted_at: job.pubDate ?? null,
     }));
   } catch (error) {
     console.error("Jobicy fetch errored:", error);

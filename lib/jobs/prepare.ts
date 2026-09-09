@@ -52,6 +52,7 @@ export async function prepareJobApplication(job: JobMatch): Promise<PrepareResul
     apply_url: job.apply_url,
     description_text: job.description_text,
     is_remote: true, // already passed the remote gate in classify.ts to be stored at all
+    posted_at: job.posted_at,
   };
 
   const draft = await draftApplication({

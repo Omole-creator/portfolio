@@ -8,6 +8,11 @@ type RecruiteeOffer = {
   careers_apply_url?: string;
   careers_url?: string;
   description?: string;
+  // Not confirmed against a populated board - documented by Recruitee for
+  // different API versions. Best-effort; correct if it comes back empty on
+  // a real synced posting.
+  created_at?: string;
+  published_at?: string;
 };
 
 /** Recruitee's public careers-site API. No auth needed. Never throws; degrades to []. */
@@ -34,6 +39,7 @@ export async function fetchRecruiteeJobs(source: JobSource): Promise<NormalizedJ
         ? offer.description.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
         : null,
       is_remote: typeof offer.remote === "boolean" ? offer.remote : null,
+      posted_at: offer.published_at ?? offer.created_at ?? null,
     }));
   } catch (error) {
     console.error(`Recruitee fetch errored for ${source.company_name}:`, error);

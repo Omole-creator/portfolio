@@ -971,6 +971,79 @@ application **email**, and only after you've reviewed the draft and confirmed.
   confirmed live) — check its first real sync output against a Breezy-sourced company
   and correct the field names in that file if anything comes back empty that
   shouldn't.
+- **The five remote-job aggregator sources (RemoteOK, Remotive, Jobicy, Arbeitnow,
+  Himalayas) are deactivated, not deleted, and should stay that way.** Confirmed live,
+  not guessed: none of their public APIs expose the real employer's own application
+  link — `apply_url` always comes back pointing at the aggregator's own hosted job
+  page, which has its own in-house "Apply" flow (Arbeitnow's is literally a form
+  called `button_send_application` on arbeitnow.com itself; RemoteOK's and Remotive's
+  `url`/`apply_url` fields are their own `/remote-jobs/...` pages, never the company's
+  domain). This was the actual cause of "every match sends me to fill a form or a
+  sign-up page" — not a UI bug, a real gap in what these APIs return. Omole confirmed
+  he'd rather have fewer matches from real employers than more matches that dead-end
+  on a job board's own gate, so these five stay off; the fetcher code stays in
+  `lib/jobs/fetchers/` (still correct, still worth having if this tradeoff is ever
+  revisited) but `job_sources.active = false` for all five. Don't reactivate without
+  asking first.
+- **`classify.ts` also gates on seniority and posting age**, added for the same
+  reason: Omole is only applying to roles reachable with at most 4 years of
+  experience, posted within the last week. `SENIOR_TITLE_PATTERN` rejects a title
+  containing Senior/Sr/Staff/Principal/Director/VP/Head of/Chief/Executive (deliberately
+  not "Lead" — `GROWTH_KEYWORDS` targets "growth lead" directly, and that's often a
+  2-4 year role at a small company, not a director-equivalent one).
+  `requiresTooMuchExperience` is a plain regex scan for "N years" near the word
+  "experience" (the smaller number in a range counts, e.g. "3-5 years" passes on the
+  3); an unrelated number of years elsewhere in the text - company age, funding round
+  - doesn't trigger it, since it only counts a match with "experience" in a short
+  window after it. `isTooOld` rejects anything with a `posted_at` more than 7 days in
+  the past; a `null` posted_at (a source with no date field at all) is let through
+  rather than guessed at. **`posted_at` on `NormalizedJob`/`JobMatch`** carries the
+  company's own posting date, confirmed live per platform: Greenhouse's
+  `first_published`, Lever's `createdAt` (epoch ms), Ashby's `publishedAt`, RemoteOK's
+  `date`, Remotive's `publication_date` (no timezone suffix in the API response but
+  confirmed UTC, so fetched with a `Z` appended), Jobicy's `pubDate`, Arbeitnow's and
+  Himalayas' `created_at`/`pubDate` (both unix seconds). Workable, SmartRecruiters,
+  Recruitee, and Breezy's date fields are best-effort, unconfirmed the same way
+  Breezy's other fields are (above) - every account probed during development had zero
+  open postings to check against. `supabase/migrations/0005_job_matches_posted_at.sql`
+  adds the column; nothing backfills old rows.
+- **Two eligibility gaps in `classify.ts` were found and fixed by testing real live
+  postings, not by inspection.** The "must be authorized to work in the United
+  States" exclusion pattern missed the phrasing "must be authorized to work **for any
+  employer** in the United States" (found on a real Himalayas-sourced posting - that
+  one specific job still got excluded correctly via a different, unrelated "unable to
+  sponsor" pattern also in its text, but the gap is real for a posting that doesn't
+  also say that). And `remoteNamesOtherCountry` only ever treated the literal words
+  "Africa"/"Nigeria" in a location string as in-scope - a role explicitly scoped
+  "Home based - EMEA" (confirmed live on real, current Canonical postings) was being
+  excluded even though EMEA, as a standard corporate region acronym, factually
+  includes Nigeria. "EMEA" now gets the same treatment as a literal Africa/Nigeria
+  mention; "APAC" and "Americas" deliberately don't, since neither includes Africa.
+- **`draftApplication` (`lib/jobs/gemini.ts`) retries transient failures and disables
+  Gemini's default "thinking."** The actual, confirmed-live cause of "draft not
+  prepared" errors: `gemini-3.6-flash` intermittently returns a `503 "currently
+  experiencing high demand"` on a completely ordinary request, and there was no retry
+  - one transient blip failed the whole "Prepare application" tap. Fixed with a
+  3-attempt retry (429 and 503 both retried) on a short backoff. Separately,
+  `thinkingConfig: { thinkingLevel: "low" }` is now always sent -
+  `gemini-3.6-flash` thinks by default even for a templated drafting task like this
+  one (confirmed live: ~1,100 hidden thinking tokens for one cover letter, versus zero
+  with `thinkingLevel: "low"`, both producing a valid draft), which burns the free
+  tier's daily quota far faster than the visible output suggests. `thinkingBudget: 0`
+  (the documented way to disable thinking on 2.5-series models) is rejected by this
+  model with a 400 - `thinkingLevel` is the 3.x replacement, confirmed live.
+- **Job sources are admin-curated data, not schema, so they're added/removed directly
+  against Supabase rather than through a migration file** - unlike the versioned SQL
+  in `supabase/migrations/`, which is schema only. The six active sources as of this
+  writing are Ahrefs, Canonical, Culture Amp, Deel, Deputy, and Float (Canonical added
+  2026-09-09 the same session the five aggregators above were deactivated, both
+  verified live before the change - Canonical because it has real, current, remote
+  -anywhere-EMEA marketing roles, several of which survive the new seniority filter).
+  **Float's existing source (`ats: workable`, token `floatjobs`) currently returns
+  zero jobs, but Float also has an active Ashby board (`ats: ashby`, token `float`,
+  ~20 open roles) - confirmed live, not yet acted on.** Those Ashby-side roles are all
+  Toronto/Canada-scoped though, so switching wouldn't add eligible matches; flagged
+  here rather than fixed, since it wasn't asked for.
 
 ## Screenshots and sensitive data
 

@@ -16,6 +16,32 @@ type DraftInput = {
 
 type DraftResult = { coverLetter: string; qaPairs: QaPair[] };
 
+// gemini-3.6-flash "thinks" by default, which burns a large, variable
+// number of hidden thinking tokens per call (confirmed live: ~1,100 tokens
+// of thinking for a single cover letter, on top of the actual output) for
+// no benefit on a templated drafting task like this one. That eats into the
+// free tier's daily quota far faster than the visible output would suggest,
+// and "thinkingLevel: low" was confirmed live to drop thoughtsTokenCount to
+// zero while still returning a valid draft (thinkingBudget: 0, the
+// documented way to disable thinking on 2.5-series models, is rejected by
+// this model with a 400 - thinkingLevel is the 3.x replacement).
+const THINKING_CONFIG = { thinkingLevel: "low" as const };
+
+// The single most common cause of "Could not generate a draft right now" in
+// practice, confirmed live: gemini-3.6-flash intermittently returns a 503
+// "currently experiencing high demand" even on a totally ordinary request,
+// with no retry built in previously - one transient blip failed the whole
+// "Prepare application" tap. A 429 (quota/rate limit) is the other
+// retryable case. Both clear up within a few seconds, so a short retry loop
+// fixes the vast majority of these without the admin ever seeing an error.
+const RETRYABLE_STATUS = new Set([429, 503]);
+const MAX_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 1500;
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /** Calls Gemini Flash (free tier) to draft a tailored cover letter and, where questions were extracted, an answer for each. Returns null on any failure - caller must degrade gracefully, never surface this as a hard error to the whole prepare flow beyond "try again." */
 export async function draftApplication(input: DraftInput): Promise<DraftResult | null> {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -29,6 +55,7 @@ export async function draftApplication(input: DraftInput): Promise<DraftResult |
     generationConfig: {
       temperature: 0.4,
       responseMimeType: "application/json",
+      thinkingConfig: THINKING_CONFIG,
       responseSchema: {
         type: "object",
         properties: {
@@ -50,40 +77,55 @@ export async function draftApplication(input: DraftInput): Promise<DraftResult |
     },
   };
 
-  try {
-    const res = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(30000),
-    });
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    try {
+      const res = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(30000),
+      });
 
-    if (!res.ok) {
-      console.error(`Gemini request failed: ${res.status} ${await res.text()}`);
+      if (!res.ok) {
+        const errorText = await res.text();
+        if (RETRYABLE_STATUS.has(res.status) && attempt < MAX_ATTEMPTS) {
+          console.error(`Gemini request failed (attempt ${attempt}): ${res.status} ${errorText}, retrying...`);
+          await wait(RETRY_DELAY_MS * attempt);
+          continue;
+        }
+        console.error(`Gemini request failed: ${res.status} ${errorText}`);
+        return null;
+      }
+
+      const data = await res.json();
+      const text: string | undefined = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) {
+        console.error("Gemini response had no text part:", JSON.stringify(data).slice(0, 500));
+        return null;
+      }
+
+      const parsed = JSON.parse(text) as { cover_letter?: string; qa_answers?: QaPair[] };
+      if (!parsed.cover_letter || typeof parsed.cover_letter !== "string") {
+        console.error("Gemini response missing cover_letter.");
+        return null;
+      }
+
+      return {
+        coverLetter: parsed.cover_letter.trim(),
+        qaPairs: Array.isArray(parsed.qa_answers) ? parsed.qa_answers : [],
+      };
+    } catch (error) {
+      if (attempt < MAX_ATTEMPTS) {
+        console.error(`Gemini draft errored (attempt ${attempt}), retrying:`, error);
+        await wait(RETRY_DELAY_MS * attempt);
+        continue;
+      }
+      console.error("Gemini draft failed:", error);
       return null;
     }
-
-    const data = await res.json();
-    const text: string | undefined = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) {
-      console.error("Gemini response had no text part:", JSON.stringify(data).slice(0, 500));
-      return null;
-    }
-
-    const parsed = JSON.parse(text) as { cover_letter?: string; qa_answers?: QaPair[] };
-    if (!parsed.cover_letter || typeof parsed.cover_letter !== "string") {
-      console.error("Gemini response missing cover_letter.");
-      return null;
-    }
-
-    return {
-      coverLetter: parsed.cover_letter.trim(),
-      qaPairs: Array.isArray(parsed.qa_answers) ? parsed.qa_answers : [],
-    };
-  } catch (error) {
-    console.error("Gemini draft failed:", error);
-    return null;
   }
+
+  return null;
 }
 
 function buildPrompt({ job, track, candidateContext, questions }: DraftInput): string {

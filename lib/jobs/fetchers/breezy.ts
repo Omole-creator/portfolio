@@ -22,6 +22,8 @@ type BreezyJob = {
     is_remote?: boolean;
   };
   description?: string;
+  published_date?: string;
+  creation_date?: string;
 };
 
 /** Breezy HR's public careers-portal JSON feed. Never throws; degrades to []. */
@@ -56,6 +58,7 @@ export async function fetchBreezyJobs(source: JobSource): Promise<NormalizedJob[
           ? job.description.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
           : null,
         is_remote: typeof job.location?.is_remote === "boolean" ? job.location.is_remote : null,
+        posted_at: job.published_date ?? job.creation_date ?? null,
       };
     });
   } catch (error) {

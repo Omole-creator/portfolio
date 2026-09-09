@@ -114,6 +114,7 @@ export async function fetchCustomJobs(source: JobSource): Promise<NormalizedJob[
           apply_url: candidate.href,
           description_text: extractPageText(detailHtml),
           is_remote: null,
+          posted_at: null, // a generic scraped page has no structured date field
         });
       } catch (error) {
         console.error(

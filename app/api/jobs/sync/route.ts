@@ -44,6 +44,7 @@ export async function GET(request: NextRequest) {
           description_text: job.description_text,
           track: classified.track,
           keyword_hits: classified.keyword_hits,
+          posted_at: job.posted_at,
         };
       })
       .filter((row): row is NonNullable<typeof row> => row !== null);

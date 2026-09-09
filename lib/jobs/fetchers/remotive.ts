@@ -8,6 +8,7 @@ type RemotiveJob = {
   company_name: string;
   candidate_required_location?: string;
   description?: string;
+  publication_date?: string;
 };
 
 /**
@@ -38,6 +39,11 @@ export async function fetchRemotiveJobs(source: JobSource): Promise<NormalizedJo
       apply_url: job.url,
       description_text: job.description ? stripHtml(job.description) : null,
       is_remote: true, // Remotive only lists remote jobs by definition
+      // publication_date comes back with no timezone suffix (e.g.
+      // "2026-09-07T01:10:43") - confirmed live it's UTC, so the "Z" is
+      // added explicitly rather than relying on the runtime's local
+      // timezone to guess right.
+      posted_at: job.publication_date ? `${job.publication_date}Z` : null,
     }));
   } catch (error) {
     console.error("Remotive fetch errored:", error);
