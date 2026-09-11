@@ -108,6 +108,9 @@ knowing why they're there:
   GluFloat carries a `"Founder"` tag, on purpose, same reasoning as dropping
   the `featured` flag: they read as projects, not as the one thing Omole
   owns sitting apart from the rest.
+- **GluFloat's `liveUrl` is `https://glufloat.com`** (its own domain, in both
+  `lib/content.ts` and `lib/web-content.ts`), not the `glufloat.vercel.app`
+  deployment URL used before the custom domain was set up.
 - **WaterBrooks had no previous website at all**, don't reintroduce language
   implying there was an old confusing one. What actually happened: two
   different developers were already paid to build the site and never

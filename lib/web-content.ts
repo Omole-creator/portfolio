@@ -133,7 +133,7 @@ export const webWork: WebProject[] = [
       "A full pricing and trial flow, from landing page to signup, with no card required to start",
       "Built entirely with AI tools, from the recommendation engine to the design",
     ],
-    liveUrl: "https://glufloat.vercel.app",
+    liveUrl: "https://glufloat.com",
     image: {
       src: "/images/glufloat-hero.webp",
       alt: "GluFloat landing page hero: Defy Diabetes, Enjoy Food Again, with personalized meal recommendations",

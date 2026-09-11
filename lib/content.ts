@@ -245,7 +245,7 @@ export const caseStudies: CaseStudy[] = [
     insight: "I built GluFloat because I had been hearing the same question for years: What can I eat? My mom did not need another generic list of foods to avoid. She needed an answer she could use every day, with the food she actually eats. I wanted to build that answer for her, and for people facing the same uncertainty.",
     builtWith: ["Claude Code", "Next.js", "AI recommendation engine"],
     tags: ["Health tech", "Built with Claude Code", "MVP", "Next.js"],
-    liveUrl: "https://glufloat.vercel.app",
+    liveUrl: "https://glufloat.com",
     images: [
       {
         src: "/images/glufloat-hero.webp",
