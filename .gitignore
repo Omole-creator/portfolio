@@ -43,3 +43,5 @@ next-env.d.ts
 /COPYWRITING-PLAYBOOK.md
 
 .vercel
+
+.env*

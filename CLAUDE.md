@@ -1220,6 +1220,178 @@ application **email**, and only after you've reviewed the draft and confirmed.
     ~20 open roles) - confirmed live, not yet acted on.** Those Ashby-side roles are all
     Toronto/Canada-scoped though, so switching wouldn't add eligible matches; flagged
     here rather than fixed, since it wasn't asked for.
+- **2026-09-12: Omole reported zero new matches for two straight days. Diagnosis
+  confirmed the pipeline itself is healthy, not broken** - Vercel's runtime logs showed
+  the `0 6 * * *` cron hitting `/api/jobs/sync` and returning `200` that morning, and
+  running the same route locally against the real database (same env vars, so no
+  production secret needed) returned `{"sourcesChecked":105,"inserted":0}` - all 105
+  sources were checked, none produced a new eligible posting that day. This is the
+  expected common case per the ceiling-test finding above, not a regression. One
+  incidental finding while diagnosing: `lib/jobs/prepare.ts`'s portfolio links point to
+  `https://omoleportfolio.vercel.app/...`, but the project's actual current production
+  domain is `https://omole.vercel.app` - worth checking whether the old domain still
+  resolves as an alias; not fixed yet, flagged for a follow-up.
+  - **Added one new source from this pass: Wishpond Technologies** (`ats: lever`,
+    token `wishpond`, Vancouver/Canada-HQ'd, `track: "both"`, `hires_globally: true`).
+    Confirmed live, not by reputation: its current postings explicitly say "100% Remote
+    outside of Canada" and are individually located in Mexico, Colombia, and South
+    Africa - a live posting already scoped to South Africa is about as strong a
+    worldwide-hiring signal as Canonical/Deel's EMEA language, which is why
+    `hires_globally` is `true` here despite no *currently open* role being an exact
+    growth/marketing keyword match (the same "a real board can post something eligible
+    later" reasoning already applied to the German batch).
+  - **Rejected candidates from this pass, with the specific reason each failed the
+    existing bar, so they aren't re-researched from scratch later:**
+    - **Jobgether** (`jobs.lever.co/jobgether`) looked like a single company at a
+      glance but its board has **4,128** postings spanning unrelated industries and
+      locations - it's a recruiting/job-matching platform posting on behalf of many
+      real employers through one Lever account, i.e. a job board wearing a company's
+      face. Excluded on the same "must not come from a job board" rule that already
+      rules out RemoteOK-style aggregators being added as if they were companies.
+    - **We Work Remotely**'s public RSS feed (`weworkremotely.com/remote-jobs.rss`,
+      no auth needed) tags nearly every listing's `<region>` as literally "Anywhere in
+      the World," including a Celonis **"Account Executive - Federal"** posting - a
+      role that is essentially certain to require US work authorization, which means
+      the field can't be trusted as an accurate per-posting eligibility signal, only a
+      site-wide default tag. Its actual job pages also 403'd on every fetch attempt
+      (`WebFetch`, matching Himalayas' Cloudflare-style protection), so the apply flow
+      (company site vs. WWR account) couldn't be verified either. Stays unadded on "no
+      evidence it's clean," the same standard already applied to Himalayas - revisit
+      only with a real browser session confirming both the region tag's accuracy and
+      the apply flow, not a plain fetch.
+    - **The Flex** (Ashby `The-Flex`, London-HQ'd, otherwise in the allowed country
+      list) has exactly one remote-eligible role right now, "Growth Marketer," and its
+      Ashby `location` field is the city "London," not a country or "Worldwide" value -
+      too ambiguous to justify `hires_globally: true` on one data point.
+    - **Reedsy** (Ashby `reedsy`, London-HQ'd) posts real growth/marketing roles
+      ("Community Growth Manager," "Growth Marketing Intern") but every one of them is
+      scoped "Remote Europe" / "United Kingdom" specifically, never worldwide.
+    - **Jiga** is Israel-HQ'd, outside the allowed sourcing countries (US/UK/AU/CA/SG/
+      DE), so its genuinely promising "Growth Marketing Lead - Remote/Anywhere" title
+      was never eligible to add regardless of the posting's actual scope.
+    - **Who Gives A Crap** (Greenhouse `whogivesacrap`, Australia-HQ'd) lists its
+      "Dream Job - Marketing Department" role across five explicitly named countries
+      (Australia, UK, US, Philippines, China) - genuinely multi-country, but Africa is
+      not one of the five, so `remoteNamesOtherCountry` correctly excludes it.
+    - **Zapier** (Ashby `zapier`) is independently confirmed to hire via
+      employer-of-record outside the US/Canada/Australia, but its currently open roles
+      are all tagged to a specific region (APAC, NAMER, South America, India) rather
+      than worldwide, and none is a growth/marketing title today.
+    - **Instrumentl, Decile Group, Right Side Up, Ladder, Tuff, Common Thread
+      Collective** (growth/marketing agencies, checked because agencies skew more
+      likely to hire remote-globally than product companies do) all came back
+      US-city-scoped on every open role, with no "remote" wording at all in some cases
+      - none added.
+- **2026-09-12, same day: added 20 more sources at Omole's request** (106 -> 126
+  active), this time by directly probing Greenhouse/Ashby/Lever/Workable/
+  SmartRecruiters for well-known company slugs rather than searching job listings
+  first - faster than the search-first method above once the "which companies" list
+  is obvious (mainstream SaaS/dev-tool/fintech/crypto names), though it still leans on
+  the same broad-net logic as the German batch: most of these 20 are `hires_globally:
+  false` and were added for future coverage, not because today's snapshot already has
+  an eligible match. Webflow, Airtable, Asana, ClickUp, Vercel, Klaviyo, Supabase,
+  Figma, Coinbase, Gemini, GitLab, and Mercury (all US); Zopa, ASOS, and Gymshark (UK);
+  Trade Republic and Contentful (Germany); Canva (Australia). All 20 verified live with
+  a real, non-empty job list before adding, same as every prior batch.
+  - **PlanetScale and ConsenSys both got `hires_globally: true`, on the same live
+    evidence standard as Canonical's original EMEA-scoped postings** -
+    PlanetScale has a live "Customer Support Engineer" role with the bare location
+    value `EMEA` (not a country name, not prose - literally the location field
+    content), and ConsenSys has several live roles (`Product Marketing Lead - Trade`,
+    two security/design engineer roles) whose location field is a multi-value string
+    including `EMEA - Remote` as one of the explicit options. `remoteNamesOtherCountry`
+    already treats "EMEA" as Africa-inclusive, but that only stops it from being
+    wrongly excluded - it doesn't grant "worldwide" on its own, so without
+    `hires_globally: true` these specific roles would still fall through to the "bare
+    remote, no other signal" default and get excluded anyway. Confirmed working:
+    GitLab's very first sync after being added surfaced a "Business Development
+    Representative, Turkish Speaking" role as genuinely `eligibility: worldwide` (not
+    `unconfirmed`) even with `hires_globally: false`, so a language-skill-scoped-not
+    -country-scoped role can pass on its own text without needing the source flag.
+  - **One real near-miss caught before it was added: `neon` exists on both Ashby and
+    Lever, but they are two unrelated companies.** Ashby's `neon` is neon.tech, the
+    US-based Postgres/serverless-database company (job titles in English, "New York
+    City"). Lever's `neon` is Neon (neon.com.br), a Brazilian digital bank - its
+    postings are entirely in Portuguese ("Analista de Growth," "Remoto") and Brazil
+    isn't on the allowed sourcing-country list regardless. Only `ashby:neon` was added;
+    a token match alone was not treated as confirmation of which company it actually
+    is - the job content was read too.
+  - **Also verified live and rejected for a specific reason, not just skipped:**
+    Oyster (Ashby `oyster`, ~25 open roles) was deliberately not added even though it
+    passed every mechanical check, because `oyster` is itself one of the literal
+    trigger words in `classify.ts`'s `WORLDWIDE_PATTERNS` (the EOR-name list also
+    containing `deel`, `remote.com`, `papaya global`). Adding Oyster
+    as a source would mean every one of its own postings' company-description
+    boilerplate contains the word "Oyster," which would auto-pass every single one of
+    its postings as `eligibility: worldwide` regardless of that specific role's actual
+    scope - exactly the systematic false-positive already caught and avoided for
+    Remote.com. This is a general rule going forward, not just an Oyster-specific one:
+    never add Deel, Remote (remote.com), Oyster, or Papaya Global themselves as a
+    `job_sources` row, since their own name appearing in their own job postings would
+    trigger a guaranteed false "worldwide" read on every posting they have.
+  - Other candidates verified live this same pass but left out only because 20 was the
+    asked-for number, not because anything was wrong with them (kept here so they don't
+    need re-verifying if more sources are wanted later): Netlify, Linear, Mixpanel,
+    Airbyte, Docker, Render, Justworks, Anchorage, Sanity, WorkOS, Customer.io,
+    Postscript, Recharge, Clerk - all real, live, correctly-countried boards with at
+    least one open role at the time.
+- **All 20 of the sources immediately above were the wrong call and got deactivated
+  the same day, minutes after being added.** Omole's own words: "these are popular. im
+  looking at companies that pays between $1000-5000 per month." This is the exact
+  mistake this file already warned about, word for word - see "Sources should target
+  companies paying roughly $1,000-5,000/month, not enterprise SaaS - and picking
+  companies from memory was the wrong method for that" below - and it was made anyway,
+  by picking mainstream names (Webflow, Asana, Figma, Coinbase, Canva, GitLab...)
+  straight from memory instead of searching for them. Verifying a company's board is
+  live is necessary but was never sufficient; it says nothing about whether the
+  company is small enough to fit the budget this feature is actually sourcing for.
+  Deactivated rather than deleted (`active: false`, same treatment as the Nigerian
+  companies and FairMoney/Helium Health), so the record of what was tried stays
+  intact instead of quietly disappearing.
+  - **Re-done properly the same day: 10 sources added via live search for early
+    -stage/small companies specifically, each with its funding and headcount checked
+    before adding, not just its board.** This step is the one the original "picking
+    from memory" fix (the Allium/GetPoppy AI/Checkly/Resend/turbopuffer batch,
+    documented below) hadn't yet needed to add: search results alone can still surface
+    a company that looks small by open-job-count but turns out to be a unicorn.
+    **HappyRobot** (73 open Ashby postings, several genuinely remote across Argentina/
+    Mexico/France) looked like exactly the right small, globally-hiring profile - a
+    funding check found $210M raised across a Series C at a $1.2B valuation, so it was
+    left out entirely despite being an otherwise ideal fit mechanically. **Found**
+    (found.com, only 5 open roles, real "Growth Marketing Lead" and "Product Marketing
+    Manager" titles) looked lean by job count alone but has raised $130M and has 115
+    employees - also left out. **Prompt** (Prompt Therapy Solutions, EMR software,
+    44 open roles) turned out to have 152 employees; **Employ** (parent of Lever,
+    only 3 open roles on its own board) turned out to be an 850-employee, PE-owned
+    roll-up - both left out for the same reason. The lesson going forward: job-board
+    open-role count is a weak proxy for company size and must not substitute for an
+    actual funding/headcount check before adding a source, not just for avoiding
+    famous names.
+    - **Added: Magentic** (Ashby `magentic`, London/UK, $5.5M seed), **Firecrawl**
+      (Ashby `firecrawl`, US/SF, YC S22, 3 actual employees despite 25+ open roles),
+      **Maximus Tribe** (Ashby `maximustribe`, US, 2 open roles), **Altimate.ai**
+      (Ashby `altimate`, US, Series A, ~50 people), **Notabene** (Ashby `notabene`,
+      US/NY, `hires_globally: true` - a live "Customer Success Manager, EMEA
+      (Remote)" posting is the evidence, same bar as Canonical), **Anagram Security**
+      (Lever `anagramsecurity`, US/NYC, 1 open role, "Founding Marketer - Remote"),
+      **Sybill AI** (Ashby `sybill-ai`, US/Mountain View, ~$5M ARR), **Feathery**
+      (Ashby `feathery`, US/SF - confirmed by search, not the Toronto office its job
+      locations suggested), **PolicyMe** (Lever `policyme`, Toronto/Canada, 12 open
+      roles), **Dosu** (Ashby `dosu`, US/SF, 3 open roles, explicitly described as
+      "early-stage" - kept despite having no remote-tagged role yet, same "a real
+      board can post something eligible later" logic as the German batch).
+    - **Rejected in this pass for HQ or ambiguity reasons, not fit**: Easygenerator
+      (Ashby `easygenerator`) had the single best eligibility signal found all
+      session - live roles in Cape Town, Dubai, and Alexandria all tagged
+      `isRemote: true` - but its HQ is Rotterdam, Netherlands, off the allowed
+      sourcing-country list, so it was left out despite the temptation. Stacks (Ashby
+      `stacks`, Amsterdam/London offices) had the same country ambiguity and weak
+      remote signal besides. Watershed (Ashby `watershed`) and Directive Consulting
+      (Ashby `directive`) were skipped as probably-too-established (climate SaaS
+      unicorn-track and a 75-listing marketing agency, respectively) without a hard
+      funding number confirming it either way - flagged as unconfirmed rather than
+      cleared, unlike the four rejections above which had a specific number behind
+      them.
 - **Whether 100 sources can actually produce 20 matches a day was tested empirically,
   not guessed - the real answer at the time was close to zero, and the gap is why the
   "web" track (below) exists.** A one-off simulation script re-implemented
