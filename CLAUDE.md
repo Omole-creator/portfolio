@@ -1413,6 +1413,112 @@ application **email**, and only after you've reviewed the draft and confirmed.
   (built and run from the scratchpad, one-off), so re-build it from `lib/jobs/classify.ts`
   and `lib/jobs/fetchers/*.ts` if this needs re-checking later - it's a straight
   reimplementation of both, not new logic.
+- **2026-09-14/15: "no big companies" cleanup and re-population, run entirely outside
+  the app (direct SQL against Supabase, no code changes) after Omole zeroed in on the
+  actual problem - not volume, but that the 116-source list built during the earlier
+  "make it 100"/"make it 105" pushes was almost entirely enterprise/unicorn-scale
+  companies (Snowflake, Notion, Robinhood, Datadog, Wise, N26, HelloFresh, Miro,
+  Sentry, Ramp, Plaid, Okta...), added before the "$1,000-5,000/month, not enterprise
+  SaaS" budget-fit rule (see above) existed and never revisited against it. Omole's own
+  instruction was explicit: "no big companies," confirmed to also mean deactivating the
+  existing ones, not just filtering new adds.
+  - **~90 of the 116 active sources were deactivated** (`active = false`, not deleted,
+    same pattern as every prior deactivation in this file), leaving only the 4
+    aggregators (arbeitnow/remoteok/remotive/workingnomads) and the dozen-odd
+    already-small companies from the original budget-fit-correction batch (Checkly,
+    Dosu, Feathery, Firecrawl, GetPoppy AI, Magentic, Maximus Tribe, Notabene,
+    Sybill AI, turbopuffer, Allium, Altimate.ai, Anagram Security, PolicyMe, Superside,
+    Wishpond, Float) - 21 sources total. One deliberate casualty: **Canonical** (maker
+    of Ubuntu) was cut too, despite being the strongest single `hires_globally`
+    evidence source in the whole list, for consistency - a large, established company
+    is still a large, established company regardless of how good its worldwide-hiring
+    signal is.
+  - **Re-populated from 21 back up to 78 active sources**, all live-verified the same
+    day, via many research rounds (a single background research agent, continued
+    across ~14 rounds, plus two more spawned in parallel partway through to speed
+    throughput once the sequential pace became a problem). Every addition holds to:
+    confirmed HQ in an allowed country, confirmed small size (roughly under 150
+    employees / $50M total raised / unicorn-adjacent valuation - a role-count/breadth
+    signal, e.g. 10+ simultaneously open roles across many departments, was used
+    repeatedly as an additional size red flag even without a hard funding number),
+    a live-verified board on one of the 7 supported ATS platforms, and no
+    signup-required apply flow (a second explicit instruction this pass, on top of "no
+    big companies"). "Recently raised a small round" was explicitly corrected to not
+    count against a candidate - only absolute scale does; a seed/Series A startup is
+    exactly the target profile, having raised money at all is not disqualifying.
+  - **Allowed HQ countries expanded mid-pass**: the original US/UK/Australia/Canada/
+    Singapore/Germany list (see above) now also includes **Switzerland, Ireland, New
+    Zealand, UAE, Philippines, Malta**, per Omole's direct instruction. None of the
+    prior wrong-country rejections (Estonia, Lithuania, France, Spain, Czech Republic,
+    India, Netherlands, Ukraine) fell in one of these 6, so nothing needed revisiting
+    retroactively - it only widened the ground for new candidates. A recurring nuance
+    for Philippines specifically: a company actually HQ'd there is fine, but a
+    US/UK/etc-HQ'd company's board that's really outsourced Philippines-based admin/VA/
+    support roles is still the same staffing-platform red flag as before, unrelated to
+    this change.
+  - **WebSearch ran out mid-pass - a real, hard limit, not a judgment call.** The
+    session's WebSearch quota (`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`, 200 calls)
+    is shared across the whole session **including every subagent spawned from it** - a
+    fresh subagent does not get a fresh quota, confirmed by testing a brand new agent
+    (it hit the same exhausted budget on its very first call) and by Claude's own
+    top-level WebSearch call failing identically. Omole chose to keep going without
+    raising the limit rather than pause to restart a session, so the rest of this pass
+    ran on WebFetch/curl only - no new-candidate discovery via search at all past that
+    point.
+  - **What worked without WebSearch, roughly in ascending order of yield**: mining the
+    aggregator APIs already used as data sources (Remotive/Arbeitnow/Jobicy/RemoteOK)
+    for company names as leads, then live-verifying each one's own ATS board - low
+    yield, most hits were already-known-large companies or staffing/BPO operations
+    riding along in the same feeds. HN's "Who is Hiring" monthly threads, fetched via
+    Algolia's public API (`hn.algolia.com/api/v1/...`, no auth) - real people
+    self-report company name, funding stage, location, and remote policy in one
+    comment, which solves HQ/size verification in a single fetch; a combined query
+    across all ~29 months of threads at once (one Algolia call per search term, OR-ed
+    across every thread's story id) was much faster than paging thread by thread, but
+    yield still saturated hard after enough months - by the end, most queries surfaced
+    the same recurring ~15 companies already seen or already decided. **GitHub-hosted
+    curated company/job lists were the highest-yield method found**, but only once
+    each list's own scope was actually read first: `established-remote` and
+    `awesome-jobs-in-australia` both explicitly curate 50+/enterprise-tier companies
+    (confirmed via their own READMEs and re-confirmed by running their contents through
+    the same probe anyway - zero viable hits, all Stripe/Figma/Xero/Notion-tier) and
+    were correctly skipped once that was clear; `remoteintech/remote-jobs` (886
+    structured entries with a `company_size` taxonomy) and especially
+    `midori-profile/reliable-remote-jobs-daily` (a **pre-verified** `companies.yaml`,
+    633 entries already carrying resolved `ats`/`token` fields from someone else's own
+    ATS-verification pipeline) were far better - the latter eliminated the
+    token-guessing step entirely and was still producing a backlog of 100+ unverified-
+    but-promising candidates when this pass was stopped.
+  - **What didn't work at all**: Product Hunt and Indie Hackers job pages (both
+    client-rendered SPAs, WebFetch gets an empty shell); `workatastartup.com`
+    (same - confirmed it returns an identical generic "Software Engineer" listing
+    regardless of the URL path tried, meaning its client-side routing can't be reached
+    via fetch at all); Remotive's own `category` query param, re-tested this pass and
+    found **newly broken** - it now returns the identical 16-job feed regardless of
+    category value (a real regression from what's documented earlier in this file,
+    where `category` was merely "doesn't narrow results," not "doesn't work at all");
+    Arbeitnow's pool is structurally the wrong ATS ecosystem for this project - its
+    German-SME listings run on Personio or similar, not any of the 7 platforms this
+    project supports (0 of 14 sample companies resolved to a supported ATS).
+  - **Recurring gotcha, worth remembering for future research passes: the same
+    company-name/domain can resolve to a completely different, unrelated company on a
+    different ATS platform, or even the same platform with a shared common word as the
+    token.** Confirmed multiple times this pass - `neon` (Ashby: the real neon.tech;
+    Lever: an unrelated Brazilian bank, already known from an earlier pass), `dispatch`
+    (Greenhouse and Ashby each resolve to a different company sharing that word),
+    `palantir` (both Lever and SmartRecruiters resolve to Palantir Technologies, the
+    large defense-tech company, not "Palantir.net" a small Drupal agency),
+    `clutch`/`stemwave`/`marble` (each resolved to an unrelated company on the obvious
+    token guess). The fix every time was the same: always read the live board's actual
+    job titles, locations, and company description before trusting a name/token match,
+    never assume a plausible-looking token is the right company.
+  - **Final state: 78 active sources** (up from the 21 left after the big-company
+    cleanup), all live-verified the same day against every rule above. The stated goal
+    for this pass was 200 - it was stopped short of that by explicit instruction once
+    Omole decided to wrap up, not because research had hit a hard ceiling the way the
+    105-source pass's ceiling test did; there was a real backlog of unverified
+    candidates (`companies.yaml` alone had 100+) still queued when it stopped. Treat 78
+    as "where curation paused," not "the most this method can find."
 
 ## The "web" track: AI-assisted rapid web/product builder
 
