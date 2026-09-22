@@ -47,6 +47,12 @@ function eligibilityNote(eligibility: JobMatch["eligibility"]) {
   if (eligibility === "worldwide") {
     return { label: "Worldwide", className: "bg-green-50 text-green-800" };
   }
+  if (eligibility === "relocation") {
+    return {
+      label: "Onsite, sponsors relocation",
+      className: "bg-blue-50 text-blue-800",
+    };
+  }
   return {
     label: "Unconfirmed scope, check before applying",
     className: "bg-amber-50 text-amber-800",

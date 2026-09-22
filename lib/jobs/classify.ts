@@ -130,6 +130,20 @@ const WORLDWIDE_PATTERNS: RegExp[] = [
 // with no other text.
 const WORLDWIDE_LOCATION_VALUES = /\b(worldwide|anywhere|global)\b/i;
 
+// The relocation path (see JobEligibility): an onsite role Omole would have
+// to physically move for, kept only when the company is explicitly willing
+// to sponsor that move to one of these three countries. Two independent
+// signals both have to be present in the same posting - naming the country
+// alone says nothing about sponsorship, and sponsorship language alone
+// doesn't say where. EXCLUSION_PATTERNS above (checked first in
+// classifyJob) already catches "no visa sponsorship" / "unable to sponsor",
+// so this only ever fires for a posting that didn't hit one of those.
+const RELOCATION_COUNTRY_PATTERN =
+  /\b(germany|deutschland|berlin|münchen|munich|hamburg|frankfurt|cologne|köln|stuttgart|düsseldorf|leipzig|netherlands|amsterdam|rotterdam|utrecht|eindhoven|the hague|den haag|austria|vienna|wien|graz|salzburg|linz)\b/i;
+
+const VISA_SPONSORSHIP_PATTERN =
+  /visa sponsorship|sponsors? (?:a |your |the )?(?:work )?visa|will sponsor|can sponsor|relocation (?:package|support|assistance|bonus)|relocation (?:is |will be )?(?:provided|available|offered|covered)|work permit sponsorship|blue card sponsorship/i;
+
 // Omole is targeting roles reachable with at most 4 years of experience.
 // Two independent, deliberately blunt heuristics, matching this file's
 // existing "plain keyword list, not a smart classifier" approach:
@@ -238,15 +252,17 @@ function checkEligibility(
 
 /**
  * Decides whether a posting belongs on /admin/jobs at all: it must match a
- * tracked keyword, be remote, and clear the eligibility check above (a
- * candidate applying from Nigeria/Africa needs to actually be hireable for
- * it). Returns null to reject the job outright (not inserted).
+ * tracked keyword and clear an eligibility check (a candidate applying from
+ * Nigeria/Africa needs to actually be hireable for it) - either because
+ * it's remote and open to anywhere/unconfirmed-but-plausible, or because
+ * it's an onsite role in Germany/Netherlands/Austria that explicitly
+ * sponsors visas/relocation. Returns null to reject the job outright (not
+ * inserted).
  */
 export function classifyJob(
   job: NormalizedJob,
   source: JobSource,
 ): { track: JobTrack; keyword_hits: string[]; eligibility: JobEligibility } | null {
-  if (!isRemoteJob(job)) return null;
   if (isTooOld(job.posted_at)) return null;
   if (SENIOR_TITLE_PATTERN.test(job.title)) return null;
   if (requiresTooMuchExperience(`${job.title} ${job.description_text ?? ""}`)) return null;
@@ -282,8 +298,28 @@ export function classifyJob(
 
   if (!track) return null;
 
-  const eligibility = checkEligibility(job, source.hires_globally);
-  if (eligibility === "excluded") return null;
+  let eligibility: JobEligibility | null = isRemoteJob(job)
+    ? ((): JobEligibility | null => {
+        const result = checkEligibility(job, source.hires_globally);
+        return result === "excluded" ? null : result;
+      })()
+    : null;
+
+  // Not remote (or the remote path came up empty, e.g. scoped to a named
+  // other country): fall back to checking whether this is an onsite role
+  // the company will actually sponsor relocation for.
+  if (!eligibility) {
+    const text = `${job.location_text ?? ""} ${job.description_text ?? ""}`;
+    if (
+      !EXCLUSION_PATTERNS.some((pattern) => pattern.test(text)) &&
+      RELOCATION_COUNTRY_PATTERN.test(text) &&
+      VISA_SPONSORSHIP_PATTERN.test(text)
+    ) {
+      eligibility = "relocation";
+    }
+  }
+
+  if (!eligibility) return null;
 
   return { track, keyword_hits: keywordHits, eligibility };
 }

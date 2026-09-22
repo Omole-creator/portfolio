@@ -1519,6 +1519,67 @@ application **email**, and only after you've reviewed the draft and confirmed.
     105-source pass's ceiling test did; there was a real backlog of unverified
     candidates (`companies.yaml` alone had 100+) still queued when it stopped. Treat 78
     as "where curation paused," not "the most this method can find."
+- **2026-09-22: Omole reported no matches for a full week. Root cause, confirmed by
+  running the sync live: the pipeline itself was healthy (78 sources checked, 0
+  inserted, no errors), but the 9/14-15 "no big companies" cleanup above had
+  deactivated every source that had ever actually produced a confirmed real match**
+  (GitLab's Turkish-speaking BDR role, Canonical's/Deel's/PlanetScale's/ConsenSys's
+  EMEA-scoped postings), leaving only 78 small, budget-fit companies, of which just 11
+  were even flagged `hires_globally: true` - consistent with every earlier ceiling
+  test in this file, just with the highest-signal sources now gone too. No config was
+  reverted; instead, a fresh research pass (continuing the same `companies.yaml`
+  backlog from the 9/14-15 pass) found **3 new small companies with a genuinely
+  eligible live posting today** (Rwazi - ashby `rwazi`, 3 roles literally titled
+  "...- Global (Remote)"; SearchApi - ashby `searchapi`, "Fully Remote. Work from
+  anywhere."; Nibiru - lever `nibiru`, "Remote - Anywhere") plus **14 more small,
+  correctly-HQ'd companies with a live board and an on-persona role today but no
+  eligible match yet**, added for future coverage the same way the German batch was
+  (ARQ, Avoca, Bitmovin, Cambly, Conveo, Exa, Finch, Gigs, Phoenix, Popl, saas.group,
+  Snappr, Stepful, Tavus). **B12, Fieldguide, and Taktile were found with real live
+  matches too but deliberately left out** - each has unconfirmed funding/headcount
+  that may put it past the small-company bar (B12 is backed by General
+  Catalyst/Breyer Capital), same "verify size before adding, don't guess" standard
+  that excluded HappyRobot/Found/Prompt/Employ earlier. Active sources: 78 -> 98.
+- **Same day: a new "relocation" eligibility path, for a second and separate request
+  - Omole also wants onsite roles in Germany, the Netherlands, or Austria that
+  explicitly sponsor a work visa or relocation, not just remote work reachable from
+  Nigeria.** This is a real architectural change, not a filter tweak: every posting
+  that failed `isRemoteJob` used to be rejected on the very first line of
+  `classifyJob` - it now falls through to a second check instead of being rejected
+  outright. `JobEligibility` (`lib/jobs/types.ts`) gained a third value, `"relocation"`,
+  alongside `"worldwide"`/`"unconfirmed"`; `supabase/migrations/0010_relocation_eligibility.sql`
+  updates `job_matches`'s eligibility check constraint to allow it (applied by hand in
+  the Supabase SQL editor, same as every migration in this repo - nothing runs them
+  automatically). `lib/jobs/classify.ts` adds `RELOCATION_COUNTRY_PATTERN` (Germany/
+  Netherlands/Austria, by name and major city) and `VISA_SPONSORSHIP_PATTERN`
+  (sponsorship/relocation-package language) - a posting only gets `eligibility:
+  "relocation"` when BOTH patterns match its combined location+description text, and
+  `EXCLUSION_PATTERNS` (the existing "unable to sponsor"/"no visa sponsorship" list)
+  is checked first and still overrides it, so a posting that explicitly refuses
+  sponsorship can never be misread as offering it. `hires_globally` plays no role in
+  this path at all - it only ever mattered for the ambiguous-bare-remote case in the
+  worldwide/unconfirmed path. `app/admin/jobs/JobRow.tsx` shows it as its own badge,
+  "Onsite, sponsors relocation." A live research pass (guessed and live-probed ~70 DACH/
+  Benelux company tokens, reading actual posting text rather than trusting company
+  reputation) found **3 companies with a real, currently-open, marketing-adjacent
+  role quoting real sponsorship language**: N26 (greenhouse `n26`, "A relocation
+  package with visa support for those who need it." - confirmed on 44 of its 49
+  Berlin/DE/NL/AT postings, i.e. a blanket company benefit rather than role-specific,
+  so it's the most durable of the three going forward), HelloFresh (greenhouse
+  `hellofresh`, "Berlin relocation support," on 26 of 111 postings), and SumUp
+  (greenhouse `sumup`, "relocation assistance," on 6 of 47 postings). All three are
+  large, well-known companies - a deliberate departure from the "no big companies"
+  rule elsewhere in this file, since visa sponsorship is inherently something only
+  well-resourced companies offer; this is specific to the relocation track, not a
+  reversal of that rule for the growth/marketing/web remote tracks. N26 and HelloFresh
+  had actually been added once already, during the original German-company batch
+  earlier in this file, then deactivated in the 9/14-15 cleanup - re-adding them
+  collided with `job_sources_unique_board`'s unique constraint on `(ats,
+  board_token)`, fixed by reactivating (`update ... set active = true`) instead of
+  re-inserting. Checked and ruled out with real evidence, not just skipped: GetYourGuide,
+  Solarisbank, Wolt, Bitpanda, GoStudent, Raisin, and Grover all have zero sponsorship
+  language anywhere on their boards; Celonis/Scout24/Isar Aerospace have sponsorship
+  somewhere but only on unrelated technical roles, not marketing/growth/web.
 
 ## The "web" track: AI-assisted rapid web/product builder
 

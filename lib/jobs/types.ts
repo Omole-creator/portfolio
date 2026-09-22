@@ -51,8 +51,12 @@ export type JobSourceTrack = JobTrack | "both";
 // Nigeria/Africa), or only passed the filter on an "unconfirmed" basis (a
 // bare "Remote" listing with no explicit scope, accepted only because its
 // source's hires_globally is true) - surfaced in the admin UI so an
-// "unconfirmed" match gets a second look before applying.
-export type JobEligibility = "worldwide" | "unconfirmed";
+// "unconfirmed" match gets a second look before applying. "relocation" is
+// the opposite case: an onsite role in Germany, the Netherlands, or Austria
+// whose own text explicitly offers visa sponsorship or relocation support -
+// not remote at all, kept only because the company said it will sponsor
+// the move.
+export type JobEligibility = "worldwide" | "unconfirmed" | "relocation";
 export type JobMatchStatus = "new" | "prepared" | "applied" | "dismissed";
 
 export type JobSource = {
