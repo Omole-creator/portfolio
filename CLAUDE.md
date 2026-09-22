@@ -1580,6 +1580,70 @@ application **email**, and only after you've reviewed the draft and confirmed.
   Solarisbank, Wolt, Bitpanda, GoStudent, Raisin, and Grover all have zero sponsorship
   language anywhere on their boards; Celonis/Scout24/Isar Aerospace have sponsorship
   somewhere but only on unrelated technical roles, not marketing/growth/web.
+- **2026-09-22, same day: Omole set an explicit target of 120 active sources (up from
+  98). Reached exactly on the fourth research round**, each round handed a fresh,
+  non-overlapping lead source since the earlier ones dry up fast (yield per round:
+  9, 7, 6 - a clear diminishing-returns curve, consistent with every prior sourcing
+  push in this file). All added via direct SQL against Supabase (admin-curated data,
+  not schema, same as every prior source addition) rather than a migration.
+  - **Round 2 (9, mixed lead sources):** Flagright (ashby `flagright.com`, Singapore
+    -founded/multi-hub, $20.1M raised, 49 employees, live "Senior Field Marketing
+    Manager - EMEA" role), Odin (ashby `odin`, London, $3M raised, 99 employees, live
+    "Founding Growth Lead" role), Melotech (ashby `melotech`, Berlin, ~10 employees
+    seed-stage, live "Founding Growth Manager"/"Founding Head of Brand" roles), Kit/
+    formerly ConvertKit (ashby `kit`, bootstrapped, 149 employees - right at the size
+    boundary, added for future coverage with no live opening today), Sora Union
+    (greenhouse `soraunion`, `hires_globally: true` - 42 employees explicitly
+    distributed across 20 countries, live "Global" location value, real Brand
+    Strategist/Designer roles), Padlet (ashby `padlet`, bootstrapped, 63 employees),
+    Langdock (ashby `langdock`, Berlin, YC S23, $3.5M raised, roles Germany-scoped not
+    worldwide), Recast (greenhouse `recast`, Albany NY, $4.46M raised, 66 employees,
+    role doesn't hit the current keyword list - future coverage), IntegraFEC
+    (greenhouse `integra`, Austin, ~30 employees, no VC funding).
+  - **Round 3 (7, YC directory + one lead-list hit):** Mira Mace (ashby `miramace`,
+    Boston, 1-10 employees, Foundation Capital/DefineVC seed, live "Growth Marketing
+    Manager, D2C" role), Tali AI (lever `tali-ai`, Toronto, seed, 55 employees),
+    DeepJudge (ashby `deepjudge`, Zurich, $41.2M Series A, 80 employees, role scoped
+    Remote-USA/Canada), Secfix (ashby `secfix`, Munich, $12M Series A, 37 employees,
+    future coverage), jetfuel.agency (smartrecruiters `Jetfuelagency`, Vancouver, no
+    VC funding, ~21-50 employees), Tiugo Technologies/CKSource-CKEditor (recruitee
+    `tiugotech`, Boston, 71 employees), GetGround (ashby `getground`, London, $25.3M
+    raised, 82-89 employees).
+  - **Round 4 (6, direct niche-token guessing - not famous-name guessing, which this
+    file already documents as the wrong method):** Trigger.dev (ashby `triggerdev`,
+    London, $16-20M raised, ~18 employees), Chatbase (ashby `chatbase`, Toronto,
+    bootstrapped, ~26-30 employees), Magic Patterns (ashby `magicpatterns`, SF, $7.2M
+    raised, 11-50 employees, live "Head of Growth"/"Head of Community" roles), Nango
+    (ashby `nango`, SF, $7.5-8M raised, ~18 employees), Plain (ashby `plain`, London,
+    $21.3M raised, 44-50 employees, live "Product Marketing Lead" role), Knock (ashby
+    `knock`, Brooklyn, $18M raised, 23 employees, future coverage). This round's fetch
+    caught a real gotcha worth remembering: SmartRecruiters returns a false-positive
+    HTTP 200 with an empty `content: []` for a token that doesn't exist at all - don't
+    trust the status code alone, check the body has real entries.
+  - **Only Sora Union got `hires_globally: true`** across all 22 - every other new
+    source is the safe `false` default, added for future coverage the same way the
+    German batch was.
+  - **Left open, not decided:** Swoop (ashby `swoopapp`) surfaced in round-3 lead-list
+    research with a live "Founding Marketing Designer" role literally based in
+    Nigeria - but the company itself is Lagos-HQ'd, which fails the standing
+    US/UK/Australia/Canada/Singapore/Germany/Switzerland/Ireland/New Zealand/UAE/
+    Philippines/Malta-only sourcing rule (the same rule that excluded Nigerian
+    fintechs in an earlier pass). Not added pending Omole's call - it's a genuinely
+    different case from the earlier rejected batch (a real live Nigeria-based opening,
+    not "trivially eligible by virtue of being Nigeria-HQ'd"), but the file's rule is
+    about company HQ, not role location, so it still needs an explicit decision rather
+    than a silent add.
+  - **Wellfound (formerly AngelList Talent) confirmed not addable, and why it's a hard
+    dead end, not just unresearched**: it's a client-rendered SPA - a plain fetch
+    returns an ~11KB shell with no job data or ATS links anywhere in the raw HTML
+    (the same failure mode already documented for workatastartup.com). It also has no
+    public, unauthenticated API anymore (AngelList closed that off years ago), so it
+    fits neither this project's "structured ATS API" fetchers nor the "scrape a plain
+    HTML page" fallback `custom.ts` uses. Fixing this would need a real headless
+    browser session, which this project's serverless-function architecture
+    deliberately avoids (the same reasoning that ruled out browser-automated ATS
+    submission in the first place) - same category as Himalayas (Cloudflare-blocked)
+    and We Work Remotely's own apply pages (403/SPA-blocked on a plain fetch).
 
 ## The "web" track: AI-assisted rapid web/product builder
 
