@@ -46,6 +46,13 @@ const TITLE_PREFILTER_KEYWORDS = [
   "creative",
   "demand generation",
   "community",
+  "social",
+  "copy",
+  "design",
+  "webflow",
+  "framer",
+  "website",
+  "landing page",
 ];
 
 export function titleLooksRelevant(title: string): boolean {

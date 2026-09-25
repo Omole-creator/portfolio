@@ -128,6 +128,11 @@ export function JobRow({ job }: { job: JobMatch }) {
                 Scraped, not an ATS - double-check details
               </span>
             ) : null}
+            {job.ats === "wellfound" || job.ats === "workatastartup" ? (
+              <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
+                {job.ats === "wellfound" ? "Needs a Wellfound account" : "Needs a YC account"}
+              </span>
+            ) : null}
             {job.apply_email ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-navy/10 px-2.5 py-0.5 text-xs font-semibold text-navy">
                 <Mail className="h-3 w-3" aria-hidden="true" />

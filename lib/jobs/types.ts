@@ -26,6 +26,10 @@
 // posting resolved straight to a "/auth/signup" endpoint on the employer's
 // own site) rather than trusting the aggregator's own apply flow the way
 // the other five do.
+//
+// "wellfound" / "workatastartup" are the only two sources whose apply flow
+// needs an account (a Wellfound account, a YC account). Omole named them
+// as deliberate exceptions to the no-sign-up rule; see their fetchers.
 export type JobAts =
   | "greenhouse"
   | "lever"
@@ -40,7 +44,9 @@ export type JobAts =
   | "jobicy"
   | "arbeitnow"
   | "himalayas"
-  | "workingnomads";
+  | "workingnomads"
+  | "wellfound"
+  | "workatastartup";
 // "web" is the AI-assisted rapid web/product builder track, matched to
 // /web's positioning (design + development + copy, moving fast with AI
 // tools like Claude Code, not a traditional CS-background engineer) - see

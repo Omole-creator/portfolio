@@ -33,6 +33,8 @@ const ATS_LABELS: Record<JobAts, string> = {
   arbeitnow: "Arbeitnow (aggregator, all companies)",
   himalayas: "Himalayas (aggregator, keyword search)",
   workingnomads: "Working Nomads (aggregator, all companies)",
+  wellfound: "Wellfound (needs a Wellfound account to apply)",
+  workatastartup: "Work at a Startup (needs a YC account to apply)",
 };
 
 // The aggregators aren't a single company, so the "token" field means
@@ -44,6 +46,8 @@ const AGGREGATOR_ATS: JobAts[] = [
   "arbeitnow",
   "himalayas",
   "workingnomads",
+  "wellfound",
+  "workatastartup",
 ];
 
 export function AddSourceForm() {
@@ -130,9 +134,13 @@ export function AddSourceForm() {
         <div className="sm:col-span-2 grid gap-4 rounded-xl border border-line bg-paper p-4 sm:grid-cols-2">
           <div>
             <label htmlFor="manual_token" className={label}>
-              {AGGREGATOR_ATS.includes(manualAts)
-                ? "Category/tag or search query (e.g. \"marketing\" or \"growth marketing\")"
-                : "Board token (or full URL, if using Custom)"}
+              {manualAts === "wellfound"
+                ? "Role slugs, comma-separated, or \"default\" for the standard marketing, growth, and web design set"
+                : manualAts === "workatastartup"
+                  ? "Search terms, comma-separated, or \"default\" for the standard marketing, growth, and web design set"
+                  : AGGREGATOR_ATS.includes(manualAts)
+                    ? "Category/tag or search query (e.g. \"marketing\" or \"growth marketing\")"
+                    : "Board token (or full URL, if using Custom)"}
             </label>
             <div className="flex gap-2">
               <input

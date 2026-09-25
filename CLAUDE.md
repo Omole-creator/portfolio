@@ -1644,6 +1644,51 @@ application **email**, and only after you've reviewed the draft and confirmed.
     deliberately avoids (the same reasoning that ruled out browser-automated ATS
     submission in the first place) - same category as Himalayas (Cloudflare-blocked)
     and We Work Remotely's own apply pages (403/SPA-blocked on a plain fetch).
+    **Superseded 2026-09-25, see the next bullet: both Wellfound and Work at a
+    Startup turned out to be readable with a plain fetch after all.**
+- **2026-09-25: Wellfound and Work at a Startup (YC) added as sources, the only two
+  exceptions to the "no account sign-up to apply" rule, by Omole's explicit
+  instruction.** Don't treat this as loosening the rule for anything else.
+  - The note above was wrong about both being unreadable without a browser, which is
+    worth knowing before calling any site a dead end: the pages that were checked
+    before were the wrong ones. Wellfound's remote role pages
+    (`wellfound.com/role/r/<slug>`) are server-rendered and carry every listing's full
+    data in `__NEXT_DATA__` (title, full description, `liveStartAt`,
+    `yearsExperienceMin`, and `acceptedRemoteLocationNames`). An empty
+    `acceptedRemoteLocationNames` on a remote listing is what Wellfound's own job page
+    renders as "Hires remotely in Everywhere" (confirmed on a live listing), so
+    `lib/jobs/fetchers/wellfound.ts` maps it to `"Remote, Worldwide"`; a non-empty list
+    becomes `"Remote (India; Philippines)"`-style text that the usual
+    `remoteNamesOtherCountry` check excludes unless it names Africa/Nigeria. Guessed
+    role slugs that don't exist 303-redirect to `/remote`. Work at a Startup's search
+    box calls a public JSON endpoint (`/jobs/search?q=...`, 30 results per query), and
+    each job's public page embeds its full data as the Inertia `data-page` attribute,
+    including a `sponsorsVisa` field: `"US citizen/visa only"` is dropped in the
+    fetcher, and a bare "Remote" with `"US citizenship/visa not required"` is labeled
+    as open anywhere. WAAS exposes no posting date (`posted_at` stays null).
+  - `board_token` for both is a comma-separated list (Wellfound role slugs, WAAS search
+    terms) or `"default"` for each fetcher's built-in marketing/growth/web design set.
+    `supabase/migrations/0011_add_wellfound_waas_ats.sql` widens both `ats` check
+    constraints and inserts the two sources. `JobRow.tsx` shows a "Needs a Wellfound
+    account" / "Needs a YC account" badge on their matches.
+  - First live run: Wellfound returned 218 remote listings and 2 real matches (both
+    worldwide), WAAS returned 13 relevant listings and 0 matches, since nearly every YC
+    remote role is US-scoped. Wellfound skews heavily toward India-scoped and unpaid/
+    equity-only listings.
+- **Track keywords match the job title only, never the description (2026-09-25).**
+  Omole was shown an SEO/GEO job and asked why. Keywords used to be matched against
+  title plus description, and descriptions mention "content marketing" or "digital
+  marketing" in passing all the time, so roles unrelated to his CVs got through. Now
+  `classify.ts` matches keywords against the title only and rejects
+  `OFF_PERSONA_TITLE_PATTERN` titles first: SEO/GEO/AEO/SEM, product/field/partner
+  marketing, marketing ops, analyst/data, sales/BD/SDR, devrel, anything with
+  "engineer" or "technical", PR/communications, Amazon/marketplace, recruiting. It
+  also rejects `UNPAID_TITLE_PATTERN` titles (unpaid, volunteer, equity-only,
+  co-founder). `"seo specialist"`/`"seo manager"` were removed from
+  `MARKETING_KEYWORDS`, and `"ai product engineer"`/`"forward deployed engineer"` from
+  `WEB_KEYWORDS`, since those are engineering hires, not the /web persona. A title that
+  names SEO as one part of a broader role ("Growth Marketing Manager (SEO, Email,
+  Social)") is rejected too. That's deliberate, since Omole said SEO roles don't fit.
 
 ## The "web" track: AI-assisted rapid web/product builder
 

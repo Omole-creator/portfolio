@@ -10,7 +10,15 @@ import type { JobAts } from "./types";
 // nothing to probe or parse a URL for in the same shape as the others.
 export type RealAts = Exclude<
   JobAts,
-  "custom" | "remoteok" | "remotive" | "jobicy" | "arbeitnow" | "himalayas" | "workingnomads"
+  | "custom"
+  | "remoteok"
+  | "remotive"
+  | "jobicy"
+  | "arbeitnow"
+  | "himalayas"
+  | "workingnomads"
+  | "wellfound"
+  | "workatastartup"
 >;
 
 export type AtsProbeResult = { ats: RealAts; jobCount: number };

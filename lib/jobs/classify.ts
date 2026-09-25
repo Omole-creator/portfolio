@@ -1,7 +1,10 @@
 import type { JobEligibility, JobSource, JobTrack, NormalizedJob } from "./types";
 
-// Plain keyword lists, not a smart classifier. Bad matches get dismissed
-// from /admin/jobs rather than engineered away here.
+// Plain keyword lists, not a smart classifier. They're matched against the
+// job TITLE only, never the description: descriptions mention "content
+// marketing" or "digital marketing" in passing all the time, which used to
+// pull in roles that have nothing to do with Omole's CVs (an SEO/GEO role
+// got through that way). The title says what the job actually is.
 const GROWTH_KEYWORDS = [
   "growth marketing",
   "growth marketer",
@@ -20,6 +23,11 @@ const GROWTH_KEYWORDS = [
   "community growth",
   "conversion rate optimization",
   "cro specialist",
+  "growth associate",
+  "growth specialist",
+  "growth marketing lead",
+  "founding marketer",
+  "founding growth",
 ];
 
 const MARKETING_KEYWORDS = [
@@ -46,8 +54,11 @@ const MARKETING_KEYWORDS = [
   "content strategist",
   "digital marketing",
   "email marketing",
-  "seo specialist",
-  "seo manager",
+  "marketing lead",
+  "marketing generalist",
+  "social media",
+  "ugc",
+  "influencer marketing",
 ];
 
 // The AI-assisted rapid web/product builder track, matched to /web's actual
@@ -71,9 +82,7 @@ const WEB_KEYWORDS = [
   "web designer",
   "founding designer",
   "ai product builder",
-  "ai product engineer",
   "creative technologist",
-  "forward deployed engineer",
   "rapid prototyper",
   "vibe coder",
   "vibe coding",
@@ -81,6 +90,23 @@ const WEB_KEYWORDS = [
   "wordpress developer",
   "squarespace designer",
 ];
+
+// Titles that can contain a tracked keyword but are a different job from
+// anything on Omole's growth, creative marketing, or web CVs. Checked
+// before keywords, so "SEO Content Marketing Manager" or "Product
+// Marketing Manager" is rejected even though "content marketing" /
+// "marketing manager" would otherwise match. SEO/GEO/AEO is the case that
+// prompted this: it's a specialist discipline none of the three CVs claim.
+// Engineering titles are excluded too - the web track is for design-led,
+// AI-assisted builders, not software engineers (a "Growth Engineer" is an
+// engineering hire, not a growth marketer).
+const OFF_PERSONA_TITLE_PATTERN =
+  /\b(seo|geo|aeo|sem|search engine|search marketing|ai search|llm visibility|product marketing|field marketing|partner marketing|channel marketing|marketing operations|marketing ops|revops|analyst|analytics|data|sales|account executive|account manager|business development|bdr|sdr|developer relations|devrel|technical|engineer|engineering|qa|quality assurance|public relations|pr|communications|comms|amazon|marketplace|recruit(er|ing)?|investor relations)\b/i;
+
+// Unpaid, volunteer, and equity-only roles (common on Wellfound) don't fit
+// the $1,000-5,000/month target these sources are chosen for.
+const UNPAID_TITLE_PATTERN =
+  /\b(unpaid|volunteer|voluntary|equity only|equity partner|co-?founder)\b|\(equity\)/i;
 
 // Explicit signals that a posting is NOT open to someone applying from
 // Nigeria/Africa: citizenship/work-authorization/residency requirements,
@@ -251,8 +277,8 @@ function checkEligibility(
 }
 
 /**
- * Decides whether a posting belongs on /admin/jobs at all: it must match a
- * tracked keyword and clear an eligibility check (a candidate applying from
+ * Decides whether a posting belongs on /admin/jobs at all: its title must
+ * match a tracked keyword, must not be an off-persona title, and it must clear an eligibility check (a candidate applying from
  * Nigeria/Africa needs to actually be hireable for it) - either because
  * it's remote and open to anywhere/unconfirmed-but-plausible, or because
  * it's an onsite role in Germany/Netherlands/Austria that explicitly
@@ -265,9 +291,11 @@ export function classifyJob(
 ): { track: JobTrack; keyword_hits: string[]; eligibility: JobEligibility } | null {
   if (isTooOld(job.posted_at)) return null;
   if (SENIOR_TITLE_PATTERN.test(job.title)) return null;
+  if (OFF_PERSONA_TITLE_PATTERN.test(job.title)) return null;
+  if (UNPAID_TITLE_PATTERN.test(job.title)) return null;
   if (requiresTooMuchExperience(`${job.title} ${job.description_text ?? ""}`)) return null;
 
-  const haystack = `${job.title} ${job.description_text ?? ""}`.toLowerCase();
+  const haystack = job.title.toLowerCase();
 
   const hitsByTrack: Record<JobTrack, string[]> = {
     growth: findHits(haystack, GROWTH_KEYWORDS),
