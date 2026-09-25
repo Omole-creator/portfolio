@@ -1703,10 +1703,30 @@ application **email**, and only after you've reviewed the draft and confirmed.
     in the portfolio. Engineering titles stay out, since Claude Code is for web design
     only. The Gemini grounding text for the web track (`candidateContext.ts`) dropped
     "rapid prototyping" for the same reason.
-  - Not yet resolved: `growthTechnicalSkills` in `lib/growth-content.ts` (shown on
-    /growth, and fed to Gemini for growth-track drafts) still lists "AI-Assisted
-    Marketing Ops (Claude Code)". That conflicts with "Claude Code only for web design"
-    and was flagged to Omole, not changed, since it's published portfolio copy.
+- **Omole doesn't write code by hand. Every /web project was built with Claude Code,
+  and that's positioned as his edge, not hidden (2026-09-25).** His own words: "i do
+  not code by hand. i only use claude code." (This clarified an earlier "only for web
+  design," which meant his only coding is through Claude Code, not that Claude Code is
+  off-limits elsewhere. The JobMingle CRM's `builtWith` already lists Claude Code, so
+  /growth's "AI-Assisted Marketing Ops (Claude Code)" skill is accurate and stays.)
+  - /web copy (`lib/web-content.ts`) now says it outright: `webAbout[0]` ("I build
+    every one of them with Claude Code. I don't write code by hand..."), the meta
+    description, the second `webDifference` pair (hand-written pages vs. Claude Code,
+    tied to the 24-hour WaterBrooks build), `webProcess` step 2, and GluFloat's "Built
+    entirely with Claude Code" highlight.
+  - `candidateContext.ts`'s web branch tells Gemini to present Claude Code building as
+    a strength and never to claim hand-coding or fluency in any language or framework,
+    so a drafted cover letter can't oversell him into a technical interview he'd fail.
+  - `WEB_KEYWORDS` now includes AI-builder titles (vibe coder/coding, AI builder, AI
+    product builder, AI web designer/developer, AI-native builder, "claude code"), and
+    `MARKETING_KEYWORDS` includes AI-first marketing titles (AI marketing/marketer/
+    content/creative). These roles are written for exactly this way of working.
+    Anything titled "engineer" is still rejected, since those interviews expect
+    hand-coding.
+  - Not changed: `public/omole-usuangbon-web-developer-cv.pdf` mentions Claude Code in
+    its summary and skills, but its GluFloat line still says "using AI tools
+    throughout" and it never states "every project built with Claude Code." Its HTML
+    source isn't in the repo, so updating it means rebuilding the PDF.
 
 ## The "web" track: AI-assisted rapid web/product builder
 

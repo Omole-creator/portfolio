@@ -70,17 +70,26 @@ const MARKETING_KEYWORDS = [
   "marketing communications",
   "short-form video",
   "video content",
+  // AI-first marketing roles, matching /marketing's positioning (video,
+  // voiceover, carousels, and landing pages made with Claude Code,
+  // ElevenLabs, and HeyGen).
+  "ai marketing",
+  "ai marketer",
+  "ai content",
+  "ai creative",
+  "ai-first marketer",
+  "ai-native marketer",
 ];
 
 // The web design track, matched to what /web actually shows: websites and
 // landing pages, designed, written, and built end to end (WaterBrooks,
-// Designs & Konstruct, the Sales Objections Toolkit page), with Claude Code
-// used for web design and nothing else, plus WordPress per the creative
-// marketing CV. Titles for tools or kinds of work the portfolio doesn't
-// show (Webflow, Framer, Shopify, Squarespace, no-code app building,
-// product design, "AI product builder"/"vibe coder"/prototyping roles)
-// were removed on purpose. "Web developer" and "software engineer" alone
-// stay out too, since those pull in traditional engineering roles.
+// Designs & Konstruct, the Sales Objections Toolkit page, plus the GluFloat
+// and CV Reviewer web apps), every one built with Claude Code rather than
+// hand-written code, plus WordPress per the creative marketing CV. Titles
+// for tools the portfolio doesn't show (Webflow, Framer, Shopify,
+// Squarespace, no-code app builders) and product design stay out. "Web
+// developer" and "software engineer" alone stay out too, since those pull
+// in traditional hand-coding engineering roles.
 const WEB_KEYWORDS = [
   "web designer",
   "website designer",
@@ -91,6 +100,19 @@ const WEB_KEYWORDS = [
   "landing page developer",
   "wordpress developer",
   "wordpress designer",
+  // Roles written for people who build by directing AI rather than writing
+  // code by hand - exactly how every /web project was made (all built with
+  // Claude Code, no hand-coding), so these are an edge, not a stretch.
+  // Titles with "engineer" still get rejected by OFF_PERSONA_TITLE_PATTERN,
+  // since those interviews expect hand-coding.
+  "vibe coder",
+  "vibe coding",
+  "ai builder",
+  "ai product builder",
+  "ai web designer",
+  "ai web developer",
+  "ai-native builder",
+  "claude code",
 ];
 
 // Titles that can contain a tracked keyword but are a different job from

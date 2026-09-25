@@ -29,6 +29,11 @@ export function buildCandidateContext(track: JobTrack): string {
       webAbout.join("\n\n"),
       "\nProjects:\n" + summarizeWebWork(webWork),
       "\nTechnical skills: AI-assisted web design and development (Claude Code), website and web app design (UI/UX), landing page development, WordPress, conversion copywriting, SEO fundamentals, checkout and payments integration (Selar), deployment (Vercel).",
+      // Omole doesn't write code by hand: every /web project was built by
+      // directing Claude Code. That's the edge to lead with (it's why a full
+      // site went live in 24 hours), and it also means a draft must never
+      // claim hand-coding or fluency in a programming language or framework.
+      "\nHow I build: every project above was built with Claude Code. I do not write code by hand. I design the site, write the copy, and direct Claude Code to build it, which is why I can ship a full site in 24 hours. Present this as a strength, and never claim hand-coding skills or fluency in any programming language or framework.",
     ].join("\n");
   }
 

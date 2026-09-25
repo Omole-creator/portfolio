@@ -45,6 +45,8 @@ const DEFAULT_QUERIES = [
   "web designer",
   "website",
   "landing page",
+  "vibe coding",
+  "ai marketing",
 ];
 
 // Each kept job costs one more request for its detail page, so this caps

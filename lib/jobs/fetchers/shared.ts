@@ -53,6 +53,8 @@ const TITLE_PREFILTER_KEYWORDS = [
   "framer",
   "website",
   "landing page",
+  "vibe",
+  "ai ",
 ];
 
 export function titleLooksRelevant(title: string): boolean {

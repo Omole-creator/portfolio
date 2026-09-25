@@ -9,7 +9,7 @@ export const webSite = {
   role: "Web Designer & Developer",
   path: "/web",
   metaDescription:
-    "Omole Usuangbon designs and builds professional websites for small businesses, fast, including a full site built in 24 hours and a modern web app from design to launch.",
+    "Omole Usuangbon designs and builds professional websites for small businesses with Claude Code, fast, including a full site built in 24 hours and a modern web app from design to launch.",
   headline: "A Website That Turns Visitors Into Customers",
   subhead:
     "An outdated website makes people leave before they trust you enough to buy. I build ones that keep them, and turn them into customers.",
@@ -35,7 +35,7 @@ export const webProof = [
 ];
 
 export const webAbout = [
-  "I design and build websites for small businesses, using modern tools and AI to move fast without cutting corners on quality.",
+  "I design and build websites for small businesses, and I build every one of them with Claude Code. I don't write code by hand. I decide what the site needs to say and how it should look, then direct AI to build it exactly that way, which is how I move fast without cutting corners on quality.",
   "Most web designers can make a page look nice. I come from growth and sales, so I build sites that are built to turn a visitor into a customer, not just look good sitting there.",
   "One business had already paid two different developers to build their site, and neither one delivered. I built the whole thing myself in 24 hours, from the story on the homepage to the page that turns visitors into partners.",
   "If your website still looks like it was built years ago, or you have never had one at all, I can have something professional and fast live in days, not months.",
@@ -131,7 +131,7 @@ export const webWork: WebProject[] = [
     highlights: [
       "A clean, modern interface for daily meal recommendations and a food and glucose report",
       "A full pricing and trial flow, from landing page to signup, with no card required to start",
-      "Built entirely with AI tools, from the recommendation engine to the design",
+      "Built entirely with Claude Code, from the recommendation engine to the design",
     ],
     liveUrl: "https://glufloat.com",
     image: {
@@ -164,8 +164,8 @@ export const webDifference = [
     mine: "I write the copy and design the page to work together, so it actually sells.",
   },
   {
-    theirs: "Most agencies take months and disappear after launch.",
-    mine: "I built a full site in 24 hours, and I stay reachable after it goes live.",
+    theirs: "Most agencies write every page by hand, take months, and disappear after launch.",
+    mine: "I build with Claude Code, which is how a full site went live in 24 hours, and I stay reachable after it goes live.",
   },
   {
     theirs: "Most developers cannot tell you why a page is not converting.",
@@ -184,7 +184,7 @@ export const webProcess = [
   },
   {
     title: "I design and build it, fast",
-    body: "Using the same process that got WaterBrooks live in 24 hours, I design and build your site in days, not months, and you see progress the whole way.",
+    body: "Using Claude Code and the same process that got WaterBrooks live in 24 hours, I design and build your site in days, not months, and you see progress the whole way.",
   },
   {
     title: "You get a site that works, and keeps working",
