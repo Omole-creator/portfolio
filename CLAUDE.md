@@ -1714,9 +1714,15 @@ application **email**, and only after you've reviewed the draft and confirmed.
     description, the second `webDifference` pair (hand-written pages vs. Claude Code,
     tied to the 24-hour WaterBrooks build), `webProcess` step 2, and GluFloat's "Built
     entirely with Claude Code" highlight.
-  - `candidateContext.ts`'s web branch tells Gemini to present Claude Code building as
-    a strength and never to claim hand-coding or fluency in any language or framework,
-    so a drafted cover letter can't oversell him into a technical interview he'd fail.
+  - **Cover letters don't announce this.** Omole: "you dont have to state that i do
+    not write code by hand or say everything i do is using claude code on the cover
+    letter... only write it based on what the job ad says so it feels like i read the
+    job ad." `candidateContext.ts`'s web branch passes the Claude Code fact as
+    background only: mention Claude Code/AI tools only if the ad asks for them, and
+    never claim hand-coding or fluency in a language or framework. The prompt in
+    `gemini.ts` builds each letter around the ad's own named responsibilities and
+    requirements, answering each with the closest proof and leaving out background
+    the ad doesn't ask about.
   - `WEB_KEYWORDS` now includes AI-builder titles (vibe coder/coding, AI builder, AI
     product builder, AI web designer/developer, AI-native builder, "claude code"), and
     `MARKETING_KEYWORDS` includes AI-first marketing titles (AI marketing/marketer/

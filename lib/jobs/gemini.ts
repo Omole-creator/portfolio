@@ -171,7 +171,7 @@ Description: ${(job.description_text ?? "").slice(0, 4000)}
 Candidate background (the only source of facts you may use - do not invent metrics, employers, or achievements not listed here):
 ${candidateContext}
 
-Write a cover letter, under 350 words, in first person as Omole Usuangbon. Ground every claim in the background above. Address why this specific role and company fit, using details from the job description. Do not use a generic opening like "I am writing to express my interest." Write the way a direct, plainspoken person actually talks: no filler, no em dashes, no "I am confident that..." hedging.
+Write a cover letter, under 350 words, in first person as Omole Usuangbon. Build it around what this job ad actually asks for: pick out the specific responsibilities and requirements it names, and answer each of the most important ones with the most relevant proof from the background above, so it reads like he read the ad closely. Refer to the company and the role by their own details and wording, not generic praise. Leave out background that doesn't answer something in the ad, even if it's impressive. Ground every claim in the background above. Do not use a generic opening like "I am writing to express my interest." Write the way a direct, plainspoken person actually talks: no filler, no em dashes, no "I am confident that..." hedging.
 
 ${questionsBlock}
 
