@@ -28,6 +28,13 @@ const GROWTH_KEYWORDS = [
   "growth marketing lead",
   "founding marketer",
   "founding growth",
+  // JobMingle CRM on /growth is marketing ops (lead capture, round-robin
+  // assignment, automated emails), and the 462-lead campaign is lead gen.
+  "marketing operations",
+  "marketing ops",
+  "lead generation",
+  "community manager",
+  "community marketing",
 ];
 
 const MARKETING_KEYWORDS = [
@@ -59,49 +66,45 @@ const MARKETING_KEYWORDS = [
   "social media",
   "ugc",
   "influencer marketing",
+  "product marketing",
+  "marketing communications",
+  "short-form video",
+  "video content",
 ];
 
-// The AI-assisted rapid web/product builder track, matched to /web's actual
-// positioning: design + copy + development, moving fast with AI tools
-// (Claude Code), not a traditional CS-background software engineer. Kept
-// deliberately narrow to titles that signal that specific persona - "web
-// developer" or "software engineer" alone were left out on purpose, since a
-// plain title match against those would pull in traditional engineering
-// roles this CV doesn't actually compete for.
+// The web design track, matched to what /web actually shows: websites and
+// landing pages, designed, written, and built end to end (WaterBrooks,
+// Designs & Konstruct, the Sales Objections Toolkit page), with Claude Code
+// used for web design and nothing else, plus WordPress per the creative
+// marketing CV. Titles for tools or kinds of work the portfolio doesn't
+// show (Webflow, Framer, Shopify, Squarespace, no-code app building,
+// product design, "AI product builder"/"vibe coder"/prototyping roles)
+// were removed on purpose. "Web developer" and "software engineer" alone
+// stay out too, since those pull in traditional engineering roles.
 const WEB_KEYWORDS = [
-  "no-code developer",
-  "no code developer",
-  "low-code developer",
-  "webflow developer",
-  "webflow designer",
-  "framer developer",
-  "framer designer",
+  "web designer",
+  "website designer",
+  "web design",
+  "website developer",
+  "web designer/developer",
   "landing page designer",
   "landing page developer",
-  "website designer",
-  "web designer",
-  "founding designer",
-  "ai product builder",
-  "creative technologist",
-  "rapid prototyper",
-  "vibe coder",
-  "vibe coding",
-  "shopify developer",
   "wordpress developer",
-  "squarespace designer",
+  "wordpress designer",
 ];
 
 // Titles that can contain a tracked keyword but are a different job from
-// anything on Omole's growth, creative marketing, or web CVs. Checked
-// before keywords, so "SEO Content Marketing Manager" or "Product
-// Marketing Manager" is rejected even though "content marketing" /
-// "marketing manager" would otherwise match. SEO/GEO/AEO is the case that
-// prompted this: it's a specialist discipline none of the three CVs claim.
-// Engineering titles are excluded too - the web track is for design-led,
-// AI-assisted builders, not software engineers (a "Growth Engineer" is an
-// engineering hire, not a growth marketer).
+// anything on Omole's growth, creative marketing, or web portfolios.
+// Checked before keywords, so "SEO Content Marketing Manager" is rejected
+// even though "content marketing" would otherwise match. SEO/GEO/AEO is the
+// case that prompted this: Omole doesn't want SEO-focused roles. Engineering
+// titles are excluded too, since Claude Code is only used for web design (a
+// "Growth Engineer" is an engineering hire, not a growth marketer). Sales
+// is excluded as a role ("sales development", "sales manager"), not as a
+// word, so "Sales Copywriter" still gets through. "Communications" is
+// excluded except as "marketing communications", which is content work.
 const OFF_PERSONA_TITLE_PATTERN =
-  /\b(seo|geo|aeo|sem|search engine|search marketing|ai search|llm visibility|product marketing|field marketing|partner marketing|channel marketing|marketing operations|marketing ops|revops|analyst|analytics|data|sales|account executive|account manager|business development|bdr|sdr|developer relations|devrel|technical|engineer|engineering|qa|quality assurance|public relations|pr|communications|comms|amazon|marketplace|recruit(er|ing)?|investor relations)\b/i;
+  /\b(seo|geo|aeo|sem|search engine|search marketing|ai search|llm visibility|field marketing|partner marketing|channel marketing|revops|analyst|analytics|data|sales (development|representative|rep|manager|executive|associate|lead|specialist)|inside sales|account executive|account manager|business development|bdr|sdr|developer relations|devrel|technical|engineer|engineering|qa|quality assurance|public relations|pr|(?<!marketing )communications|comms|amazon|marketplace|recruit(er|ing)?|investor relations)\b/i;
 
 // Unpaid, volunteer, and equity-only roles (common on Wellfound) don't fit
 // the $1,000-5,000/month target these sources are chosen for.

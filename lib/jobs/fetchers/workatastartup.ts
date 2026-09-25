@@ -39,8 +39,12 @@ const DEFAULT_QUERIES = [
   "social media",
   "copywriter",
   "brand",
+  "product marketing",
+  "community",
+  "video",
   "web designer",
-  "webflow",
+  "website",
+  "landing page",
 ];
 
 // Each kept job costs one more request for its detail page, so this caps

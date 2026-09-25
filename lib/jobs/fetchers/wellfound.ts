@@ -40,6 +40,7 @@ type WellfoundStartup = {
 const DEFAULT_ROLES = [
   "marketing",
   "marketing-manager",
+  "product-marketing-manager",
   "growth-hacker",
   "digital-marketing-manager",
   "social-media-manager",

@@ -28,7 +28,7 @@ export function buildCandidateContext(track: JobTrack): string {
     return [
       webAbout.join("\n\n"),
       "\nProjects:\n" + summarizeWebWork(webWork),
-      "\nTechnical skills: AI-assisted web development (Claude Code), website and web app design (UI/UX), rapid prototyping, landing page development, conversion copywriting, SEO fundamentals, checkout and payments integration (Selar), deployment (Vercel).",
+      "\nTechnical skills: AI-assisted web design and development (Claude Code), website and web app design (UI/UX), landing page development, WordPress, conversion copywriting, SEO fundamentals, checkout and payments integration (Selar), deployment (Vercel).",
     ].join("\n");
   }
 

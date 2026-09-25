@@ -1680,15 +1680,33 @@ application **email**, and only after you've reviewed the draft and confirmed.
   title plus description, and descriptions mention "content marketing" or "digital
   marketing" in passing all the time, so roles unrelated to his CVs got through. Now
   `classify.ts` matches keywords against the title only and rejects
-  `OFF_PERSONA_TITLE_PATTERN` titles first: SEO/GEO/AEO/SEM, product/field/partner
-  marketing, marketing ops, analyst/data, sales/BD/SDR, devrel, anything with
-  "engineer" or "technical", PR/communications, Amazon/marketplace, recruiting. It
-  also rejects `UNPAID_TITLE_PATTERN` titles (unpaid, volunteer, equity-only,
-  co-founder). `"seo specialist"`/`"seo manager"` were removed from
-  `MARKETING_KEYWORDS`, and `"ai product engineer"`/`"forward deployed engineer"` from
-  `WEB_KEYWORDS`, since those are engineering hires, not the /web persona. A title that
-  names SEO as one part of a broader role ("Growth Marketing Manager (SEO, Email,
+  `OFF_PERSONA_TITLE_PATTERN` titles first: SEO/GEO/AEO/SEM, field/partner/channel
+  marketing, analyst/data, sales as a role (sales development/rep/manager, BD, SDR,
+  account executive; "Sales Copywriter" still passes), devrel, anything with
+  "engineer" or "technical", PR and communications (except "marketing
+  communications"), Amazon/marketplace, recruiting. It also rejects
+  `UNPAID_TITLE_PATTERN` titles (unpaid, volunteer, equity-only, co-founder). A title
+  that names SEO as one part of a broader role ("Growth Marketing Manager (SEO, Email,
   Social)") is rejected too. That's deliberate, since Omole said SEO roles don't fit.
+- **The keyword lists are checked against the three portfolios, not guessed
+  (2026-09-25).** Omole's corrections: product marketing is acceptable, and he uses
+  Claude Code only for web design. So:
+  - Product marketing, marketing communications, marketing ops (JobMingle CRM on
+    /growth is marketing ops), lead generation (the 462-lead campaign), community
+    manager/marketing, and short-form video/video content (/marketing) are all
+    tracked keywords.
+  - `WEB_KEYWORDS` is only what /web actually shows: web/website designer, web design,
+    website developer, landing page designer/developer, and WordPress (the creative
+    marketing CV lists it). Webflow, Framer, Shopify, Squarespace, no-code/low-code
+    developer, founding designer, AI product builder, creative technologist, rapid
+    prototyper, and vibe coder were removed, since none of those tools or roles appear
+    in the portfolio. Engineering titles stay out, since Claude Code is for web design
+    only. The Gemini grounding text for the web track (`candidateContext.ts`) dropped
+    "rapid prototyping" for the same reason.
+  - Not yet resolved: `growthTechnicalSkills` in `lib/growth-content.ts` (shown on
+    /growth, and fed to Gemini for growth-track drafts) still lists "AI-Assisted
+    Marketing Ops (Claude Code)". That conflicts with "Claude Code only for web design"
+    and was flagged to Omole, not changed, since it's published portfolio copy.
 
 ## The "web" track: AI-assisted rapid web/product builder
 
