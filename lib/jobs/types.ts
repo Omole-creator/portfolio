@@ -30,6 +30,9 @@
 // "wellfound" / "workatastartup" are the only two sources whose apply flow
 // needs an account (a Wellfound account, a YC account). Omole named them
 // as deliberate exceptions to the no-sign-up rule; see their fetchers.
+//
+// "hackernews" is the monthly "Ask HN: Who is hiring?" thread, where
+// founders post their own roles (see lib/jobs/fetchers/hackernews.ts).
 export type JobAts =
   | "greenhouse"
   | "lever"
@@ -46,7 +49,8 @@ export type JobAts =
   | "himalayas"
   | "workingnomads"
   | "wellfound"
-  | "workatastartup";
+  | "workatastartup"
+  | "hackernews";
 // "web" is the AI-assisted rapid web/product builder track, matched to
 // /web's positioning (design + development + copy, moving fast with AI
 // tools like Claude Code, not a traditional CS-background engineer) - see

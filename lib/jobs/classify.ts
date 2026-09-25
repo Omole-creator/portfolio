@@ -178,8 +178,12 @@ const WORLDWIDE_PATTERNS: RegExp[] = [
 // A bare location VALUE (not prose) that already says everything: remote
 // job aggregators (Remotive, Jobicy) put this straight in a
 // candidate_required_location-style field, e.g. "Worldwide" on its own
-// with no other text.
-const WORLDWIDE_LOCATION_VALUES = /\b(worldwide|anywhere|global)\b/i;
+// with no other text. "Everywhere" is Wellfound/HN wording for the same
+// thing. The lookahead stops a time-zone note from counting: a Hacker News
+// post located "Remote (NYC / SEA / global overlap)" means working hours
+// that overlap globally, not a role open anywhere.
+const WORLDWIDE_LOCATION_VALUES =
+  /\b(worldwide|anywhere|everywhere|global)\b(?!\s+(overlap|hours|time|timezones?|time zones?))/i;
 
 // The relocation path (see JobEligibility): an onsite role Omole would have
 // to physically move for, kept only when the company is explicitly willing

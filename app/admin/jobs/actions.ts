@@ -32,6 +32,7 @@ const ATS_VALUES: JobAts[] = [
   "workingnomads",
   "wellfound",
   "workatastartup",
+  "hackernews",
 ];
 const SOURCE_TRACK_VALUES: JobSourceTrack[] = ["growth", "marketing", "web", "both"];
 

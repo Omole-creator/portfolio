@@ -1675,6 +1675,30 @@ application **email**, and only after you've reviewed the draft and confirmed.
     worldwide), WAAS returned 13 relevant listings and 0 matches, since nearly every YC
     remote role is US-scoped. Wellfound skews heavily toward India-scoped and unpaid/
     equity-only listings.
+- **2026-09-25: Hacker News "Ask HN: Who is hiring?" added as a source (`ats:
+  hackernews`, `supabase/migrations/0012_add_hackernews_ats.sql`).** Omole asked
+  whether startup job sites other than YC are all US-only. Mostly yes, since funded
+  startups hire where they have payroll, and HN was picked as the best next source
+  because founders post their own roles there and often state the remote scope
+  outright ("REMOTE (Worldwide)" vs. "REMOTE (US only)"). Applying is by email or the
+  company's site, so it meets the normal no-account rule.
+  - `lib/jobs/fetchers/hackernews.ts` reads the latest thread (plus the previous one
+    while the new one is under a week old) through Algolia's free HN API. Each
+    top-level comment is one company. Its first line is conventionally a pipe header
+    ("Company | Roles | Location | ..."), and one post usually lists several roles,
+    mostly engineering. So each relevant-looking role phrase from the header, plus
+    short body lines, becomes its own job (`external_id` = `<commentId>-<index>`),
+    letting `classify.ts` judge "Founding Marketer" without rejecting it because the
+    same post mentions "Senior Engineer". This produces noisy phrases ("Our website:",
+    AI research lines) that the title keywords then reject. That's expected.
+  - `posted_at` is null on purpose: the thread is posted once a month and roles stay
+    open for weeks, so the comment date would trip the 7-day freshness check for
+    almost everything after the month's first week.
+  - First live run (September 2026 thread, 257 posts): 61 role entries, 0 matches.
+    The closest was Railway's "Senior Growth Marketer" (REMOTE (Worldwide)), dropped by
+    the seniority filter. The run also exposed a shared bug: `WORLDWIDE_LOCATION_VALUES`
+    read "Remote (NYC / SEA / global overlap)" as worldwide. It now ignores "global"
+    when followed by overlap/hours/time zone, and also accepts "everywhere".
 - **Track keywords match the job title only, never the description (2026-09-25).**
   Omole was shown an SEO/GEO job and asked why. Keywords used to be matched against
   title plus description, and descriptions mention "content marketing" or "digital

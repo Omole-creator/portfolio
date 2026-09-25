@@ -35,6 +35,7 @@ const ATS_LABELS: Record<JobAts, string> = {
   workingnomads: "Working Nomads (aggregator, all companies)",
   wellfound: "Wellfound (needs a Wellfound account to apply)",
   workatastartup: "Work at a Startup (needs a YC account to apply)",
+  hackernews: "Hacker News \"Who is hiring?\" (monthly thread)",
 };
 
 // The aggregators aren't a single company, so the "token" field means
@@ -48,6 +49,7 @@ const AGGREGATOR_ATS: JobAts[] = [
   "workingnomads",
   "wellfound",
   "workatastartup",
+  "hackernews",
 ];
 
 export function AddSourceForm() {
