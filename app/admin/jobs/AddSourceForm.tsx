@@ -36,6 +36,9 @@ const ATS_LABELS: Record<JobAts, string> = {
   wellfound: "Wellfound (needs a Wellfound account to apply)",
   workatastartup: "Work at a Startup (needs a YC account to apply)",
   hackernews: "Hacker News \"Who is hiring?\" (monthly thread)",
+  remoterocketship: "Remote Rocketship (roles open to Nigeria)",
+  getro: "Getro VC portfolio board (e.g. jobs.8vc.com)",
+  consider: "Consider VC portfolio board (e.g. jobs.sequoiacap.com)",
 };
 
 // The aggregators aren't a single company, so the "token" field means
@@ -50,6 +53,9 @@ const AGGREGATOR_ATS: JobAts[] = [
   "wellfound",
   "workatastartup",
   "hackernews",
+  "remoterocketship",
+  "getro",
+  "consider",
 ];
 
 export function AddSourceForm() {
@@ -140,9 +146,13 @@ export function AddSourceForm() {
                 ? "Role slugs, comma-separated, or \"default\" for the standard marketing, growth, and web design set"
                 : manualAts === "workatastartup"
                   ? "Search terms, comma-separated, or \"default\" for the standard marketing, growth, and web design set"
-                  : AGGREGATOR_ATS.includes(manualAts)
-                    ? "Category/tag or search query (e.g. \"marketing\" or \"growth marketing\")"
-                    : "Board token (or full URL, if using Custom)"}
+                  : manualAts === "getro" || manualAts === "consider"
+                    ? "The board's host, e.g. \"jobs.8vc.com\""
+                    : manualAts === "remoterocketship"
+                      ? "Job title searches, comma-separated, or \"default\" for the standard marketing, growth, and web design set"
+                      : AGGREGATOR_ATS.includes(manualAts)
+                        ? "Category/tag or search query (e.g. \"marketing\" or \"growth marketing\")"
+                        : "Board token (or full URL, if using Custom)"}
             </label>
             <div className="flex gap-2">
               <input

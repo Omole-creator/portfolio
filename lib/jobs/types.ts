@@ -33,6 +33,11 @@
 //
 // "hackernews" is the monthly "Ask HN: Who is hiring?" thread, where
 // founders post their own roles (see lib/jobs/fetchers/hackernews.ts).
+//
+// "remoterocketship" is a remote-job search that already filters to roles
+// open to someone in Nigeria. "getro" and "consider" are the two platforms
+// behind most VC portfolio job boards (one source row per VC board, its
+// host as board_token). All three link to the employer's own apply page.
 export type JobAts =
   | "greenhouse"
   | "lever"
@@ -50,7 +55,10 @@ export type JobAts =
   | "workingnomads"
   | "wellfound"
   | "workatastartup"
-  | "hackernews";
+  | "hackernews"
+  | "remoterocketship"
+  | "getro"
+  | "consider";
 // "web" is the AI-assisted rapid web/product builder track, matched to
 // /web's positioning (design + development + copy, moving fast with AI
 // tools like Claude Code, not a traditional CS-background engineer) - see

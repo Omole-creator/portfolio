@@ -1699,6 +1699,40 @@ application **email**, and only after you've reviewed the draft and confirmed.
     the seniority filter. The run also exposed a shared bug: `WORLDWIDE_LOCATION_VALUES`
     read "Remote (NYC / SEA / global overlap)" as worldwide. It now ignores "global"
     when followed by overlap/hours/time zone, and also accepts "everywhere".
+- **2026-09-26: Remote Rocketship and VC portfolio job boards added (`ats:
+  remoterocketship | getro | consider`, `supabase/migrations/0013_add_rocketship_getro_consider_ats.sql`),
+  after Omole asked for sites that look like Wellfound.** All three link to the
+  employer's own apply page, so no account-signup exception was needed. The migration
+  (constraint change plus 13 source rows) was applied in the Supabase SQL editor the
+  same day, so those rows already exist; don't re-run its inserts.
+  - **Remote Rocketship** has no API, but its search pages carry results in
+    `__NEXT_DATA__` (plain fetch, one redirect to `/remote-jobs/`). Its own
+    `locations=Nigeria` filter returns only roles open worldwide or listing Nigeria
+    among allowed countries, so it pre-applies the eligibility rule. `page=` is
+    ignored (20 results per search), so the fetcher runs several keyword searches.
+    First live run: 86 listings, 4 matches, the best yield of any source added in a
+    while. Several matches come from staffing/VA firms (20four7VA, Scale Army,
+    WeAssist), worth a second look before applying.
+  - **Getro and Consider** are the two platforms behind most VC portfolio boards
+    (one source row per VC, board host as `board_token`). Getro's search page embeds
+    results in `__NEXT_DATA__`, with a base64 `{"work_mode":["remote"]}` `filter`
+    param. Consider's page is client-rendered, but its `POST /api-boards/search-jobs`
+    works with the session cookie and `csrfToken` from the board page; the board id
+    is read from the same page. Neither gives descriptions, so both fetch the
+    employer's apply page text (`fetchApplyPageText` in `shared.ts`) for remote,
+    relevant, non-senior titles, capped at 15 per board. Both drop large companies:
+    Consider by `companyStaffCount > 200`, Getro by its `headCount` size bucket > 3
+    (a bucket code, not a number: 2 was a pre-seed startup, 4 a Series D, 5 Monzo).
+  - First live run across all 12 VC boards: 0 matches. Nearly every remote marketing
+    role on them is US-scoped, the same "direct companies rarely hire worldwide"
+    pattern documented above. They were added for coverage anyway. Left out: a16z
+    (Consider, its page gives no session token) and Point Nine (Getro, no relevant
+    remote roles). Also checked and not usable with a plain fetch: startup.jobs,
+    Built In, and hiring.cafe (403); Welcome to the Jungle/Otta (client-rendered,
+    account to apply).
+  - All three fetchers run their requests in parallel, because the sync route
+    fetches sources one after another with no `maxDuration` set, and sequential
+    requests took up to 47s for one board.
 - **Track keywords match the job title only, never the description (2026-09-25).**
   Omole was shown an SEO/GEO job and asked why. Keywords used to be matched against
   title plus description, and descriptions mention "content marketing" or "digital

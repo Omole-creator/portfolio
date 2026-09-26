@@ -83,3 +83,27 @@ export function extractPageText(html: string, maxLength = 6000): string {
   return text.slice(0, maxLength);
 }
 
+
+const PAGE_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36",
+  Accept: "text/html",
+};
+
+/**
+ * Plain-text content of a job's own apply page, for sources that list jobs
+ * without a description (the Getro and Consider VC portfolio boards).
+ * classify.ts needs that text to spot "must be based in the US" or "work
+ * from anywhere" wording that the location field alone doesn't carry.
+ * Returns null on any failure; many employer pages render client-side and
+ * come back nearly empty, which is expected.
+ */
+export async function fetchApplyPageText(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, { headers: PAGE_HEADERS, signal: AbortSignal.timeout(10000) });
+    if (!res.ok) return null;
+    return extractPageText(await res.text()) || null;
+  } catch {
+    return null;
+  }
+}

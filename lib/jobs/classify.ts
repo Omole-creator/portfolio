@@ -217,7 +217,7 @@ const VISA_SPONSORSHIP_PATTERN =
 //    false exclusion.
 const MAX_YEARS_EXPERIENCE = 4;
 
-const SENIOR_TITLE_PATTERN =
+export const SENIOR_TITLE_PATTERN =
   /\b(senior|sr\.?|staff|principal|director|vice president|vp|head of|chief|executive)\b/i;
 
 const EXPERIENCE_YEARS_PATTERN = /(\d{1,2})\s*(?:\+|-|to)?\s*(?:\d{1,2})?\+?\s*years?/gi;

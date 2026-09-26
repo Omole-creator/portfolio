@@ -20,6 +20,9 @@ export type RealAts = Exclude<
   | "wellfound"
   | "workatastartup"
   | "hackernews"
+  | "remoterocketship"
+  | "getro"
+  | "consider"
 >;
 
 export type AtsProbeResult = { ats: RealAts; jobCount: number };
