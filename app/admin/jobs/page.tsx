@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { JobMatch, JobSource } from "@/lib/jobs/types";
 import { JobRow } from "./JobRow";
 import { AppliedRow } from "./AppliedRow";
+import { OutcomeChart, type OutcomeCounts } from "@/components/admin/charts/OutcomeChart";
 import { AddSourceForm } from "./AddSourceForm";
 import { toggleJobSource, deleteJobSource } from "./actions";
 
@@ -60,11 +61,18 @@ function groupByMonth(jobs: JobMatch[]) {
         year: "numeric",
       }),
       jobs: monthJobs,
-      heardBack: monthJobs.filter((j) => j.feedback_at).length,
-      interviews: monthJobs.filter((j) => j.interview_at).length,
-      offers: monthJobs.filter((j) => j.offer_at).length,
-      rejections: monthJobs.filter((j) => j.rejected_at).length,
+      counts: countOutcomes(monthJobs),
     }));
+}
+
+function countOutcomes(jobs: JobMatch[]): OutcomeCounts {
+  return {
+    applied: jobs.length,
+    heardBack: jobs.filter((j) => j.feedback_at).length,
+    interviews: jobs.filter((j) => j.interview_at).length,
+    offers: jobs.filter((j) => j.offer_at).length,
+    rejections: jobs.filter((j) => j.rejected_at).length,
+  };
 }
 
 function plural(n: number, one: string, many: string) {
@@ -175,6 +183,15 @@ export default async function JobsPage({ searchParams }: Props) {
         ) : null}
 
         {appliedMonths.length ? (
+          <div className="mt-6 rounded-2xl border border-line p-5">
+            <p className="text-sm font-semibold text-ink">All time</p>
+            <div className="mt-4">
+              <OutcomeChart counts={countOutcomes(applied)} />
+            </div>
+          </div>
+        ) : null}
+
+        {appliedMonths.length ? (
           <div className="mt-6 space-y-4">
             {appliedMonths.map((month, i) => (
               <details
@@ -186,12 +203,15 @@ export default async function JobsPage({ searchParams }: Props) {
                   <span className="font-semibold text-ink">{month.label}</span>
                   <span className="ml-2 text-muted">
                     {plural(month.jobs.length, "application", "applications")} ·{" "}
-                    {month.heardBack} heard back ·{" "}
-                    {plural(month.interviews, "interview", "interviews")} ·{" "}
-                    {plural(month.offers, "offer", "offers")} ·{" "}
-                    {plural(month.rejections, "rejection", "rejections")}
+                    {month.counts.heardBack} heard back ·{" "}
+                    {plural(month.counts.interviews, "interview", "interviews")} ·{" "}
+                    {plural(month.counts.offers, "offer", "offers")} ·{" "}
+                    {plural(month.counts.rejections, "rejection", "rejections")}
                   </span>
                 </summary>
+                <div className="mx-5 mb-4 rounded-xl bg-white p-4">
+                  <OutcomeChart counts={month.counts} size="sm" />
+                </div>
                 <ul className="space-y-3 px-5 pb-5">
                   {month.jobs.map((job) => (
                     <AppliedRow key={job.id} job={job} />
