@@ -854,6 +854,16 @@ application **email**, and only after you've reviewed the draft and confirmed.
   bounded height as matches accumulate over weeks instead of growing without limit —
   added once daily volume moved from a handful of matches to several dozen once the
   aggregator sources were producing real results.
+- **Applied jobs stay on `/admin/jobs` in their own collapsible "Applied" section,
+  grouped by month** (West Africa Time), with a per-month count of applications,
+  replies, interviews, offers, and rejections. They used to disappear once marked
+  applied, which made it impossible to track anything afterwards. Each applied job
+  (`AppliedRow.tsx`) has four independent toggles, "Heard back," "Interviewed," "Got
+  the job," and "Rejected" (`feedback_at`/`interview_at`/`offer_at`/`rejected_at`,
+  `supabase/migrations/0014_job_application_tracking.sql`), tickable in any order
+  because not every company runs the same process. Tapping one again unticks it; the
+  only coupling is that an offer and a rejection clear each other. Monthly grouping
+  uses `applied_at`, not `updated_at`, since ticking a milestone bumps `updated_at`.
 - **Eligibility from Nigeria/Africa is a hard gate, not a nice-to-have — this was a
   correction, not the original design.** The first version of `classify.ts` only
   checked whether a job's location text mentioned "US" or "Australia," which had a

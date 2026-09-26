@@ -101,7 +101,15 @@ export type JobSource = {
   created_at: string;
 };
 
-export type QaPair = { question: string; answer: string };
+export type JobMilestone = "feedback_at" | "interview_at" | "offer_at" | "rejected_at";
+export const JOB_MILESTONES: JobMilestone[] = [
+  "feedback_at",
+  "interview_at",
+  "offer_at",
+  "rejected_at",
+];
+
+export type QaPair ={ question: string; answer: string };
 
 export type JobMatch = {
   id: string;
@@ -137,6 +145,15 @@ export type JobMatch = {
   // Distinct from first_seen_at, which is when our own sync first found it.
   posted_at: string | null;
   prepared_at: string | null;
+  // When the job was marked applied (or emailed). Drives the monthly
+  // grouping in /admin/jobs, so it's kept separate from updated_at.
+  applied_at: string | null;
+  // Post-application milestones, each ticked independently since not every
+  // company runs the same process. null means it hasn't happened (yet).
+  feedback_at: string | null;
+  interview_at: string | null;
+  offer_at: string | null;
+  rejected_at: string | null;
   first_seen_at: string;
   updated_at: string;
 };

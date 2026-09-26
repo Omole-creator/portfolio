@@ -1,11 +1,18 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { prepareJobApplication } from "@/lib/jobs/prepare";
 import { sendApplicationEmail as sendViaGmail } from "@/lib/jobs/gmail";
 import { detectAts, type AtsProbeResult } from "@/lib/jobs/detect";
-import type { JobAts, JobMatch, JobSourceTrack } from "@/lib/jobs/types";
+import {
+  JOB_MILESTONES,
+  type JobAts,
+  type JobMatch,
+  type JobMilestone,
+  type JobSourceTrack,
+} from "@/lib/jobs/types";
 
 export type ActionState = { error?: string; message?: string };
 export type DetectState = { error?: string; matches?: AtsProbeResult[] };
@@ -126,6 +133,7 @@ export async function sendApplicationEmail(
     .update({
       status: "applied",
       email_sent_at: new Date().toISOString(),
+      applied_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     })
     .eq("id", id);
@@ -142,10 +150,48 @@ export async function markApplied(formData: FormData) {
   const supabase = await createClient();
   await supabase
     .from("job_matches")
-    .update({ status: "applied", updated_at: new Date().toISOString() })
+    .update({
+      status: "applied",
+      applied_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", id);
 
   redirect("/admin/jobs");
+}
+
+/**
+ * Ticks or unticks one post-application milestone (heard back, interviewed,
+ * got the job, rejected). Each is independent, so any can be set in any
+ * order. The one exception: an offer and a rejection can't both stand, so
+ * setting either clears the other.
+ */
+export async function toggleMilestone(formData: FormData): Promise<ActionState> {
+  const id = String(formData.get("id") ?? "");
+  const milestone = String(formData.get("milestone") ?? "") as JobMilestone;
+  const isSet = formData.get("set") === "true";
+  if (!id) return { error: "Missing job id." };
+  if (!JOB_MILESTONES.includes(milestone)) return { error: "Unknown milestone." };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/admin/login");
+
+  const now = new Date().toISOString();
+  const update: Record<string, string | null> = {
+    [milestone]: isSet ? null : now,
+    updated_at: now,
+  };
+  if (!isSet && milestone === "offer_at") update.rejected_at = null;
+  if (!isSet && milestone === "rejected_at") update.offer_at = null;
+
+  const { error } = await supabase.from("job_matches").update(update).eq("id", id);
+  if (error) return { error: friendly(error.message) };
+
+  revalidatePath("/admin/jobs");
+  return {};
 }
 
 export async function dismissMatch(formData: FormData) {

@@ -3,6 +3,7 @@ import { Briefcase } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import type { JobMatch, JobSource } from "@/lib/jobs/types";
 import { JobRow } from "./JobRow";
+import { AppliedRow } from "./AppliedRow";
 import { AddSourceForm } from "./AddSourceForm";
 import { toggleJobSource, deleteJobSource } from "./actions";
 
@@ -34,6 +35,42 @@ function groupByDay(matches: JobMatch[]): { dateKey: string; label: string; jobs
   }));
 }
 
+// Applied jobs are grouped by the month they were applied to, in West
+// Africa Time (fixed UTC+1, same as the metrics dashboard), so the monthly
+// count is right at a glance. applied_at is null only on rows marked applied
+// before migration 0014 was run, hence the fallbacks.
+function groupByMonth(jobs: JobMatch[]) {
+  const LAGOS_OFFSET_MS = 60 * 60 * 1000;
+  const appliedOn = (job: JobMatch) => job.applied_at ?? job.email_sent_at ?? job.updated_at;
+  const sorted = [...jobs].sort((a, b) => appliedOn(b).localeCompare(appliedOn(a)));
+  const groups = new Map<string, JobMatch[]>();
+  for (const job of sorted) {
+    const monthKey = new Date(new Date(appliedOn(job)).getTime() + LAGOS_OFFSET_MS)
+      .toISOString()
+      .slice(0, 7);
+    if (!groups.has(monthKey)) groups.set(monthKey, []);
+    groups.get(monthKey)!.push(job);
+  }
+  return Array.from(groups.entries())
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([monthKey, monthJobs]) => ({
+      monthKey,
+      label: new Date(`${monthKey}-01T12:00:00Z`).toLocaleDateString("en-GB", {
+        month: "long",
+        year: "numeric",
+      }),
+      jobs: monthJobs,
+      heardBack: monthJobs.filter((j) => j.feedback_at).length,
+      interviews: monthJobs.filter((j) => j.interview_at).length,
+      offers: monthJobs.filter((j) => j.offer_at).length,
+      rejections: monthJobs.filter((j) => j.rejected_at).length,
+    }));
+}
+
+function plural(n: number, one: string, many: string) {
+  return `${n} ${n === 1 ? one : many}`;
+}
+
 export default async function JobsPage({ searchParams }: Props) {
   const params = await searchParams;
   const showAll = params.all === "1";
@@ -45,9 +82,15 @@ export default async function JobsPage({ searchParams }: Props) {
     .select("*")
     .order("first_seen_at", { ascending: false });
 
-  const { data: matchesData, error: matchesError } = showAll
-    ? await matchesQuery
-    : await matchesQuery.in("status", ["new", "prepared"]);
+  const { data: matchesData, error: matchesError } = await matchesQuery.in(
+    "status",
+    showAll ? ["new", "prepared", "dismissed"] : ["new", "prepared"],
+  );
+
+  const { data: appliedData, error: appliedError } = await supabase
+    .from("job_matches")
+    .select("*")
+    .eq("status", "applied");
 
   const { data: sourcesData, error: sourcesError } = await supabase
     .from("job_sources")
@@ -55,6 +98,8 @@ export default async function JobsPage({ searchParams }: Props) {
     .order("company_name", { ascending: true });
 
   const matches = (matchesData ?? []) as JobMatch[];
+  const applied = (appliedData ?? []) as JobMatch[];
+  const appliedMonths = groupByMonth(applied);
   const sources = (sourcesData ?? []) as JobSource[];
 
   return (
@@ -75,7 +120,7 @@ export default async function JobsPage({ searchParams }: Props) {
           href={showAll ? "/admin/jobs" : "/admin/jobs?all=1"}
           className="text-sm font-semibold text-muted underline-offset-4 hover:text-ink hover:underline"
         >
-          {showAll ? "Hide applied and dismissed" : "Show applied and dismissed"}
+          {showAll ? "Hide dismissed" : "Show dismissed"}
         </Link>
       </div>
 
@@ -117,7 +162,52 @@ export default async function JobsPage({ searchParams }: Props) {
         </div>
       )}
 
-      <details className="mt-12 rounded-3xl border border-line bg-white p-6 md:p-8">
+      <details open className="mt-12 rounded-3xl border border-line bg-white p-6 md:p-8">
+        <summary className="cursor-pointer text-sm font-semibold text-ink">
+          Applied
+          <span className="ml-2 font-normal text-muted">({applied.length})</span>
+        </summary>
+
+        {appliedError ? (
+          <p role="alert" className="mt-4 text-sm text-red-600">
+            Could not load applied jobs: {appliedError.message}
+          </p>
+        ) : null}
+
+        {appliedMonths.length ? (
+          <div className="mt-6 space-y-4">
+            {appliedMonths.map((month, i) => (
+              <details
+                key={month.monthKey}
+                open={i === 0}
+                className="rounded-2xl border border-line bg-paper"
+              >
+                <summary className="cursor-pointer select-none px-5 py-4 text-sm">
+                  <span className="font-semibold text-ink">{month.label}</span>
+                  <span className="ml-2 text-muted">
+                    {plural(month.jobs.length, "application", "applications")} ·{" "}
+                    {month.heardBack} heard back ·{" "}
+                    {plural(month.interviews, "interview", "interviews")} ·{" "}
+                    {plural(month.offers, "offer", "offers")} ·{" "}
+                    {plural(month.rejections, "rejection", "rejections")}
+                  </span>
+                </summary>
+                <ul className="space-y-3 px-5 pb-5">
+                  {month.jobs.map((job) => (
+                    <AppliedRow key={job.id} job={job} />
+                  ))}
+                </ul>
+              </details>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-6 text-sm text-muted">
+            Nothing applied to yet. Jobs you mark applied or send by email land here.
+          </p>
+        )}
+      </details>
+
+      <details className="mt-6 rounded-3xl border border-line bg-white p-6 md:p-8">
         <summary className="cursor-pointer text-sm font-semibold text-ink">
           Manage sources
         </summary>
