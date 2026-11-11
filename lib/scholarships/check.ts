@@ -14,7 +14,7 @@ const PAGE_HEADERS = {
 // Wording that says applications are open right now. Deliberately not a
 // bare "Apply now", which sits on most program pages all year round.
 const OPEN_SIGNAL =
-  /(?:applications?|application (?:portal|system|period|round|phase))\s+(?:is|are)\s+(?:now\s+)?open\b|now accepting applications|(?:is|are) (?:now )?accepting applications|application[^.!?]{0,80}\bhas (?:started|opened)\b|applications? (?:can|may) (?:now )?be submitted/gi;
+  /(?:applications?|application (?:portal|system|period|round|phase))\s+(?:is|are)\s+(?:now\s+)?open\b|now accepting applications|(?:is|are) (?:now )?accepting applications|application (?:campaign|call)[^.!?]{0,80}\b(?:is|are) (?:now )?open\b|application[^.!?]{0,80}\bhas (?:started|opened)\b|applications? (?:can|may) (?:now )?be submitted/gi;
 
 // Sentences that carry admission information. The page fingerprint is
 // built from these only, so a changed news ticker or cookie banner doesn't

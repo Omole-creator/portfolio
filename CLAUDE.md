@@ -1885,6 +1885,31 @@ tells him when applications open. Data lives in `scholarship_programs` (migratio
   track (a language test is mandatory). Ireland and Canada entries are in by his
   request but are high-tuition and flagged as such.
 
+- **Second sweep (migration 0016), against the official databases instead of web
+  search.** DAAD's International Programmes database has a public JSON search
+  (`www2.daad.de/.../international-programmes/api/solr/en/search.json`,
+  `degree[]=2` master's, `lang[]=2` English only); its detail pages list entry
+  background, English certificates and application periods. The Stipendium
+  Hungaricum site runs on DreamApply: POST `/courses/find/results` returns chunk
+  tokens, POST `/courses/find/chunk` with `chunk=<token>` returns 50 courses each
+  (~1,000 total). It has **no health informatics course**, which confirms Debrecen's
+  Public Health MSc as the Hungary stand-in.
+- **Omole's degree is a Doctor of Pharmacy** (University of Benin, 2019, per his
+  CVs), and that turned out to matter more than tuition or IELTS: HNU, HPI,
+  Regensburg, Augsburg's Medical Information Sciences and FH Dortmund all require
+  a computer science-type bachelor's. `background_fit` (`yes`/`maybe`/`no`) and
+  `background_note` record this per program; `no` programs stay listed but sort
+  last. Added in this sweep: **EMMaH** (Erasmus Mundus, medical technology,
+  digital health and healthcare business; takes health sciences degrees, accepts
+  two years of English-taught study instead of IELTS; scholarship round 1 Nov to
+  31 Dec per DAAD), Aalen's Health Technology Management, and Deggendorf's Life
+  Science Informatics. The sweep also corrected Deggendorf (it charges non-EU
+  students €500/semester and DAAD lists a C1 certificate with exemptions) and
+  confirmed Bonn's window (1 Dec to 1 Mar) and Regensburg's summer window. Not
+  added: USTP's Citizen-Centered Digital Health (Austria; its site refused the
+  connection, so nothing could be verified), Karolinska's Health Informatics
+  (Sweden) and Malta's Digital Health (both outside his countries).
+
 ## GTM Engineer (planned, not built)
 
 `GTM-ENGINEER-PLAN.md` (repo root) holds the 2026-09-29 research into GTM Engineer

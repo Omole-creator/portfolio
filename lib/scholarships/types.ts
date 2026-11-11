@@ -11,6 +11,9 @@ export type ApplicationWindow = {
 };
 
 export type IeltsRequired = "no" | "yes" | "unclear";
+// Whether Omole's degree (a Doctor of Pharmacy) meets the program's entry
+// requirements.
+export type BackgroundFit = "yes" | "maybe" | "no";
 
 export type ScholarshipProgram = {
   id: string;
@@ -24,6 +27,8 @@ export type ScholarshipProgram = {
   funding_note: string | null;
   english_note: string | null;
   ielts_required: IeltsRequired;
+  background_fit: BackgroundFit;
+  background_note: string | null;
   windows: ApplicationWindow[];
   windows_note: string | null;
   apply_url: string | null;

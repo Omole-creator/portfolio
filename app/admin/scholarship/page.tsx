@@ -50,6 +50,12 @@ function ieltsBadge(ielts: ScholarshipProgram["ielts_required"]) {
   return { text: "Check English proof", className: "bg-amber-50 text-amber-800" };
 }
 
+function backgroundBadge(fit: ScholarshipProgram["background_fit"]) {
+  if (fit === "yes") return { text: "Your PharmD qualifies", className: "bg-green-50 text-green-800" };
+  if (fit === "no") return { text: "Your PharmD doesn't qualify", className: "bg-red-50 text-red-700" };
+  return { text: "Check your PharmD fits", className: "bg-amber-50 text-amber-800" };
+}
+
 function sortKey(row: Row, today: string): string {
   const s = row.status;
   if (s.opensOn && s.opensOn > today) return s.opensOn;
@@ -59,6 +65,7 @@ function sortKey(row: Row, today: string): string {
 function ProgramCard({ program, status, today }: Row & { today: string }) {
   const badge = statusBadge(status);
   const ielts = ieltsBadge(program.ielts_required);
+  const background = backgroundBadge(program.background_fit);
   const isOpen = status.state === "open" || status.state === "expected_open" || status.state === "rolling";
   const applyHref = program.apply_url || program.info_url;
 
@@ -74,6 +81,9 @@ function ProgramCard({ program, status, today }: Row & { today: string }) {
       <div className="mt-3 flex flex-wrap gap-1.5">
         <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${badge.className}`}>{badge.text}</span>
         <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${ielts.className}`}>{ielts.text}</span>
+        <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${background.className}`}>
+          {background.text}
+        </span>
         {program.fit === "closest" ? (
           <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
             Closest match, not health informatics
@@ -83,6 +93,12 @@ function ProgramCard({ program, status, today }: Row & { today: string }) {
 
       <dl className="mt-4 grid gap-2 text-sm">
         {program.fit_note ? <p className="text-muted">{program.fit_note}</p> : null}
+        {program.background_note ? (
+          <div>
+            <dt className="inline font-semibold text-ink">Entry: </dt>
+            <dd className="inline text-muted">{program.background_note}</dd>
+          </div>
+        ) : null}
         {program.tuition_note ? (
           <div>
             <dt className="inline font-semibold text-ink">Tuition: </dt>
@@ -203,7 +219,8 @@ export default async function ScholarshipPage() {
           <p className="eyebrow text-gold-hover">Study abroad</p>
           <h1 className="mt-3 text-3xl font-semibold text-ink md:text-4xl">Scholarships</h1>
           <p className="mt-2 text-sm text-muted">
-            English-taught health informatics master&apos;s programs with low tuition or a scholarship route.
+            English-taught health informatics and digital health master&apos;s programs with low tuition or a
+            scholarship route. Programs your PharmD doesn&apos;t qualify for are marked and listed last.
             Every morning each program&apos;s page is checked, and you get an email the day an application
             window opens, with the link to apply.
           </p>
@@ -221,7 +238,11 @@ export default async function ScholarshipPage() {
       {GROUPS.map((group) => {
         const groupRows = rows
           .filter((row) => group.states.includes(row.status.state))
-          .sort((a, b) => sortKey(a, today).localeCompare(sortKey(b, today)));
+          .sort(
+            (a, b) =>
+              Number(a.program.background_fit === "no") - Number(b.program.background_fit === "no") ||
+              sortKey(a, today).localeCompare(sortKey(b, today)),
+          );
         if (groupRows.length === 0 && !group.empty) return null;
         return (
           <section key={group.key} className="mt-10">
