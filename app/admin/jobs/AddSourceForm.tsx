@@ -39,6 +39,9 @@ const ATS_LABELS: Record<JobAts, string> = {
   remoterocketship: "Remote Rocketship (roles open to Nigeria)",
   getro: "Getro VC portfolio board (e.g. jobs.8vc.com)",
   consider: "Consider VC portfolio board (e.g. jobs.sequoiacap.com)",
+  englishjobsde: "English Jobs Germany (German job board)",
+  iamexpat: "IamExpat Jobs Germany (German job board)",
+  arbeitsagentur: "Bundesagentur fuer Arbeit Jobboerse (German job board)",
 };
 
 // The aggregators aren't a single company, so the "token" field means
@@ -56,6 +59,9 @@ const AGGREGATOR_ATS: JobAts[] = [
   "remoterocketship",
   "getro",
   "consider",
+  "englishjobsde",
+  "iamexpat",
+  "arbeitsagentur",
 ];
 
 export function AddSourceForm() {

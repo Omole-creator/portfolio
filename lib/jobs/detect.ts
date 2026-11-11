@@ -23,6 +23,9 @@ export type RealAts = Exclude<
   | "remoterocketship"
   | "getro"
   | "consider"
+  | "englishjobsde"
+  | "iamexpat"
+  | "arbeitsagentur"
 >;
 
 export type AtsProbeResult = { ats: RealAts; jobCount: number };

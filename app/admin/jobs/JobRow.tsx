@@ -10,7 +10,14 @@ import {
   dismissMatch,
   type ActionState,
 } from "./actions";
-import type { JobMatch } from "@/lib/jobs/types";
+import { GERMANY_BOARD_ATS, type JobMatch } from "@/lib/jobs/types";
+
+const GERMANY_BOARD_NAMES: Partial<Record<JobMatch["ats"], string>> = {
+  arbeitnow: "Arbeitnow",
+  englishjobsde: "English Jobs Germany",
+  iamexpat: "IamExpat",
+  arbeitsagentur: "Bundesagentur fuer Arbeit",
+};
 
 const initial: ActionState = {};
 const initialEmailState: ActionState = {};
@@ -118,6 +125,12 @@ export function JobRow({ job }: { job: JobMatch }) {
             ) : null}
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
+            {GERMANY_BOARD_ATS.includes(job.ats) ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-green-600 px-2.5 py-0.5 text-xs font-semibold text-white">
+                <Check className="h-3 w-3" aria-hidden="true" />
+                German job board · {GERMANY_BOARD_NAMES[job.ats]}
+              </span>
+            ) : null}
             <span
               className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${eligibilityNote(job.eligibility).className}`}
             >

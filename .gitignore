@@ -45,3 +45,6 @@ next-env.d.ts
 .vercel
 
 .env*
+
+# Third-party scholarship directory, reference only
+/halo.pdf

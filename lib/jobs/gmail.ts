@@ -145,3 +145,52 @@ export async function sendApplicationEmail(params: {
     return { ok: false, error: "Could not reach Gmail right now. Try again in a moment." };
   }
 }
+
+/**
+ * Sends a plain-text note to Omole's own inbox (the From address), with no
+ * attachment. Used by the scholarship tracker's daily check to say a program
+ * has opened. Sending to yourself needs nothing beyond the gmail.send scope
+ * the job desk already uses. The body goes out base64-encoded so characters
+ * like € and ü survive; keep the subject ASCII.
+ */
+export async function sendSelfNotification(params: {
+  subject: string;
+  bodyText: string;
+}): Promise<SendResult> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    return { ok: false, error: "Gmail is not connected. Check GOOGLE_CLIENT_ID/SECRET/REFRESH_TOKEN." };
+  }
+
+  const raw = [
+    `From: ${FROM_ADDRESS}`,
+    `To: ${FROM_ADDRESS}`,
+    `Subject: ${params.subject}`,
+    "MIME-Version: 1.0",
+    'Content-Type: text/plain; charset="UTF-8"',
+    "Content-Transfer-Encoding: base64",
+    "",
+    wrapBase64(Buffer.from(params.bodyText, "utf-8").toString("base64")),
+  ].join("\r\n");
+
+  try {
+    const res = await fetch(SEND_ENDPOINT, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ raw: base64UrlEncode(Buffer.from(raw, "utf-8")) }),
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (!res.ok) {
+      console.error(`Gmail self-notification failed: ${res.status} ${await res.text()}`);
+      return { ok: false, error: "Gmail rejected the send." };
+    }
+    return { ok: true };
+  } catch (error) {
+    console.error("Gmail self-notification errored:", error);
+    return { ok: false, error: "Could not reach Gmail right now." };
+  }
+}

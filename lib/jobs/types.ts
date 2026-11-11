@@ -58,7 +58,19 @@ export type JobAts =
   | "hackernews"
   | "remoterocketship"
   | "getro"
-  | "consider";
+  | "consider"
+  | "englishjobsde"
+  | "iamexpat"
+  | "arbeitsagentur";
+
+// The German job boards Omole asked to track (2026-11-11): Arbeitnow,
+// English Jobs Germany, IamExpat, and the Bundesagentur fuer Arbeit's
+// Jobboerse (which is also the data behind Make it in Germany's and
+// JobMESH's listings, so it covers those two). Matches from these get a
+// green "German job board" mark in /admin/jobs. They're mostly onsite roles,
+// so they only surface through classify.ts's relocation path: the ad itself
+// has to offer visa sponsorship or relocation support.
+export const GERMANY_BOARD_ATS: JobAts[] = ["arbeitnow", "englishjobsde", "iamexpat", "arbeitsagentur"];
 // "web" is the AI-assisted rapid web/product builder track, matched to
 // /web's positioning (design + development + copy, moving fast with AI
 // tools like Claude Code, not a traditional CS-background engineer) - see

@@ -197,7 +197,7 @@ const RELOCATION_COUNTRY_PATTERN =
   /\b(germany|deutschland|berlin|münchen|munich|hamburg|frankfurt|cologne|köln|stuttgart|düsseldorf|leipzig|netherlands|amsterdam|rotterdam|utrecht|eindhoven|the hague|den haag|austria|vienna|wien|graz|salzburg|linz)\b/i;
 
 const VISA_SPONSORSHIP_PATTERN =
-  /visa sponsorship|sponsors? (?:a |your |the )?(?:work )?visa|will sponsor|can sponsor|relocation (?:package|support|assistance|bonus)|relocation (?:is |will be )?(?:provided|available|offered|covered)|work permit sponsorship|blue card sponsorship/i;
+  /visa sponsorship|sponsors? (?:a |your |the )?(?:work )?visa|will sponsor|can sponsor|relocation (?:package|support|assistance|bonus)|relocation (?:is |will be )?(?:provided|available|offered|covered)|work permit sponsorship|blue card sponsorship|visa support|support with (?:your )?(?:visa|relocation)|unterstützung (?:bei|beim) (?:der |dem )?(?:visum|visa|umzug|relocation)|relocation[- ]unterstützung|umzugskosten(?:übernahme|zuschuss)|visa[- ]unterstützung/i;
 
 // Omole is targeting roles reachable with at most 4 years of experience.
 // Two independent, deliberately blunt heuristics, matching this file's

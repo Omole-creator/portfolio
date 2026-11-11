@@ -1802,6 +1802,96 @@ application **email**, and only after you've reviewed the draft and confirmed.
     throughout" and it never states "every project built with Claude Code." Its HTML
     source isn't in the repo, so updating it means rebuilding the PDF.
 
+- **2026-11-11: German job boards added as sources, with a green mark.** Omole
+  asked to track a list of German boards and see at a glance when a match came
+  from one. `GERMANY_BOARD_ATS` (`lib/jobs/types.ts`) is Arbeitnow (already a
+  source) plus three new fetchers, and `JobRow.tsx` gives their matches a solid
+  green "German job board · <name>" badge. Migration
+  `0015_german_job_boards_and_scholarships.sql` adds the three source rows.
+  - `arbeitsagentur.ts` reads the Bundesagentur fuer Arbeit's Jobboerse through
+    its public API (jobsuche.api.bund.dev key). Search only works at `pc/v6/jobs`
+    (v4/v5 return 403) and details only at `pc/v4/jobdetails/<base64 refnr>`,
+    both confirmed live. **Make it in Germany and JobMESH both render their
+    listings client-side from this same database**, so this one source covers
+    both; neither got its own fetcher.
+  - `englishjobsde.ts` parses englishjobs.de's search HTML. `?sort=date` makes
+    the site ignore the search term (every query returned the same list), so
+    it isn't used. Most results are signed `/clickout/` redirects to the
+    employer's page, not ads hosted on the site; those have no `/job/<id>`
+    page (404), so the fetcher reads the employer page and keeps the listing
+    snippet alongside it.
+  - `iamexpat.ts` reads IamExpat's category pages and each job page's escaped
+    JSON-LD (`datePosted`, `hiringOrganization`, `addressLocality`) plus its
+    "Apply for this position" link. Pages are 2+ MB, so titles are
+    pre-filtered by URL slug and capped at 12 a run.
+  - **Not built, on purpose:** StepStone and Indeed return 403 to plain
+    fetches, LinkedIn and XING forbid scraping in their terms, and Workeer
+    didn't respond. Omole chose to skip them rather than add manual links.
+  - These boards are mostly onsite jobs, so per Omole's choice they **only
+    surface through the existing relocation path** (onsite Germany/NL/Austria
+    plus visa or relocation wording). `VISA_SPONSORSHIP_PATTERN` gained a few
+    German phrasings (`Unterstützung bei Visum/Umzug`, `Relocation-Unterstützung`,
+    `Umzugskosten...`) for Jobboerse ads written in German. The first live run
+    found one match (IamExpat, a Zalando role); zero from the other two that
+    day is the expected common case.
+
+## Scholarship tracker (`/admin/scholarship`)
+
+Omole is planning a health informatics master's. The tracker lists English-taught
+programs with low tuition or a scholarship route where IELTS isn't compulsory, and
+tells him when applications open. Data lives in `scholarship_programs` (migration
+0015), seeded with 11 programs researched and link-checked on 2026-11-11.
+
+- **Countries in scope (his call):** Germany, the Netherlands, Hungary, Switzerland,
+  Austria, Ireland, Canada, plus Erasmus Mundus. **Not the UK**, explicitly. The
+  other countries in `halo.pdf` (a general master's scholarship directory, repo
+  root, no health informatics programs and nothing in Hungary) were offered and
+  declined.
+- **Windows are recurring `MM-DD` pairs in a `windows` jsonb array**, each with
+  `confirmed` (read off the program's own page for the current cycle) or not (from
+  an older cycle or a third-party listing). `lib/scholarships/status.ts` places
+  them on the calendar in West Africa Time, handles windows that wrap the new year
+  (HNU's 15 Nov to 15 Jan), and rolls to next year once a deadline passes, so
+  nobody has to re-enter dates every year. `opens: null` means only a deadline is
+  published; those show "deadline coming up" 45 days out.
+- **The daily check** (`lib/scholarships/check.ts`, cron `/api/scholarships/check`
+  at 07:00 UTC, same `CRON_SECRET` auth as the job sync) emails Omole once per
+  event via `sendSelfNotification` in `lib/jobs/gmail.ts`: a window opening, a
+  near deadline with no published opening date, or new "applications are open"
+  wording on the watched page. Alert keys are stored in `notified_keys` only after
+  the email succeeds, so a failed send retries the next day. Two guards against
+  false alerts: wording already on a page at its first check is recorded silently,
+  and wording whose trailing text only names earlier years is ignored. This was
+  needed because the Stipendium Hungaricum homepage still carries "application
+  system is open!" news from every year back to 2020. The page fingerprint
+  (`page_hash`) only covers admission-related sentences, so cookie banners and
+  news tickers don't count as changes.
+- RLS: anon (the cron) can read active rows and update only the check columns
+  (column-level grant); the signed-in admin can do everything. "Check now" on the
+  page runs the same check with the admin's session.
+- **Findings worth not re-researching:** Bochum (Ruhr-Uni and Hochschule) has no
+  English-taught health informatics master's; Bonn and Regensburg don't either,
+  so they're tracked with their closest programs (Life Science Informatics, Data
+  Science) flagged `fit: 'closest'`. Hungary has no dedicated program; Debrecen's
+  Public Health MSc (health informatics as a core subject, Stipendium Hungaricum,
+  medium-of-instruction certificate accepted) is the stand-in. Left out because
+  they fail his criteria: Deggendorf's Medical Informatics master (page is gone,
+  only Digital Health remains), UvA Medical Informatics (€25,900, needs an MI
+  bachelor's or a pre-master, "has no scholarship"), FHNW Medical Informatics in
+  Switzerland (CHF 5,000/semester, test certificate required), TU Wien/MedUni Wien
+  Medical Informatics (IELTS 6.5 or an equivalent certificate), FH Dortmund
+  (IELTS 6.5), RWTH's Applied Health Informatics (private academy, fees, page not
+  found), and Europubhealth+, the only Erasmus Mundus with a health informatics
+  track (a language test is mandatory). Ireland and Canada entries are in by his
+  request but are high-tuition and flagged as such.
+
+## GTM Engineer (planned, not built)
+
+`GTM-ENGINEER-PLAN.md` (repo root) holds the 2026-09-29 research into GTM Engineer
+roles: the fit verdict, the skill gaps (Clay, HubSpot/Salesforce, B2B outbound), and
+the steps Omole plans to take before building a `/gtm` portfolio or adding a GTM track
+to `/admin/jobs`. Read it before starting either.
+
 ## The "web" track: AI-assisted rapid web/product builder
 
 A third job track alongside growth and marketing, added 2026-09-09 after the volume

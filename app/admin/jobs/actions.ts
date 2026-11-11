@@ -43,6 +43,9 @@ const ATS_VALUES: JobAts[] = [
   "remoterocketship",
   "getro",
   "consider",
+  "englishjobsde",
+  "iamexpat",
+  "arbeitsagentur",
 ];
 const SOURCE_TRACK_VALUES: JobSourceTrack[] = ["growth", "marketing", "web", "both"];
 
