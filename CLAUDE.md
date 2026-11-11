@@ -1909,6 +1909,18 @@ tells him when applications open. Data lives in `scholarship_programs` (migratio
   added: USTP's Citizen-Centered Digital Health (Austria; its site refused the
   connection, so nothing could be verified), Karolinska's Health Informatics
   (Sweden) and Malta's Digital Health (both outside his countries).
+- **Stipendium Hungaricum needs a Nigerian nomination too (migration 0017).**
+  Besides the SH portal, Nigerian applicants must be nominated by the Federal
+  Ministry of Education's Department of Scholarship Awards (renamed in 2026 from
+  the Federal Scholarship Board), often with an earlier deadline. The ministry
+  site is WordPress, so `https://education.gov.ng/search/hungary/feed/rss2/`
+  lists every notice mentioning Hungary. Programs can now carry an optional
+  `feed_url`/`feed_label`; `readFeed` in `check.ts` emails on items that appear
+  after the first read (a `feed:baseline` key marks that read, so an empty feed
+  at first read doesn't swallow the first real notice). Goethe University
+  Frankfurt was checked on DAAD on request: its 10 English master's are law,
+  finance, economics, management, East Asian studies and neuroscience, so it
+  wasn't added.
 
 ## GTM Engineer (planned, not built)
 

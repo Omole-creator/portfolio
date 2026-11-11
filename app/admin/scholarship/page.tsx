@@ -138,6 +138,11 @@ function ProgramCard({ program, status, today }: Row & { today: string }) {
           </div>
         ) : null}
         {program.windows_note ? <p className="text-muted">{program.windows_note}</p> : null}
+        {program.feed_url ? (
+          <p className="text-xs text-muted">
+            Also watching {program.feed_label || "a news feed"} for new notices.
+          </p>
+        ) : null}
         {program.page_signal ? (
           <p className="rounded-xl bg-paper px-3 py-2 text-muted">
             <span className="font-semibold text-ink">The page says: </span>

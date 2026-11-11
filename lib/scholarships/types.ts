@@ -34,6 +34,9 @@ export type ScholarshipProgram = {
   apply_url: string | null;
   info_url: string;
   watch_url: string | null;
+  // An optional RSS feed watched alongside the page (see readFeed in check.ts).
+  feed_url: string | null;
+  feed_label: string | null;
   page_hash: string | null;
   page_signal: string | null;
   page_changed_at: string | null;

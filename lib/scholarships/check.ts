@@ -65,6 +65,37 @@ export async function readPage(url: string): Promise<PageReading> {
   }
 }
 
+type FeedItem = { title: string; link: string };
+
+/**
+ * Items of an RSS feed (title + link). Used for feed_url: a second thing to
+ * watch alongside the program page, e.g. the Federal Ministry of Education's
+ * WordPress search feed for "hungary", which is where Nigeria's Stipendium
+ * Hungaricum nomination notice appears. Returns null on any failure.
+ */
+export async function readFeed(url: string): Promise<FeedItem[] | null> {
+  try {
+    const res = await fetch(url, { headers: PAGE_HEADERS, signal: AbortSignal.timeout(20000) });
+    if (!res.ok) return null;
+    const xml = await res.text();
+    const items: FeedItem[] = [];
+    for (const match of xml.matchAll(/<item>([\s\S]*?)<\/item>/g)) {
+      const raw = (tag: string) =>
+        match[1].match(new RegExp(`<${tag}>(?:<!\\[CDATA\\[)?([\\s\\S]*?)(?:\\]\\]>)?</${tag}>`))?.[1]?.trim() ?? "";
+      const link = raw("link");
+      const title = raw("title")
+        .replace(/&#8211;/g, "-")
+        .replace(/&#8217;/g, "'")
+        .replace(/&#8220;|&#8221;/g, '"')
+        .replace(/&amp;/g, "&");
+      if (link) items.push({ title, link });
+    }
+    return items;
+  } catch {
+    return null;
+  }
+}
+
 type Alert = { program: ScholarshipProgram; lines: string[] };
 type PendingUpdate = { id: string; name: string; update: Record<string, unknown>; known: Set<string>; alertKeys: string[] };
 
@@ -104,6 +135,7 @@ export async function checkScholarships(supabase: SupabaseClient, now = new Date
   const pending: PendingUpdate[] = [];
 
   const readings = await Promise.all(programs.map((p) => readPage(p.watch_url || p.info_url)));
+  const feeds = await Promise.all(programs.map((p) => (p.feed_url ? readFeed(p.feed_url) : Promise.resolve(null))));
 
   for (const [i, program] of programs.entries()) {
     const reading = readings[i];
@@ -147,6 +179,24 @@ export async function checkScholarships(supabase: SupabaseClient, now = new Date
       if (!firstCheck) {
         alertKeys.push(key);
         lines.push(`The page now says: "${signal.text}"`);
+      }
+    }
+
+    // Feed items already there the first time the feed is read are
+    // recorded silently ("feed:baseline" marks that first read), so only
+    // notices posted after that alert.
+    const feedItems = feeds[i];
+    if (feedItems) {
+      const baselined = known.has("feed:baseline");
+      known.add("feed:baseline");
+      for (const item of feedItems) {
+        const key = `feed:${shortHash(item.link)}`;
+        if (known.has(key)) continue;
+        known.add(key);
+        if (baselined) {
+          alertKeys.push(key);
+          lines.push(`New notice on ${program.feed_label || "the watched feed"}: "${item.title}" ${item.link}`);
+        }
       }
     }
 
