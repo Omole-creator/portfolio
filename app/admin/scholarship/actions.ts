@@ -5,7 +5,11 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { checkScholarships } from "@/lib/scholarships/check";
 import { parseWindows } from "@/lib/scholarships/windows";
-import type { IeltsRequired } from "@/lib/scholarships/types";
+import {
+  SCHOLARSHIP_MILESTONES,
+  type IeltsRequired,
+  type ScholarshipMilestone,
+} from "@/lib/scholarships/types";
 
 export type ActionState = { error?: string; message?: string };
 
@@ -128,4 +132,64 @@ export async function removeProgram(formData: FormData): Promise<void> {
   const { error } = await supabase.from("scholarship_programs").delete().eq("id", id);
   if (error) console.error("Could not remove scholarship program:", error.message);
   revalidatePath("/admin/scholarship");
+}
+
+/** Moves a program into the Applied section and stops its "it's open" emails. */
+export async function markProgramApplied(formData: FormData): Promise<void> {
+  const id = text(formData, "id");
+  if (!id) return;
+  const supabase = await signedInClient();
+  const now = new Date().toISOString();
+  const { error } = await supabase
+    .from("scholarship_programs")
+    .update({ applied_at: now, updated_at: now })
+    .eq("id", id);
+  if (error) console.error("Could not mark program applied:", error.message);
+  revalidatePath("/admin/scholarship");
+}
+
+/** Takes a program back out of Applied, clearing its milestones. */
+export async function undoProgramApplied(formData: FormData): Promise<ActionState> {
+  const id = text(formData, "id");
+  if (!id) return { error: "Missing program id." };
+  const supabase = await signedInClient();
+  const { error } = await supabase
+    .from("scholarship_programs")
+    .update({
+      applied_at: null,
+      heard_back_at: null,
+      interview_at: null,
+      admitted_at: null,
+      funded_at: null,
+      rejected_at: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+  if (error) return { error: `Could not undo: ${error.message}` };
+  revalidatePath("/admin/scholarship");
+  return {};
+}
+
+/**
+ * Ticks or unticks one milestone. They're independent, since programs run
+ * different processes; the only coupling is that admitted and rejected
+ * clear each other.
+ */
+export async function toggleProgramMilestone(formData: FormData): Promise<ActionState> {
+  const id = text(formData, "id");
+  const milestone = String(formData.get("milestone") ?? "") as ScholarshipMilestone;
+  const isSet = formData.get("set") === "true";
+  if (!id) return { error: "Missing program id." };
+  if (!SCHOLARSHIP_MILESTONES.includes(milestone)) return { error: "Unknown milestone." };
+
+  const supabase = await signedInClient();
+  const now = new Date().toISOString();
+  const update: Record<string, string | null> = { [milestone]: isSet ? null : now, updated_at: now };
+  if (!isSet && milestone === "admitted_at") update.rejected_at = null;
+  if (!isSet && milestone === "rejected_at") update.admitted_at = null;
+
+  const { error } = await supabase.from("scholarship_programs").update(update).eq("id", id);
+  if (error) return { error: `Could not save: ${error.message}` };
+  revalidatePath("/admin/scholarship");
+  return {};
 }

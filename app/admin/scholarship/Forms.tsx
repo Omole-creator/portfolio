@@ -1,9 +1,17 @@
 "use client";
 
-import { useActionState } from "react";
-import { AlertCircle, Check, RefreshCw } from "lucide-react";
-import { addProgram, checkNow, removeProgram, updateProgram, type ActionState } from "./actions";
-import type { IeltsRequired } from "@/lib/scholarships/types";
+import { useActionState, useState, useTransition } from "react";
+import { AlertCircle, Check, ExternalLink, RefreshCw } from "lucide-react";
+import {
+  addProgram,
+  checkNow,
+  removeProgram,
+  toggleProgramMilestone,
+  undoProgramApplied,
+  updateProgram,
+  type ActionState,
+} from "./actions";
+import type { IeltsRequired, ScholarshipMilestone, ScholarshipProgram } from "@/lib/scholarships/types";
 
 const initial: ActionState = {};
 
@@ -184,5 +192,114 @@ export function AddProgramForm() {
         <Feedback state={state} />
       </div>
     </form>
+  );
+}
+
+const MILESTONE_BUTTONS: { key: ScholarshipMilestone; label: string; on: string }[] = [
+  { key: "heard_back_at", label: "Heard back", on: "border-navy bg-navy text-white" },
+  { key: "interview_at", label: "Interviewed", on: "border-navy bg-navy text-white" },
+  { key: "admitted_at", label: "Admitted", on: "border-green-700 bg-green-700 text-white" },
+  { key: "funded_at", label: "Scholarship awarded", on: "border-green-700 bg-green-700 text-white" },
+  { key: "rejected_at", label: "Rejected", on: "border-red-700 bg-red-700 text-white" },
+];
+
+function shortDate(value: string) {
+  return new Date(value).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "Africa/Lagos",
+  });
+}
+
+// A compact row for a program already applied to, mirroring the job desk's
+// AppliedRow: each milestone is its own toggle, tapping again unticks it.
+export function AppliedProgramRow({ program }: { program: ScholarshipProgram }) {
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  function toggle(key: ScholarshipMilestone, isSet: boolean) {
+    const formData = new FormData();
+    formData.set("id", program.id);
+    formData.set("milestone", key);
+    formData.set("set", String(isSet));
+    setError(null);
+    startTransition(async () => {
+      const result = await toggleProgramMilestone(formData);
+      if (result.error) setError(result.error);
+    });
+  }
+
+  function undo() {
+    if (!window.confirm(`Move ${program.program} back out of Applied?`)) return;
+    const formData = new FormData();
+    formData.set("id", program.id);
+    setError(null);
+    startTransition(async () => {
+      const result = await undoProgramApplied(formData);
+      if (result.error) setError(result.error);
+    });
+  }
+
+  return (
+    <li className="rounded-2xl border border-line bg-white p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-semibold text-ink">{program.program}</p>
+          <p className="mt-1 text-sm text-muted">
+            {program.university}
+            <span aria-hidden="true"> · </span>
+            Applied {program.applied_at ? shortDate(program.applied_at) : ""}
+          </p>
+        </div>
+        <a
+          href={program.apply_url || program.info_url}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy underline-offset-4 hover:text-gold-hover hover:underline"
+        >
+          <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+          Application
+        </a>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {MILESTONE_BUTTONS.map(({ key, label, on }) => {
+          const value = program[key];
+          const isSet = Boolean(value);
+          return (
+            <button
+              key={key}
+              type="button"
+              disabled={pending}
+              aria-pressed={isSet}
+              onClick={() => toggle(key, isSet)}
+              className={`inline-flex h-9 items-center gap-1.5 rounded-full border px-4 text-xs font-semibold transition disabled:opacity-60 ${
+                isSet ? on : "border-line text-muted hover:border-gold hover:text-ink"
+              }`}
+            >
+              {isSet ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : null}
+              {label}
+              {value ? <span className="font-normal opacity-80">{shortDate(value)}</span> : null}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          disabled={pending}
+          onClick={undo}
+          className="inline-flex h-9 items-center px-2 text-xs font-semibold text-muted hover:text-ink hover:underline disabled:opacity-60"
+        >
+          Undo applied
+        </button>
+      </div>
+
+      {error ? (
+        <p role="alert" className="mt-3 inline-flex items-start gap-1.5 text-sm text-red-600">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          {error}
+        </p>
+      ) : null}
+    </li>
   );
 }

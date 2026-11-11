@@ -215,6 +215,13 @@ export async function checkScholarships(supabase: SupabaseClient, now = new Date
       },
     });
 
+    // Already applied: keep checking the page, but don't email about it.
+    if (program.applied_at) {
+      for (const key of alertKeys) known.delete(key);
+      alertKeys.length = 0;
+      lines.length = 0;
+    }
+
     if (lines.length > 0) alerts.push({ program, lines });
   }
 

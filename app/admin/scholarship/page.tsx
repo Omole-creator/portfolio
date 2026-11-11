@@ -1,23 +1,18 @@
-import { ExternalLink, GraduationCap } from "lucide-react";
+import Link from "next/link";
+import { Check, ExternalLink, GraduationCap } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, programStatus, todayInLagos, windowDates, type ProgramStatus } from "@/lib/scholarships/status";
 import { windowsToText } from "@/lib/scholarships/windows";
 import type { ScholarshipProgram } from "@/lib/scholarships/types";
-import { AddProgramForm, CheckNowButton, EditProgramForm, RemoveProgramButton } from "./Forms";
+import { AddProgramForm, AppliedProgramRow, CheckNowButton, EditProgramForm, RemoveProgramButton } from "./Forms";
+import { markProgramApplied } from "./actions";
 
 type Row = { program: ScholarshipProgram; status: ProgramStatus };
 
-const GROUPS: { key: string; title: string; states: ProgramStatus["state"][]; empty: string }[] = [
-  {
-    key: "open",
-    title: "Open now",
-    states: ["open", "expected_open"],
-    empty: "Nothing is open right now. You'll get an email the day something opens.",
-  },
-  { key: "soon", title: "Deadline coming up", states: ["deadline_soon"], empty: "" },
-  { key: "rolling", title: "Apply any time", states: ["rolling"], empty: "" },
-  { key: "later", title: "Opening later", states: ["upcoming", "unknown"], empty: "" },
-];
+// What counts as "you can apply right now": a window that's open (or should
+// be, going by last cycle), rolling admission, or a near deadline at a
+// university that doesn't publish when its portal opens.
+const APPLY_NOW_STATES: ProgramStatus["state"][] = ["open", "expected_open", "deadline_soon", "rolling"];
 
 function statusBadge(status: ProgramStatus): { text: string; className: string } {
   switch (status.state) {
@@ -30,7 +25,7 @@ function statusBadge(status: ProgramStatus): { text: string; className: string }
       };
     case "deadline_soon":
       return {
-        text: `Deadline ${formatDate(status.closesOn)} (${status.daysLeft} days) · opening date not published`,
+        text: `Probably open · deadline ${formatDate(status.closesOn)} (${status.daysLeft} days) · check the portal`,
         className: "bg-amber-50 text-amber-800",
       };
     case "rolling":
@@ -168,6 +163,16 @@ function ProgramCard({ program, status, today }: Row & { today: string }) {
           {program.apply_url ? "Go to the application" : "Open the program page"}
           <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
         </a>
+        <form action={markProgramApplied}>
+          <input type="hidden" name="id" value={program.id} />
+          <button
+            type="submit"
+            className="inline-flex h-10 items-center gap-1.5 rounded-full border border-line px-5 text-sm font-semibold text-ink transition hover:border-gold"
+          >
+            <Check className="h-3.5 w-3.5" aria-hidden="true" />
+            Mark applied
+          </button>
+        </form>
         {program.apply_url ? (
           <a
             href={program.info_url}
@@ -205,7 +210,16 @@ function ProgramCard({ program, status, today }: Row & { today: string }) {
   );
 }
 
-export default async function ScholarshipPage() {
+type Props = { searchParams: Promise<{ all?: string }> };
+
+function byFitThenDate(today: string) {
+  return (a: Row, b: Row) =>
+    Number(a.program.background_fit === "no") - Number(b.program.background_fit === "no") ||
+    sortKey(a, today).localeCompare(sortKey(b, today));
+}
+
+export default async function ScholarshipPage({ searchParams }: Props) {
+  const showAll = (await searchParams).all === "1";
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("scholarship_programs")
@@ -217,6 +231,17 @@ export default async function ScholarshipPage() {
     .filter((program) => program.active)
     .map((program) => ({ program, status: programStatus(program, today) }));
 
+  const applied = rows
+    .filter((row) => row.program.applied_at)
+    .sort((a, b) => (b.program.applied_at ?? "").localeCompare(a.program.applied_at ?? ""));
+  const notApplied = rows.filter((row) => !row.program.applied_at);
+  const openNow = notApplied
+    .filter((row) => APPLY_NOW_STATES.includes(row.status.state))
+    .sort(byFitThenDate(today));
+  const notOpen = notApplied
+    .filter((row) => !APPLY_NOW_STATES.includes(row.status.state))
+    .sort(byFitThenDate(today));
+
   return (
     <div className="container-x">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -224,10 +249,9 @@ export default async function ScholarshipPage() {
           <p className="eyebrow text-gold-hover">Study abroad</p>
           <h1 className="mt-3 text-3xl font-semibold text-ink md:text-4xl">Scholarships</h1>
           <p className="mt-2 text-sm text-muted">
-            English-taught health informatics and digital health master&apos;s programs with low tuition or a
-            scholarship route. Programs your PharmD doesn&apos;t qualify for are marked and listed last.
-            Every morning each program&apos;s page is checked, and you get an email the day an application
-            window opens, with the link to apply.
+            Only programs you can apply to right now are shown. Every morning each program&apos;s page is
+            checked, and the day a window opens it appears here and you get an email with the link to apply.
+            Mark a program applied to move it into Applied.
           </p>
         </div>
         <CheckNowButton />
@@ -235,49 +259,82 @@ export default async function ScholarshipPage() {
 
       {error ? (
         <p role="alert" className="mt-8 text-sm text-red-600">
-          Could not load programs: {error.message}. If the table doesn&apos;t exist yet, run
-          supabase/migrations/0015_german_job_boards_and_scholarships.sql in the Supabase SQL editor.
+          Could not load programs: {error.message}
         </p>
       ) : null}
 
-      {GROUPS.map((group) => {
-        const groupRows = rows
-          .filter((row) => group.states.includes(row.status.state))
-          .sort(
-            (a, b) =>
-              Number(a.program.background_fit === "no") - Number(b.program.background_fit === "no") ||
-              sortKey(a, today).localeCompare(sortKey(b, today)),
-          );
-        if (groupRows.length === 0 && !group.empty) return null;
-        return (
-          <section key={group.key} className="mt-10">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-ink">
-              <GraduationCap className="h-5 w-5 text-gold-hover" aria-hidden="true" />
-              {group.title}
-              <span className="text-sm font-normal text-muted">({groupRows.length})</span>
-            </h2>
-            {groupRows.length === 0 ? (
-              <p className="mt-3 text-sm text-muted">{group.empty}</p>
-            ) : (
-              <ul className="mt-4 grid gap-4 lg:grid-cols-2">
-                {groupRows.map((row) => (
-                  <ProgramCard key={row.program.id} {...row} today={today} />
-                ))}
-              </ul>
-            )}
-          </section>
-        );
-      })}
+      <section className="mt-10">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-ink">
+          <GraduationCap className="h-5 w-5 text-gold-hover" aria-hidden="true" />
+          Open now
+          <span className="text-sm font-normal text-muted">({openNow.length})</span>
+        </h2>
+        {openNow.length ? (
+          <ul className="mt-4 grid gap-4 lg:grid-cols-2">
+            {openNow.map((row) => (
+              <ProgramCard key={row.program.id} {...row} today={today} />
+            ))}
+          </ul>
+        ) : (
+          <div className="mt-4 rounded-3xl border border-dashed border-line bg-white p-10 text-center">
+            <GraduationCap className="mx-auto h-8 w-8 text-gold" aria-hidden="true" />
+            <p className="mt-4 text-lg font-semibold text-ink">Nothing is open right now.</p>
+            <p className="mt-2 leading-relaxed text-muted">
+              The day a program opens, it shows up here and you get an email.
+            </p>
+          </div>
+        )}
+      </section>
 
-      <section className="mt-14 rounded-2xl border border-line bg-white p-6">
-        <h2 className="text-lg font-semibold text-ink">Add a program</h2>
-        <p className="mt-1 text-sm text-muted">
+      <details open className="mt-12 rounded-3xl border border-line bg-white p-6 md:p-8">
+        <summary className="cursor-pointer text-sm font-semibold text-ink">
+          Applied
+          <span className="ml-2 font-normal text-muted">({applied.length})</span>
+        </summary>
+        {applied.length ? (
+          <ul className="mt-6 space-y-3">
+            {applied.map((row) => (
+              <AppliedProgramRow key={row.program.id} program={row.program} />
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-6 text-sm text-muted">
+            Nothing applied to yet. Programs you mark applied land here.
+          </p>
+        )}
+      </details>
+
+      <div className="mt-6">
+        <Link
+          href={showAll ? "/admin/scholarship" : "/admin/scholarship?all=1"}
+          className="text-sm font-semibold text-muted underline-offset-4 hover:text-ink hover:underline"
+        >
+          {showAll ? "Hide programs not open yet" : `Show programs not open yet (${notOpen.length})`}
+        </Link>
+      </div>
+
+      {showAll ? (
+        <section className="mt-6">
+          <h2 className="text-lg font-semibold text-ink">
+            Not open yet <span className="text-sm font-normal text-muted">({notOpen.length})</span>
+          </h2>
+          <ul className="mt-4 grid gap-4 lg:grid-cols-2">
+            {notOpen.map((row) => (
+              <ProgramCard key={row.program.id} {...row} today={today} />
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      <details className="mt-10 rounded-2xl border border-line bg-white p-6">
+        <summary className="cursor-pointer text-sm font-semibold text-ink">Add a program</summary>
+        <p className="mt-3 text-sm text-muted">
           Found another one? Add it here and it joins the daily check.
         </p>
         <div className="mt-5">
           <AddProgramForm />
         </div>
-      </section>
+      </details>
     </div>
   );
 }

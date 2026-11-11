@@ -1921,6 +1921,17 @@ tells him when applications open. Data lives in `scholarship_programs` (migratio
   Frankfurt was checked on DAAD on request: its 10 English master's are law,
   finance, economics, management, East Asian studies and neuroscience, so it
   wasn't added.
+- **The page shows only what he can apply to now (migration 0018), at his
+  request, and tracks applications like /admin/jobs.** "Open now" is
+  `APPLY_NOW_STATES` in `page.tsx`: open, expected_open (last cycle's dates say
+  it should be), deadline_soon (no published opening date, deadline within 45
+  days) and rolling. Everything else is behind "Show programs not open yet"
+  (`?all=1`), and appears in Open now on its own the day its window opens.
+  "Mark applied" sets `applied_at` and moves the program to an Applied section
+  with independent milestone toggles (heard back, interviewed, admitted,
+  scholarship awarded, rejected; admitted and rejected clear each other), plus
+  "Undo applied". Applied programs are still checked daily but never emailed
+  about.
 
 ## GTM Engineer (planned, not built)
 

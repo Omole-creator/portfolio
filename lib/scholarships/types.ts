@@ -15,6 +15,20 @@ export type IeltsRequired = "no" | "yes" | "unclear";
 // requirements.
 export type BackgroundFit = "yes" | "maybe" | "no";
 
+export type ScholarshipMilestone =
+  | "heard_back_at"
+  | "interview_at"
+  | "admitted_at"
+  | "funded_at"
+  | "rejected_at";
+export const SCHOLARSHIP_MILESTONES: ScholarshipMilestone[] = [
+  "heard_back_at",
+  "interview_at",
+  "admitted_at",
+  "funded_at",
+  "rejected_at",
+];
+
 export type ScholarshipProgram = {
   id: string;
   university: string;
@@ -42,6 +56,13 @@ export type ScholarshipProgram = {
   page_changed_at: string | null;
   last_checked_at: string | null;
   notified_keys: string[];
+  // When Omole marked it applied, and what happened after. null = not (yet).
+  applied_at: string | null;
+  heard_back_at: string | null;
+  interview_at: string | null;
+  admitted_at: string | null;
+  funded_at: string | null;
+  rejected_at: string | null;
   active: boolean;
   sort_order: number;
   created_at: string;
