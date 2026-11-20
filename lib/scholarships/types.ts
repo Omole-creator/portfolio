@@ -15,6 +15,21 @@ export type IeltsRequired = "no" | "yes" | "unclear";
 // requirements.
 export type BackgroundFit = "yes" | "maybe" | "no";
 
+// The subject areas Omole is tracking. A program can cover more than one
+// (Debrecen's pharmaceutical R&D management master teaches both
+// pharmacovigilance and drug registration).
+export type ScholarshipSubject =
+  | "health_informatics"
+  | "digital_health"
+  | "pharmacovigilance"
+  | "regulatory_affairs";
+export const SCHOLARSHIP_SUBJECTS: { value: ScholarshipSubject; label: string }[] = [
+  { value: "health_informatics", label: "Health informatics" },
+  { value: "digital_health", label: "Digital health" },
+  { value: "pharmacovigilance", label: "Pharmacovigilance" },
+  { value: "regulatory_affairs", label: "Regulatory affairs" },
+];
+
 export type ScholarshipMilestone =
   | "heard_back_at"
   | "interview_at"
@@ -35,6 +50,7 @@ export type ScholarshipProgram = {
   program: string;
   country: string;
   city: string | null;
+  subjects: ScholarshipSubject[];
   fit: "direct" | "closest";
   fit_note: string | null;
   tuition_note: string | null;

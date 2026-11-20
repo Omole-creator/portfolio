@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
-import { AlertCircle, Check, ExternalLink, RefreshCw } from "lucide-react";
+import { AlertCircle, Check, ExternalLink, RefreshCw, Trash2 } from "lucide-react";
 import {
   addProgram,
   checkNow,
@@ -11,7 +11,12 @@ import {
   updateProgram,
   type ActionState,
 } from "./actions";
-import type { IeltsRequired, ScholarshipMilestone, ScholarshipProgram } from "@/lib/scholarships/types";
+import {
+  SCHOLARSHIP_SUBJECTS,
+  type IeltsRequired,
+  type ScholarshipMilestone,
+  type ScholarshipProgram,
+} from "@/lib/scholarships/types";
 
 const initial: ActionState = {};
 
@@ -120,12 +125,18 @@ export function RemoveProgramButton({ id, name }: { id: string; name: string }) 
     <form
       action={removeProgram}
       onSubmit={(event) => {
-        if (!window.confirm(`Remove ${name} from the tracker?`)) event.preventDefault();
+        if (!window.confirm(`Delete ${name}? It leaves the tracker and you won't get emails about it.`)) {
+          event.preventDefault();
+        }
       }}
     >
       <input type="hidden" name="id" value={id} />
-      <button type="submit" className="text-sm font-semibold text-red-600 hover:underline">
-        Remove from tracker
+      <button
+        type="submit"
+        className="inline-flex h-10 items-center gap-1.5 rounded-full border border-line px-5 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50"
+      >
+        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+        Delete
       </button>
     </form>
   );
@@ -143,6 +154,17 @@ export function AddProgramForm() {
         Program
         <input name="program" required placeholder="MSc Health Informatics" className={field} />
       </label>
+      <fieldset className={`${label} sm:col-span-2`}>
+        <legend>Subject</legend>
+        <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 font-normal text-ink">
+          {SCHOLARSHIP_SUBJECTS.map((subject) => (
+            <label key={subject.value} className="inline-flex items-center gap-1.5">
+              <input type="checkbox" name="subjects" value={subject.value} />
+              {subject.label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <label className={label}>
         Country
         <input name="country" required className={field} />

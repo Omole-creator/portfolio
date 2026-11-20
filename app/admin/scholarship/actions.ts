@@ -7,8 +7,10 @@ import { checkScholarships } from "@/lib/scholarships/check";
 import { parseWindows } from "@/lib/scholarships/windows";
 import {
   SCHOLARSHIP_MILESTONES,
+  SCHOLARSHIP_SUBJECTS,
   type IeltsRequired,
   type ScholarshipMilestone,
+  type ScholarshipSubject,
 } from "@/lib/scholarships/types";
 
 export type ActionState = { error?: string; message?: string };
@@ -59,11 +61,16 @@ export async function addProgram(_prev: ActionState, formData: FormData): Promis
   const infoUrl = text(formData, "info_url");
   const applyUrl = text(formData, "apply_url");
   const ielts = String(formData.get("ielts_required") ?? "unclear") as IeltsRequired;
+  const subjects = formData
+    .getAll("subjects")
+    .map(String)
+    .filter((value): value is ScholarshipSubject => SCHOLARSHIP_SUBJECTS.some((s) => s.value === value));
 
   if (!university || !program || !country) return { error: "Fill in the university, program, and country." };
   if (!infoUrl) return { error: "Add the program's page, so the daily check has something to read." };
   if (!validUrl(infoUrl) || !validUrl(applyUrl)) return { error: "One of the links isn't a valid web address." };
   if (!IELTS_VALUES.includes(ielts)) return { error: "Choose whether IELTS is needed." };
+  if (!subjects.length) return { error: "Tick at least one subject." };
 
   const parsed = parseWindows(String(formData.get("windows") ?? ""));
   if ("error" in parsed) return { error: parsed.error };
@@ -73,6 +80,7 @@ export async function addProgram(_prev: ActionState, formData: FormData): Promis
     university,
     program,
     country,
+    subjects,
     city: text(formData, "city"),
     tuition_note: text(formData, "tuition_note"),
     funding_note: text(formData, "funding_note"),

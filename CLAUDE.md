@@ -1933,6 +1933,49 @@ tells him when applications open. Data lives in `scholarship_programs` (migratio
   "Undo applied". Applied programs are still checked daily but never emailed
   about.
 
+- **Pharmacovigilance and regulatory affairs added (migration 0019, 2026-11-20).**
+  Each program has a `subjects` array (`health_informatics`, `digital_health`,
+  `pharmacovigilance`, `regulatory_affairs`; labels in `SCHOLARSHIP_SUBJECTS`,
+  `lib/scholarships/types.ts`), shown on each card, with filter links on the page
+  (`?subject=`) and checkboxes in the Add form. The "closest" badge now reads
+  "Closest match, not an exact program." Sources, all readable with a plain fetch:
+  DAAD's JSON search; Study in NL's Studyfinder via `/api/programs?limit=2000`
+  (Drupal page, results load from that endpoint); the Stipendium Hungaricum
+  DreamApply chunks (needs a `Referer` header, and on Windows strip `
+` from the
+  chunk tokens); studyprogrammes.ch via `api.studyprogrammes.ch/list_studyprogrammes?page_size=5000`
+  and `/get_studyprogramme_details?id=`. studyinhungary.hu was down for maintenance.
+  Added: Debrecen's MSc Pharmaceutical Research and Development Management (the best
+  fit: pharmacovigilance and drug registration modules, pharmacy accepted, oral
+  interview instead of IELTS, Stipendium Hungaricum) and Basel's Drug Sciences
+  (closest, CHF 850/semester, may need German-taught prerequisites). Left out:
+  Bonn's Drug Regulatory Affairs and TH Lübeck's Regulatory Affairs (mostly or
+  fully online; every program must be onsite for a visa),
+  every Dutch match (about €20,000-25,000/year for non-EU students plus IELTS 6.5),
+  Hochschule Fresenius and Dresden International University (private, about
+  €4,000-5,700/semester), and the Swiss MAS/DAS courses (CHF 15,500-34,000).
+
+- **Second sweep (migration 0020, same day): onsite only, plus named
+  scholarships.** Omole's rules for it: every program must be on campus (the
+  point is a study visa), and the UK only counts when it's a 100% scholarship he
+  qualifies for. Sweden is now in scope through the Swedish Institute Scholarship
+  for Global Professionals (Nigeria eligible, 3,000 hours of work experience).
+  Added: Karolinska's Joint Master's in Health Informatics (on the SI 2027/28
+  list; healthcare degrees accepted; a four-year Nigerian bachelor's counts as
+  English proof), Maastricht's MSc Health and Digital Transformation with the
+  NL-High Potential scholarship (pharmacy listed as relevant; an English-only
+  degree waives IELTS; needs a 75% GPA; program file due 10 December), Innsbruck's
+  MSc Pharmaceutical Sciences – Drug Development and Regulatory Affairs (public,
+  English, in-person test and interview), ETH's MSc Pharmaceutical Sciences with
+  ESOP (closes 30 November; top-10% grades), and Chevening (fully funded,
+  but requires two years back in Nigeria). Ruled out, with reasons in the
+  migration header: RESCO (renewable energy), Swiss Government Excellence
+  Scholarships (doctoral and postdoc only), Irish and Canadian PV/RA programs (no
+  low fees or full funding), and Commonwealth Master's (closed 20 October 2026).
+  The SI eligible-programme PDF (si.se, published each November) also lists Uppsala
+  and Lund pharmaceutical programs, but they're drug discovery/technology, so they
+  weren't added.
+
 ## GTM Engineer (planned, not built)
 
 `GTM-ENGINEER-PLAN.md` (repo root) holds the 2026-09-29 research into GTM Engineer

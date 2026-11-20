@@ -3,7 +3,7 @@ import { Check, ExternalLink, GraduationCap } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, programStatus, todayInLagos, windowDates, type ProgramStatus } from "@/lib/scholarships/status";
 import { windowsToText } from "@/lib/scholarships/windows";
-import type { ScholarshipProgram } from "@/lib/scholarships/types";
+import { SCHOLARSHIP_SUBJECTS, type ScholarshipProgram, type ScholarshipSubject } from "@/lib/scholarships/types";
 import { AddProgramForm, AppliedProgramRow, CheckNowButton, EditProgramForm, RemoveProgramButton } from "./Forms";
 import { markProgramApplied } from "./actions";
 
@@ -51,6 +51,18 @@ function backgroundBadge(fit: ScholarshipProgram["background_fit"]) {
   return { text: "Check your PharmD fits", className: "bg-amber-50 text-amber-800" };
 }
 
+function subjectLabel(subject: ScholarshipSubject): string {
+  return SCHOLARSHIP_SUBJECTS.find((s) => s.value === subject)?.label ?? subject;
+}
+
+function pageHref(showAll: boolean, subject: ScholarshipSubject | null): string {
+  const params = new URLSearchParams();
+  if (showAll) params.set("all", "1");
+  if (subject) params.set("subject", subject);
+  const query = params.toString();
+  return query ? `/admin/scholarship?${query}` : "/admin/scholarship";
+}
+
 function sortKey(row: Row, today: string): string {
   const s = row.status;
   if (s.opensOn && s.opensOn > today) return s.opensOn;
@@ -73,6 +85,12 @@ function ProgramCard({ program, status, today }: Row & { today: string }) {
       <p className="mt-1 font-semibold text-ink">{program.program}</p>
       <p className="text-sm text-muted">{program.university}</p>
 
+      {program.subjects?.length ? (
+        <p className="mt-2 text-xs font-semibold text-navy">
+          {program.subjects.map(subjectLabel).join(" · ")}
+        </p>
+      ) : null}
+
       <div className="mt-3 flex flex-wrap gap-1.5">
         <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${badge.className}`}>{badge.text}</span>
         <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${ielts.className}`}>{ielts.text}</span>
@@ -81,7 +99,7 @@ function ProgramCard({ program, status, today }: Row & { today: string }) {
         </span>
         {program.fit === "closest" ? (
           <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
-            Closest match, not health informatics
+            Closest match, not an exact program
           </span>
         ) : null}
       </div>
@@ -173,6 +191,7 @@ function ProgramCard({ program, status, today }: Row & { today: string }) {
             Mark applied
           </button>
         </form>
+        <RemoveProgramButton id={program.id} name={program.program} />
         {program.apply_url ? (
           <a
             href={program.info_url}
@@ -198,9 +217,6 @@ function ProgramCard({ program, status, today }: Row & { today: string }) {
           windowsText={windowsToText(program.windows)}
           windowsNote={program.windows_note}
         />
-        <div className="mt-4">
-          <RemoveProgramButton id={program.id} name={program.program} />
-        </div>
       </details>
 
       {program.last_checked_at ? (
@@ -210,7 +226,7 @@ function ProgramCard({ program, status, today }: Row & { today: string }) {
   );
 }
 
-type Props = { searchParams: Promise<{ all?: string }> };
+type Props = { searchParams: Promise<{ all?: string; subject?: string }> };
 
 function byFitThenDate(today: string) {
   return (a: Row, b: Row) =>
@@ -219,7 +235,10 @@ function byFitThenDate(today: string) {
 }
 
 export default async function ScholarshipPage({ searchParams }: Props) {
-  const showAll = (await searchParams).all === "1";
+  const params = await searchParams;
+  const showAll = params.all === "1";
+  const subject =
+    SCHOLARSHIP_SUBJECTS.find((s) => s.value === params.subject)?.value ?? null;
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("scholarship_programs")
@@ -229,6 +248,7 @@ export default async function ScholarshipPage({ searchParams }: Props) {
   const today = todayInLagos();
   const rows: Row[] = ((data ?? []) as ScholarshipProgram[])
     .filter((program) => program.active)
+    .filter((program) => !subject || (program.subjects ?? []).includes(subject))
     .map((program) => ({ program, status: programStatus(program, today) }));
 
   const applied = rows
@@ -256,6 +276,24 @@ export default async function ScholarshipPage({ searchParams }: Props) {
         </div>
         <CheckNowButton />
       </div>
+
+      <nav aria-label="Filter by subject" className="mt-6 flex flex-wrap gap-2">
+        {[{ value: null, label: "All subjects" }, ...SCHOLARSHIP_SUBJECTS].map((option) => {
+          const active = option.value === subject;
+          return (
+            <Link
+              key={option.label}
+              href={pageHref(showAll, option.value)}
+              aria-current={active ? "page" : undefined}
+              className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+                active ? "border-navy bg-navy text-white" : "border-line bg-white text-muted hover:text-ink"
+              }`}
+            >
+              {option.label}
+            </Link>
+          );
+        })}
+      </nav>
 
       {error ? (
         <p role="alert" className="mt-8 text-sm text-red-600">
@@ -306,7 +344,7 @@ export default async function ScholarshipPage({ searchParams }: Props) {
 
       <div className="mt-6">
         <Link
-          href={showAll ? "/admin/scholarship" : "/admin/scholarship?all=1"}
+          href={pageHref(!showAll, subject)}
           className="text-sm font-semibold text-muted underline-offset-4 hover:text-ink hover:underline"
         >
           {showAll ? "Hide programs not open yet" : `Show programs not open yet (${notOpen.length})`}
